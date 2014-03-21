@@ -1,0 +1,17 @@
+{
+  "folders": [
+    {
+      "path": ".",
+      "file_exclude_patterns": [
+      	"*.class",
+      	"*~",
+        "*.sublime-workspace",
+        "*.sublime-project"
+      ],
+      "folder_exclude_patterns": [
+      	"project/target",
+      	"target"
+      ]
+    }
+  ]
+}
