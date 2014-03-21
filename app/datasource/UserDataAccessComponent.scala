@@ -71,7 +71,7 @@ trait UserDataAccessComponent {
   */
 trait UserDataAccessComponentImpl extends UserDataAccessComponent {
 
-  object userDataAccess extends UserDataAccessModule {
+  trait UserDataAccessModuleImpl extends UserDataAccessModule {
 
     /*
      * Types
