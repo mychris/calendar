@@ -11,3 +11,7 @@ project/plugins/project/
 
 # Sublime
 *.sublime-workspace
+
+# IDEA
+.idea/
+.idea_modules/
