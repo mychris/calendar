@@ -100,8 +100,8 @@ trait UserDataAccessComponentImpl extends UserDataAccessComponent {
     protected class UserTableImpl(tag: Tag) extends Table[User](tag, "app_user") with AbstractUserTable {
 
       def id       = column[Int   ]("id", O.PrimaryKey, O.AutoInc)
-      def name     = column[String]("name")
-      def password = column[String]("password")
+      def name     = column[String]("name", O.NotNull)
+      def password = column[String]("password", O.NotNull)
 
       def *        = (id, name, password) <> (UserImpl.tupled, UserImpl.unapply)
     }
