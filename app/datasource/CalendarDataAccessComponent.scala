@@ -65,9 +65,10 @@ trait CalendarDataAccessComponent {
     /** */
     trait AbstractTag {
 
-      def id     : Int
-      def name   : String
-      def userId : Int
+      def id       : Int
+      def name     : String
+      def priority : Int
+      def userId   : Int
     }
 
     /*
@@ -88,9 +89,10 @@ trait CalendarDataAccessComponent {
     /** */
     trait AbstractTagTable extends Table[Tag] {
 
-      def id     : Column[Int]
-      def name   : Column[String]
-      def userId : Column[Int]
+      def id       : Column[Int]
+      def name     : Column[String]
+      def priority : Column[Int]
+      def userId   : Column[Int]
 
       def user : Query[UserTable, User]
     }
@@ -154,7 +156,7 @@ trait CalendarDataAccessComponentImpl extends CalendarDataAccessComponent {
     protected case class AppointmentImpl(id: Int, description: String, start: DateTime, end: DateTime) extends AbstractAppointment
 
     /** */
-    protected case class TagImpl(id: Int, name: String, userId: Int) extends AbstractTag
+    protected case class TagImpl(id: Int, name: String, priority: Int, userId: Int) extends AbstractTag
 
     /*
      * Database tables
@@ -176,13 +178,14 @@ trait CalendarDataAccessComponentImpl extends CalendarDataAccessComponent {
     /** */
     protected class TagTableImpl(tag: scala.slick.lifted.Tag) extends Table[Tag](tag, "tag") with AbstractTagTable {
 
-      def id     = column[Int   ]("id", O.PrimaryKey, O.AutoInc)
-      def name   = column[String]("name", O.NotNull)
-      def userId = column[Int   ]("user_id", O.NotNull)
+      def id       = column[Int   ]("id", O.PrimaryKey, O.AutoInc)
+      def name     = column[String]("name", O.NotNull)
+      def priority = column[Int   ]("priority", O.NotNull)
+      def userId   = column[Int   ]("user_id", O.NotNull)
 
       def user   = foreignKey("user_fk", userId, users)(_.id)
 
-      def *      = (id, name, userId) <> (TagImpl.tupled, TagImpl.unapply)
+      def *      = (id, name, priority, userId) <> (TagImpl.tupled, TagImpl.unapply)
     }
 
     /** */
