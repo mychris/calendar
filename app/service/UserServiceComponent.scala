@@ -2,7 +2,7 @@ package app.service
 
 import akka.actor._
 
-import app.datasource.UserDataAccessComponent
+import app.datasource._
 
 import scala.slick.driver.PostgresDriver.simple._
 
@@ -12,52 +12,84 @@ import scala.slick.driver.PostgresDriver.simple._
   */
 trait UserServiceComponent {
 
-  self: UserDataAccessComponent =>
+  self: UserDataAccessComponentImpl =>
 
-  /** Database connection */
+  /** Database */
   val db: Database
 
   /** User data access module accessor */
-  val userDataAccess: UserDataAccessModule
+  val userDataAccess: UserDataAccessModuleImpl
 
   import userDataAccess._
 
   trait UserServiceModule {
 
-    /*
-     * Requests
-     */
-
     /** */
-    case class GetUserByName(name: String)
+    object protocol {
 
-    /*
-     * Answers
-     */
+      /*
+       * Requests
+       */
 
-    /** */
-    case class UserByName(user: User)
+      /** */
+      case class GetUserByName(name: String) extends Request
 
-    /*
-     * Errors
-     */
+      /*
+       * Reponses
+       */
 
-    /** */
-    case class NoSuchUserError(message: String) extends Error
+      /** */
+      case class UserByName(user: User) extends Response
 
-    /** */
-    object UserService {
+      /*
+       * Errors
+       */
 
-      def props: Props = Props(classOf[UserService])
+      /** */
+      case class NoSuchUserError(message: String) extends Error
     }
 
     /** */
-    class UserService extends Actor with ActorLogging {
+    trait PropsFactory {
+
+      def userService: Props
+    }
+
+    /** */
+    val factory: PropsFactory
+
+    /** */
+    trait UserService extends Actor
+  }
+}
+
+/**
+  *
+  * @author Simon Kaltenbacher
+  */
+trait UserServiceComponentImpl extends UserServiceComponent {
+
+  self: UserDataAccessComponentImpl =>
+
+  import userDataAccess._
+
+  trait UserServiceModuleImpl extends UserServiceModule {
+
+    import protocol._
+
+    /** */
+    object factory extends PropsFactory {
+
+      def userService = Props(classOf[UserServiceImpl])
+    }
+
+    /** */
+    class UserServiceImpl extends UserService with Actor with ActorLogging {
 
       /** */
       def getUserByName(name: String) =
         db.withSession { implicit session =>
-          sender ! userDataAccess.usersByName(name).firstOption.fold[Any](NoSuchUserError(s"User with name $name does not exist!"))(UserByName(_))
+          sender ! usersByName(name).firstOption.fold[Any](NoSuchUserError(s"User with name $name does not exist!"))(UserByName(_))
         }
 
       def receive =  {
