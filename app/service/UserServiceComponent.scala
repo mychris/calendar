@@ -32,11 +32,17 @@ trait UserServiceComponent {
        */
 
       /** */
+      case class GetUserById(id: Int) extends Request
+
+      /** */
       case class GetUserByName(name: String) extends Request
 
       /*
        * Reponses
        */
+
+      /** */
+      case class UserById(user: User) extends Response
 
       /** */
       case class UserByName(user: User) extends Response
@@ -87,12 +93,19 @@ trait UserServiceComponentImpl extends UserServiceComponent {
     class UserServiceImpl extends UserService with Actor with ActorLogging {
 
       /** */
+      def getUserById(id: Int) =
+        db.withSession { implicit session =>
+          sender ! usersById(id).firstOption.fold[Any](NoSuchUserError(s"User with id $id does not exist!"))(UserById(_))
+        }
+
+      /** */
       def getUserByName(name: String) =
         db.withSession { implicit session =>
           sender ! usersByName(name).firstOption.fold[Any](NoSuchUserError(s"User with name $name does not exist!"))(UserByName(_))
         }
 
       def receive =  {
+        case GetUserById(id)     => getUserById(id)
         case GetUserByName(name) => getUserByName(name)
       }
     }
