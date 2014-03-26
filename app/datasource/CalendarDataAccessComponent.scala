@@ -200,10 +200,10 @@ trait CalendarDataAccessComponentImpl extends CalendarDataAccessComponent {
     /** */
     protected class AppointmentTableImpl(tag: scala.slick.lifted.Tag) extends Table[Appointment](tag, "appointment") with AbstractAppointmentTable {
 
-      def id          = column[Int     ]("id", O.PrimaryKey, O.AutoInc)
-      def description = column[String  ]("description", O.NotNull)
-      def start       = column[DateTime]("start_date", O.NotNull)
-      def end         = column[DateTime]("end_date", O.NotNull)
+      def id          = column[Int     ]("id"         , O.PrimaryKey, O.AutoInc)
+      def description = column[String  ]("description", O.NotNull              )
+      def start       = column[DateTime]("start_date" , O.NotNull              )
+      def end         = column[DateTime]("end_date"   , O.NotNull              )
 
       def tags        = for(abtt <- appointmentBelongsToTag; t <- abtt.tag if abtt.appointmentId === id) yield t
 
@@ -214,9 +214,9 @@ trait CalendarDataAccessComponentImpl extends CalendarDataAccessComponent {
     protected class TagTableImpl(tag: scala.slick.lifted.Tag) extends Table[Tag](tag, "tag") with AbstractTagTable {
 
       def id       = column[Int   ]("id"      , O.PrimaryKey, O.AutoInc)
-      def name     = column[String]("name"    , O.NotNull)
-      def priority = column[Int   ]("priority", O.NotNull)
-      def userId   = column[Int   ]("user_id" , O.NotNull)
+      def name     = column[String]("name"    , O.NotNull              )
+      def priority = column[Int   ]("priority", O.NotNull              )
+      def userId   = column[Int   ]("user_id" , O.NotNull              )
 
       def user     = foreignKey("user_fk", userId, users)(_.id)
 
@@ -227,7 +227,7 @@ trait CalendarDataAccessComponentImpl extends CalendarDataAccessComponent {
     protected class AppointmentBelongsToTagTableImpl(tag: scala.slick.lifted.Tag) extends Table[(Int, Int)](tag, "appointment_belongsto_tag") with AbstractAppointmentBelongsToTagTable {
 
       def appointmentId = column[Int]("appointment_id")
-      def tagId         = column[Int]("tag_id")
+      def tagId         = column[Int]("tag_id"        )
 
       def pk            = primaryKey("pk_appointment_belongsto_tag", (appointmentId, tagId))
       def appointment   = foreignKey("appointment_fk", appointmentId, appointments)(_.id)
