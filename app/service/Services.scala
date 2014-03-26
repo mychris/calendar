@@ -47,9 +47,9 @@ object Services extends
     // Execution environment
     val system = Akka.system
 
-    // Starting user service
+    /** User service actors */
     val user = system.actorOf(userService.factory.userService.withRouter(FromConfig()), "user-service")
 
-    // Starting calendar service
+    /** Calendar service actors */
     val calendar = system.actorOf(calendarService.factory.calendarService.withRouter(FromConfig()), "calendar-service")
 }
