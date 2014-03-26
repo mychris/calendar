@@ -40,6 +40,12 @@ trait CalendarServiceComponent {
        */
 
       /** */
+      case class GetTagById(id: Int) extends Request
+
+      /** */
+      case class GetAppointmentById(id: Int) extends Request
+
+      /** */
       case class GetTagsFromUser(userId: Int) extends Request
 
       /** */
@@ -65,25 +71,31 @@ trait CalendarServiceComponent {
        */
 
       /** */
-      case class TagsFromUser(tags: Seq[Tag])
+      case class TagById(tag: Tag) extends Response
 
       /** */
-      case class TagsFromAppointment(tags: Seq[Tag])
+      case class AppointmentById(appointment: Appointment) extends Response
 
       /** */
-      case class AppointmentsWithTag(appointments: Seq[Appointment])
+      case class TagsFromUser(tags: Seq[Tag]) extends Response
 
       /** */
-      case class TagAdded(id: Int)
+      case class TagsFromAppointment(tags: Seq[Tag]) extends Response
 
       /** */
-      case class AppointmentAdded(id: Int)
+      case class AppointmentsWithTag(appointments: Seq[Appointment]) extends Response
 
       /** */
-      case object TagsRemoved
+      case class TagAdded(id: Int) extends Response
 
       /** */
-      case object AppointmentsRemoved
+      case class AppointmentAdded(id: Int) extends Response
+
+      /** */
+      case object TagsRemoved extends Response
+
+      /** */
+      case object AppointmentsRemoved extends Response
 
       /*
        * Errors
@@ -138,6 +150,14 @@ trait CalendarServiceComponentImpl extends CalendarServiceComponent {
     class CalendarServiceImpl extends CalendarService with Actor with ActorLogging {
 
       /** */
+      def getTagById(id: Int) =
+        db.withSession { implicit session => sender ! tagsById(id).firstOption.fold[Any](NoSuchTag(s"Tag with id $id does not exist!"))(TagById(_)) }
+
+      /** */
+      def getAppointmentById(id: Int) =
+        db.withSession { implicit session => sender ! appointmentsById(id).firstOption.fold[Any](NoSuchTag(s"Appointment with id $id does not exist!"))(AppointmentById(_)) }
+
+      /** */
       def getTagsFromUser(userId: Int) =
         db.withSession { implicit session => sender ! TagsFromUser(tagsFromUser(userId).buildColl[Seq]) }
 
@@ -172,6 +192,8 @@ trait CalendarServiceComponentImpl extends CalendarServiceComponent {
         }
 
       def receive =  {
+        case GetTagById(id)                          => getTagById(id)
+        case GetAppointmentById(id)                  => getAppointmentById(id)
         case GetTagsFromUser(userId)                 => getTagsFromUser(userId)
         case GetTagsFromAppointment(appointmentId)   => getTagsFromAppointment(appointmentId)
         case GetAppointmentsWithTag(tagId)           => getAppointmentsWithTag(tagId)
