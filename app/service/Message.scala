@@ -22,7 +22,7 @@ trait Error extends Response {
   val message: String
 }
 
-/** Enables pattern matching on instances of [[app.service.Error]]
+/** Enables pattern matching on instances of [[service.Error]]
   *
   * @author Simon Kaltenbacher
   */

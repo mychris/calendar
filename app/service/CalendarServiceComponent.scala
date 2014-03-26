@@ -14,20 +14,20 @@ import scala.slick.driver.PostgresDriver.simple._
   */
 trait CalendarServiceComponent {
 
-  self: UserDataAccessComponentImpl
-  with  CalendarDataAccessComponentImpl =>
+  self: UserDataAccessComponentImpl with
+        CalendarDataAccessComponentImpl =>
 
   /** Database */
   val db: Database
 
   /** User data access module accessor */
-  val userDataAccess: UserDataAccessModuleImpl
+  val userDataAccessImpl: UserDataAccessModuleImpl
 
   /** User data access module accessor */
-  val calendarDataAccess: CalendarDataAccessModuleImpl
+  val calendarDataAccessImpl: CalendarDataAccessModuleImpl
 
-  import userDataAccess._
-  import calendarDataAccess._
+  import userDataAccessImpl._
+  import calendarDataAccessImpl._
 
   /** */
   trait CalendarServiceModule {
@@ -132,8 +132,8 @@ trait CalendarServiceComponentImpl extends CalendarServiceComponent {
   self: UserDataAccessComponentImpl
   with  CalendarDataAccessComponentImpl =>
 
-  import userDataAccess._
-  import calendarDataAccess._
+  import userDataAccessImpl._
+  import calendarDataAccessImpl._
 
   /** */
   trait CalendarServiceModuleImpl extends CalendarServiceModule {

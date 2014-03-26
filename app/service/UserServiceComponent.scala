@@ -18,9 +18,9 @@ trait UserServiceComponent {
   val db: Database
 
   /** User data access module accessor */
-  val userDataAccess: UserDataAccessModuleImpl
+  val userDataAccessImpl: UserDataAccessModuleImpl
 
-  import userDataAccess._
+  import userDataAccessImpl._
 
   trait UserServiceModule {
 
@@ -77,7 +77,7 @@ trait UserServiceComponentImpl extends UserServiceComponent {
 
   self: UserDataAccessComponentImpl =>
 
-  import userDataAccess._
+  import userDataAccessImpl._
 
   trait UserServiceModuleImpl extends UserServiceModule {
 
