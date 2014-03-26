@@ -1,0 +1,23 @@
+@()(implicit flash:Flash)
+<!doctype html>
+
+<html>
+    <head>
+        <title>Login-Seite</title>
+    </head>
+
+    <body>
+        <h1>Login</h1>
+
+        @if(flash.get("error").isDefined) {
+            <h1>@flash.get("error").get</h1>
+        }
+    <form action="@routes.LoginController.doLogin" method="post">
+        username: <input type="username" name="username"><br/>
+        password: <input type="password" name="password"><br/>
+        <input type="submit" value="Login">
+    </form>
+
+    </body>
+
+</html>
