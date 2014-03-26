@@ -1,8 +1,8 @@
-package app.service
+package service
 
 import akka.actor._
 
-import app.datasource._
+import datasource._
 
 import hirondelle.date4j.DateTime
 

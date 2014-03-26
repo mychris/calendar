@@ -1,6 +1,6 @@
-package app.datasource
+package datasource
 
-import app.util.slick._
+import util.slick._
 
 import hirondelle.date4j.DateTime
 

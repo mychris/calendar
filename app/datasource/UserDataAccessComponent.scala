@@ -1,4 +1,4 @@
-package app.datasource
+package datasource
 
 import scala.slick.driver.PostgresDriver.simple._
 import scala.slick.lifted.Shape

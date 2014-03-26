@@ -1,4 +1,4 @@
-package app.service
+package service
 
 /** Base trait for all requests sent to service actors
   *

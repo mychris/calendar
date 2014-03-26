@@ -1,4 +1,4 @@
-package app.util
+package util
 
 import hirondelle.date4j.DateTime
 

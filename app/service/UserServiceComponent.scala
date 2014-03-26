@@ -1,8 +1,8 @@
-package app.service
+package service
 
 import akka.actor._
 
-import app.datasource._
+import datasource._
 
 import scala.slick.driver.PostgresDriver.simple._
 
