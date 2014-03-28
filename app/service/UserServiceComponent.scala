@@ -6,6 +6,8 @@ import datasource._
 
 import scala.slick.driver.PostgresDriver.simple._
 
+import service.baseprotocol._
+
 /**
   *
   * @author Simon Kaltenbacher
@@ -15,10 +17,10 @@ trait UserServiceComponent {
   self: UserDataAccessComponentImpl =>
 
   /** Database */
-  val db: Database
+  protected val db: Database
 
   /** User data access module accessor */
-  val userDataAccessImpl: UserDataAccessModuleImpl
+  protected val userDataAccessImpl: UserDataAccessModuleImpl
 
   import userDataAccessImpl._
 

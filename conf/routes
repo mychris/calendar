@@ -4,8 +4,8 @@
 
 # Home page
 GET     /                           controllers.LoginController.index
-POST    /login                      controllers.LoginController.doLogin
-GET     /logout                     controllers.LoginController.doLogout
+POST    /login                      controllers.LoginController.login
+GET     /logout                     controllers.LoginController.logout
 
 
 GET     /hello                      controllers.Application.hello

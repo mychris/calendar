@@ -16,7 +16,7 @@ trait CalendarDataAccessComponent {
   self: UserDataAccessComponent =>
 
   /** User data access module accessor */
-  val userDataAccess: UserDataAccessModule
+  protected val userDataAccess: UserDataAccessModule
 
   import userDataAccess._
 

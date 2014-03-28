@@ -12,7 +12,7 @@
         @if(flash.get("error").isDefined) {
             <h1>@flash.get("error").get</h1>
         }
-    <form action="@routes.LoginController.doLogin" method="post">
+    <form action="@routes.LoginController.login" method="post">
         username: <input type="username" name="username"><br/>
         password: <input type="password" name="password"><br/>
         <input type="submit" value="Login">

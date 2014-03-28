@@ -8,6 +8,8 @@ import hirondelle.date4j.DateTime
 
 import scala.slick.driver.PostgresDriver.simple._
 
+import service.baseprotocol._
+
 /**
   *
   * @author Simon Kaltenbacher
@@ -18,13 +20,13 @@ trait CalendarServiceComponent {
         CalendarDataAccessComponentImpl =>
 
   /** Database */
-  val db: Database
+  protected val db: Database
 
   /** User data access module accessor */
-  val userDataAccessImpl: UserDataAccessModuleImpl
+  protected val userDataAccessImpl: UserDataAccessModuleImpl
 
   /** User data access module accessor */
-  val calendarDataAccessImpl: CalendarDataAccessModuleImpl
+  protected val calendarDataAccessImpl: CalendarDataAccessModuleImpl
 
   import userDataAccessImpl._
   import calendarDataAccessImpl._
@@ -129,8 +131,8 @@ trait CalendarServiceComponent {
   */
 trait CalendarServiceComponentImpl extends CalendarServiceComponent {
 
-  self: UserDataAccessComponentImpl
-  with  CalendarDataAccessComponentImpl =>
+  self: UserDataAccessComponentImpl with 
+        CalendarDataAccessComponentImpl =>
 
   import userDataAccessImpl._
   import calendarDataAccessImpl._

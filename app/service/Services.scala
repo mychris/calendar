@@ -22,34 +22,60 @@ object Services extends
   CalendarDataAccessComponentImpl with
   AppointmentProposalDataAccessComponentImpl {
 
-    /*
-     * Configuration
-     */
-
     val db = Database.forDataSource(DB.getDataSource())
+
+    /** Execution environment */
+    val system = Akka.system
+
+    /** Data transfer objects */
+    object dto {
+
+      /** */
+      type User = userDataAccessImpl.User
+
+      /** */
+      type Appointment = calendarDataAccessImpl.Appointment
+
+      /** */
+      type Tag = calendarDataAccessImpl.Tag
+
+      /** */
+      type AppointmentProposal = appointmentProposalDataAccessImpl.AppointmentProposal
+
+      /** */
+      type AppointmentProposalTime = appointmentProposalDataAccessImpl.AppointmentProposalTime
+    }
 
     /*
      * Module accessors
      */
 
-    object userService extends UserServiceModuleImpl
-    object calendarService extends CalendarServiceModuleImpl
-    object userDataAccess extends UserDataAccessModuleImpl
-    object calendarDataAccess extends CalendarDataAccessModuleImpl
+    /* */
+    object userService extends UserServiceModuleImpl {
 
-    val userDataAccessImpl     = userDataAccess
-    val calendarDataAccessImpl = calendarDataAccess
+      /** User service actors */
+      val entryPoint = system.actorOf(userService.factory.userService.withRouter(FromConfig()), "user-service")
+    }
 
-    /*
-     * Starting services
-     */
+    /* */
+    object calendarService extends CalendarServiceModuleImpl {
 
-    // Execution environment
-    val system = Akka.system
+      /** Calendar service actors */
+      val entryPoint = system.actorOf(calendarService.factory.calendarService.withRouter(FromConfig()), "calendar-service")
+    }
 
-    /** User service actors */
-    val user = system.actorOf(userService.factory.userService.withRouter(FromConfig()), "user-service")
+    /* */
+    protected val userDataAccessImpl = new UserDataAccessModuleImpl {}
 
-    /** Calendar service actors */
-    val calendar = system.actorOf(calendarService.factory.calendarService.withRouter(FromConfig()), "calendar-service")
+    /* */
+    protected val calendarDataAccessImpl = new CalendarDataAccessModuleImpl {}
+
+    /** */
+    protected val appointmentProposalDataAccessImpl = new AppointmentProposalDataAccessModuleImpl {}
+
+    /* */
+    protected val userDataAccess = userDataAccessImpl
+
+    /* */
+    protected val calendarDataAccess = calendarDataAccessImpl
 }

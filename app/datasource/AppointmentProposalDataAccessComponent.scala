@@ -16,11 +16,11 @@ trait AppointmentProposalDataAccessComponent {
   self: UserDataAccessComponent =>
 
   /** User data access module accessor */
-  val userDataAccess: UserDataAccessModule
+  protected val userDataAccess: UserDataAccessModule
 
   import userDataAccess._
 
-  trait AppointmentProposalAccessModule {
+  trait AppointmentProposalDataAccessModule {
 
 	/*
      * Types
@@ -131,7 +131,7 @@ trait AppointmentProposalDataAccessComponentImpl extends AppointmentProposalData
 
   import userDataAccess._
 
-  trait AppointmentProposalAccessModuleImpl extends AppointmentProposalAccessModule {
+  trait AppointmentProposalDataAccessModuleImpl extends AppointmentProposalDataAccessModule {
 
   	/*
      * Types
