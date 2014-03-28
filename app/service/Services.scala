@@ -18,6 +18,7 @@ import datasource._
 object Services extends
   UserServiceComponentImpl with
   CalendarServiceComponentImpl with
+  ConflictFindingServiceComponent with
   UserDataAccessComponentImpl with
   CalendarDataAccessComponentImpl with
   AppointmentProposalDataAccessComponentImpl {
