@@ -1,4 +1,4 @@
-package datasource
+package datasource.user
 
 import scala.slick.driver.PostgresDriver.simple._
 import scala.slick.lifted.Shape
@@ -28,18 +28,6 @@ trait UserDataAccessComponent {
  
     /** */
     implicit val userShape: Shape[_, UserTable, User, UserTable]
- 
-    /*
-     * Data Transfer Objects
-     */
- 
-    /** */
-    trait AbstractUser {
- 
-      def id       : Int
-      def name     : String
-      def password : String
-    }
 
     /*
      * Database tables
@@ -52,7 +40,7 @@ trait UserDataAccessComponent {
       def name     : Column[String]
       def password : Column[String]
     }
-
+ 
     /*
      * Queries
      */
@@ -80,7 +68,7 @@ trait UserDataAccessComponentImpl extends UserDataAccessComponent {
      * Types
      */
 
-    type User = UserImpl
+    type User = datasource.user.User
 
     type UserTable = UserTableImpl
 
@@ -89,24 +77,19 @@ trait UserDataAccessComponentImpl extends UserDataAccessComponent {
      */
 
     implicit val userShape: Shape[_, UserTable, User, UserTable] = implicitly[Shape[_, UserTable, User, UserTable]]
-
-    /*
-     * Data transfer objects
-     */
-
-    protected case class UserImpl(id: Int, val name: String, val password: String) extends AbstractUser
-
+    
     /*
      * Database tables
      */
 
-    protected class UserTableImpl(tag: Tag) extends Table[User](tag, "app_user") with AbstractUserTable {
+    /** */
+    class UserTableImpl(tag: Tag) extends Table[User](tag, "app_user") with AbstractUserTable {
 
       def id       = column[Int   ]("id"      , O.PrimaryKey, O.AutoInc)
       def name     = column[String]("name"    , O.NotNull              )
       def password = column[String]("password", O.NotNull              )
 
-      def *        = (id, name, password) <> (UserImpl.tupled, UserImpl.unapply)
+      def *        = (id, name, password) <> (User.tupled, User.unapply)
     }
 
     /*

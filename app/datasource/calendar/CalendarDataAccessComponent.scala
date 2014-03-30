@@ -1,11 +1,13 @@
-package datasource
+package datasource.calendar
 
-import util.slick._
+import datasource.user._
 
 import hirondelle.date4j.DateTime
 
 import scala.slick.driver.PostgresDriver.simple.{Tag => _, _}
 import scala.slick.lifted.Constraint
+
+import util.slick._
 
 /**
   *
@@ -51,28 +53,6 @@ trait CalendarDataAccessComponent {
 
     /** */
     implicit val tagShape: Shape[_, TagTable, Tag, TagTable]
-
-    /*
-     * Data Transfer Objects
-     */
-
-    /** */
-    trait AbstractAppointment {
-
-      def id          : Int
-      def description : String
-      def start       : DateTime
-      def end         : DateTime
-    }    
-
-    /** */
-    trait AbstractTag {
-
-      def id       : Int
-      def name     : String
-      def priority : Int
-      def userId   : Int
-    } 
 
     /*
      * Database tables
@@ -159,13 +139,13 @@ trait CalendarDataAccessComponentImpl extends CalendarDataAccessComponent {
      */
 
     /** */    
-    type Appointment = AppointmentImpl
+    type Appointment = datasource.calendar.Appointment
 
     /** */
     type AppointmentTable = AppointmentTableImpl
 
     /** */
-    type Tag = TagImpl
+    type Tag = datasource.calendar.Tag
 
     /** */
     type TagTable = TagTableImpl
@@ -184,21 +164,11 @@ trait CalendarDataAccessComponentImpl extends CalendarDataAccessComponent {
     implicit val tagShape: Shape[_, TagTable, Tag, TagTable] = implicitly[Shape[_, TagTable, Tag, TagTable]]
 
     /*
-     * Data Transfer Objects
-     */
-
-    /** */
-    protected case class AppointmentImpl(id: Int, description: String, start: DateTime, end: DateTime) extends AbstractAppointment
-
-    /** */
-    protected case class TagImpl(id: Int, name: String, priority: Int, userId: Int) extends AbstractTag
-
-    /*
      * Database tables
      */
 
     /** */
-    protected class AppointmentTableImpl(tag: scala.slick.lifted.Tag) extends Table[Appointment](tag, "appointment") with AbstractAppointmentTable {
+    class AppointmentTableImpl(tag: scala.slick.lifted.Tag) extends Table[Appointment](tag, "appointment") with AbstractAppointmentTable {
 
       def id          = column[Int     ]("id"         , O.PrimaryKey, O.AutoInc)
       def description = column[String  ]("description", O.NotNull              )
@@ -207,11 +177,11 @@ trait CalendarDataAccessComponentImpl extends CalendarDataAccessComponent {
 
       def tags        = for(abtt <- appointmentBelongsToTag; t <- abtt.tag if abtt.appointmentId === id) yield t
 
-      def *           = (id, description, start, end) <> (AppointmentImpl.tupled, AppointmentImpl.unapply)
+      def *           = (id, description, start, end) <> (Appointment.tupled, Appointment.unapply)
     }
 
     /** */
-    protected class TagTableImpl(tag: scala.slick.lifted.Tag) extends Table[Tag](tag, "tag") with AbstractTagTable {
+    class TagTableImpl(tag: scala.slick.lifted.Tag) extends Table[Tag](tag, "tag") with AbstractTagTable {
 
       def id       = column[Int   ]("id"      , O.PrimaryKey, O.AutoInc)
       def name     = column[String]("name"    , O.NotNull              )
@@ -220,11 +190,11 @@ trait CalendarDataAccessComponentImpl extends CalendarDataAccessComponent {
 
       def user     = foreignKey("user_fk", userId, users)(_.id)
 
-      def *        = (id, name, priority, userId) <> (TagImpl.tupled, TagImpl.unapply)
+      def *        = (id, name, priority, userId) <> (Tag.tupled, Tag.unapply)
     }
 
     /** */
-    protected class AppointmentBelongsToTagTableImpl(tag: scala.slick.lifted.Tag) extends Table[(Int, Int)](tag, "appointment_belongsto_tag") with AbstractAppointmentBelongsToTagTable {
+    class AppointmentBelongsToTagTableImpl(tag: scala.slick.lifted.Tag) extends Table[(Int, Int)](tag, "appointment_belongsto_tag") with AbstractAppointmentBelongsToTagTable {
 
       def appointmentId = column[Int]("appointment_id")
       def tagId         = column[Int]("tag_id"        )
@@ -235,7 +205,7 @@ trait CalendarDataAccessComponentImpl extends CalendarDataAccessComponent {
 
       def *             = (appointmentId, tagId)
     }
-
+    
     /*
      * Queries
      */

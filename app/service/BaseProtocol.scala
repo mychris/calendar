@@ -1,4 +1,4 @@
-package service.baseprotocol
+package service
 
 import scala.reflect.ClassTag
 

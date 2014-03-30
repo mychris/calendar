@@ -2,6 +2,8 @@ package controllers
 
 import akka.pattern.ask
 
+import datasource.user._
+
 import play.api.mvc._
 import play.api.data.Form
 import play.api.data.Forms._
@@ -9,10 +11,7 @@ import play.Logger
 
 import scala.concurrent._
 
-import service.Services
-import service.Services.dto._
-import service.baseprotocol._
-import service.Services.userService.protocol._
+import service._
 
 object LoginController extends Controller with ExecutionEnvironment {
 
@@ -20,12 +19,9 @@ object LoginController extends Controller with ExecutionEnvironment {
   case class LoginData(name: String, password: String)
 
   /** */
-  val userService = Services.userService.entryPoint
-
-  /** */
   def authenticate(loginData: LoginData) = {
 
-    val response = (userService ? GetUserByName(loginData.name)).mapTo[Response]
+    val response = (Services.userService ? GetUserByName(loginData.name)).mapTo[Response]
 
     response.map {
       case UserByName(user) if user.password == loginData.password => Right(user)

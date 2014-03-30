@@ -1,11 +1,14 @@
-package datasource
+package datasource.appointmentproposal
 
-import util.slick._
+import datasource.user._
+import datasource.calendar._
 
 import hirondelle.date4j.DateTime
 
 import scala.slick.driver.PostgresDriver.simple.{Tag => _, _}
 import scala.slick.lifted.Shape
+
+import util.slick._
 
 /**
   *
@@ -22,7 +25,7 @@ trait AppointmentProposalDataAccessComponent {
 
   trait AppointmentProposalDataAccessModule {
 
-	/*
+    /*
      * Types
      */
 
@@ -38,19 +41,6 @@ trait AppointmentProposalDataAccessComponent {
     /** */
     type AppointmentProposalTimeTable <: AbstractAppointmentProposalTimeTable
 
-    object Vote extends Enumeration {
-      type Vote = Value
-      val NotVoted = Value(0)
-      val Accepted = Value(1)
-      val Refused  = Value(2)
-      val Uncertain = Value(3)
-    }
-
-    /*
-     * Mapping from Vote to Int and Int to Vote.
-     */
-    implicit val eliminationPathwayTypeMapper = MappedColumnType.base[Vote.Value, Int](_.id, Vote(_))
-
     /*
      * Shapes
      */
@@ -61,27 +51,10 @@ trait AppointmentProposalDataAccessComponent {
     /** */
     implicit val AppointmentProposalTimeShape: Shape[_, AppointmentProposalTimeTable, AppointmentProposalTime, AppointmentProposalTimeTable]
 
-
     /*
-     * Data Transfer Objects
+     * Mapping from Vote to Int and Int to Vote.
      */
-
-    /** */
-    trait AbstractAppointmentProposal {
-
-      def id          : Int
-      def description : String
-      def creatorId   : Int
-    }
-
-    /** */
-    trait AbstractAppointmentProposalTime {
-
-      def id         : Int
-      def start      : DateTime
-      def end        : DateTime
-      def proposalId : Int
-    }
+    implicit val eliminationPathwayTypeMapper = MappedColumnType.base[Vote.Value, Int](_.id, Vote(_))
 
     /*
      * Database tables
@@ -100,12 +73,12 @@ trait AppointmentProposalDataAccessComponent {
     /** */
     trait AbstractAppointmentProposalTimeTable extends Table[AppointmentProposalTime] {
 
-    	def id         : Column[Int]
-    	def start      : Column[DateTime]
-    	def end        : Column[DateTime]
-    	def proposalId : Column[Int]
+      def id         : Column[Int]
+      def start      : Column[DateTime]
+      def end        : Column[DateTime]
+      def proposalId : Column[Int]
 
-    	def proposal: Query[AppointmentProposalTable, AppointmentProposal]
+      def proposal: Query[AppointmentProposalTable, AppointmentProposal]
     }
 
     /*
@@ -117,7 +90,6 @@ trait AppointmentProposalDataAccessComponent {
 
     /** */
     val appointmentProposalTimes: TableQuery[AppointmentProposalTimeTable]
-
   }
 }
 
@@ -133,18 +105,18 @@ trait AppointmentProposalDataAccessComponentImpl extends AppointmentProposalData
 
   trait AppointmentProposalDataAccessModuleImpl extends AppointmentProposalDataAccessModule {
 
-  	/*
+    /*
      * Types
      */
 
     /** */    
-    type AppointmentProposal = AppointmentProposalImpl
+    type AppointmentProposal = datasource.appointmentproposal.AppointmentProposal
 
     /** */
     type AppointmentProposalTable = AppointmentProposalTableImpl
 
     /** */
-    type AppointmentProposalTime = AppointmentProposalTimeImpl
+    type AppointmentProposalTime = datasource.appointmentproposal.AppointmentProposalTime
 
     /** */
     type AppointmentProposalTimeTable = AppointmentProposalTimeTableImpl
@@ -160,21 +132,11 @@ trait AppointmentProposalDataAccessComponentImpl extends AppointmentProposalData
     implicit val AppointmentProposalTimeShape: Shape[_, AppointmentProposalTimeTable, AppointmentProposalTime, AppointmentProposalTimeTable] = implicitly[Shape[_, AppointmentProposalTimeTable, AppointmentProposalTime, AppointmentProposalTimeTable]]
 
     /*
-     * Data Transfer Objects
-     */
-
-    /** */
-    protected case class AppointmentProposalImpl(id: Int, description: String, creatorId: Int) extends AbstractAppointmentProposal
-
-    /** */
-    protected case class AppointmentProposalTimeImpl(id: Int, start: DateTime, end: DateTime, proposalId: Int) extends AbstractAppointmentProposalTime
-
-    /*
      * Database tables
      */
 
     /** */
-    protected class AppointmentProposalTableImpl(tag: scala.slick.lifted.Tag) extends Table[AppointmentProposal](tag, "appointment_proposal") with AbstractAppointmentProposalTable {
+    class AppointmentProposalTableImpl(tag: scala.slick.lifted.Tag) extends Table[AppointmentProposal](tag, "appointment_proposal") with AbstractAppointmentProposalTable {
 
       def id          = column[Int     ]("id", O.PrimaryKey, O.AutoInc)
       def description = column[String  ]("description", O.NotNull)
@@ -182,11 +144,11 @@ trait AppointmentProposalDataAccessComponentImpl extends AppointmentProposalData
 
       def creator = foreignKey("creator_fk", creatorId, users)(_.id)
 
-      def * = (id, description, creatorId) <> (AppointmentProposalImpl.tupled, AppointmentProposalImpl.unapply)
+      def * = (id, description, creatorId) <> (AppointmentProposal.tupled, AppointmentProposal.unapply)
     }
 
     /** */
-    protected class AppointmentProposalTimeTableImpl(tag: scala.slick.lifted.Tag) extends Table[AppointmentProposalTime](tag, "appointment_proposal_time") with AbstractAppointmentProposalTimeTable {
+    class AppointmentProposalTimeTableImpl(tag: scala.slick.lifted.Tag) extends Table[AppointmentProposalTime](tag, "appointment_proposal_time") with AbstractAppointmentProposalTimeTable {
 
       def id         = column[Int      ]("id", O.PrimaryKey, O.AutoInc)
       def start      = column[DateTime ]("start", O.NotNull)
@@ -195,10 +157,10 @@ trait AppointmentProposalDataAccessComponentImpl extends AppointmentProposalData
 
       def proposal = foreignKey("proposal_fk", proposalId, appointmentProposals)(_.id)
 
-      def * = (id, start, end, proposalId) <> (AppointmentProposalTimeImpl.tupled, AppointmentProposalTimeImpl.unapply)
+      def * = (id, start, end, proposalId) <> (AppointmentProposalTime.tupled, AppointmentProposalTime.unapply)
     }
 
-    protected class AppointmentProposalTimeBelongsToUserImpl(tag: scala.slick.lifted.Tag) extends Table[(Int, Int, Vote.Value)](tag, "appointment_proposal_time_belongsto_user") {
+    class AppointmentProposalTimeBelongsToUserImpl(tag: scala.slick.lifted.Tag) extends Table[(Int, Int, Vote.Value)](tag, "appointment_proposal_time_belongsto_user") {
 
       def appointmentProposalTimeId = column[Int       ]("appointment_proposal_time_id", O.NotNull)
       def userId                    = column[Int       ]("user_id", O.NotNull)
@@ -209,7 +171,6 @@ trait AppointmentProposalDataAccessComponentImpl extends AppointmentProposalData
       def user                      = foreignKey("user_fk", userId, users)(_.id)
 
       def * = (appointmentProposalTimeId, userId, vote)
-
     }
 
     /*
@@ -224,7 +185,5 @@ trait AppointmentProposalDataAccessComponentImpl extends AppointmentProposalData
 
     /** */
     val appointmentProposalTimeBelongsToUser = TableQuery[AppointmentProposalTimeBelongsToUserImpl] 
-
   }
-
 }
