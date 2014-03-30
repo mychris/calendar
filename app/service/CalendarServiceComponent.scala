@@ -145,7 +145,7 @@ trait CalendarServiceComponentImpl extends CalendarServiceComponent {
     /** */
     object factory extends PropsFactory {
 
-      def calendarService: Props = Props(classOf[CalendarServiceImpl])
+      def calendarService: Props = Props[CalendarServiceImpl]
     }
 
     /** */

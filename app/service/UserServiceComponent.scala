@@ -88,7 +88,7 @@ trait UserServiceComponentImpl extends UserServiceComponent {
     /** */
     object factory extends PropsFactory {
 
-      def userService = Props(classOf[UserServiceImpl])
+      def userService = Props[UserServiceImpl]
     }
 
     /** */
