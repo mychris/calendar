@@ -28,14 +28,14 @@ case class Conflicts(conflicts: List[(Appointment, Appointment)]) extends Respon
   */
 object ConflictFindingService {
 
-  def props(db: Database): Props = Props(classOf[ConflictFindingService], db)
+  def props: Props = Props(classOf[ConflictFindingService])
 }
 
 /**
   *
   * @author Christoph Goettschkes
   */
-class ConflictFindingService(db: Database) extends Actor with ActorLogging {
+class ConflictFindingService extends Actor with ActorLogging {
 
   def findConflicts(conflicts: List[Appointment]) {
     val sorted = conflicts.sortBy(a => a.start)
@@ -48,6 +48,6 @@ class ConflictFindingService(db: Database) extends Actor with ActorLogging {
   }
 
   def receive =  {
-    case FindConflict(conflicts)     => findConflicts(conflicts)
+    case FindConflict(conflicts) => findConflicts(conflicts)
   }
 }
