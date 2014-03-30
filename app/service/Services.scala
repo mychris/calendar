@@ -15,12 +15,12 @@ import scala.slick.driver.PostgresDriver.simple._
   */
 object Services {
 
-    val db = Database.forDataSource(DB.getDataSource())
+  val db = Database.forDataSource(DB.getDataSource())
 
-    /** Execution environment */
-    val system = Akka.system
+  /** Execution environment */
+  val system = Akka.system
 
-    val userService = system.actorOf(UserService.props(db).withRouter(FromConfig()), "user-service")
+  val userService = system.actorOf(UserService.props(db).withRouter(FromConfig()), "user-service")
 
-    val calendarService = system.actorOf(CalendarService.props(db).withRouter(FromConfig()), "calendar-service")
+  val calendarService = system.actorOf(CalendarService.props(db).withRouter(FromConfig()), "calendar-service")
 }
