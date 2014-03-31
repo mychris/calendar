@@ -8,6 +8,9 @@ import scala.reflect.ClassTag
   */
 trait Request
 
+/** */
+case object GetDdl extends Request
+
 /** Base trait for all requests sent to service actors
   *
   * @author Simon Kaltenbacher
@@ -28,6 +31,9 @@ trait Response {
     case _            => throw new Exception("Type of right value does not conform to supplied type!")
   }
 }
+
+/** */
+case class Ddl(ddl: scala.slick.driver.PostgresDriver.SchemaDescription) extends Response
 
 /** Base trait for all error messages sent by service actors
   *
@@ -56,9 +62,3 @@ object Error {
     case _            => None
   }
 }
-
-/** */
-case class Ddl(ddl: scala.slick.driver.PostgresDriver.SchemaDescription) extends Response
-
-/** */
-case object GetDdl extends Request
