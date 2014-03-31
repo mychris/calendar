@@ -81,6 +81,9 @@ trait AppointmentProposalDataAccessComponent {
       def proposal: Query[AppointmentProposalTable, AppointmentProposal]
     }
 
+    /** Data definition language */
+    def appointmentProposalDdl = appointmentProposals.ddl ++ appointmentProposalTimes.ddl
+
     /*
      * Queries
      */

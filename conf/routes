@@ -7,6 +7,9 @@ GET     /                           controllers.LoginController.index
 POST    /login                      controllers.LoginController.login
 GET     /logout                     controllers.LoginController.logout
 
+# Database setup
+GET     /createschema               controllers.Application.createSchema
+GET     /dropschema 								controllers.Application.dropSchema
 
 GET     /hello                      controllers.Application.hello
 # Map static resources from the /public folder to the /assets URL path

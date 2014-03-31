@@ -40,6 +40,9 @@ trait UserDataAccessComponent {
       def name     : Column[String]
       def password : Column[String]
     }
+
+    /** Data definition language */
+    def userDdl = users.ddl
  
     /*
      * Queries

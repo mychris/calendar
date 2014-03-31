@@ -56,3 +56,9 @@ object Error {
     case _            => None
   }
 }
+
+/** */
+case class Ddl(ddl: scala.slick.driver.PostgresDriver.SchemaDescription) extends Response
+
+/** */
+case object GetDdl extends Request

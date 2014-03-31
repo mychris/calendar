@@ -151,6 +151,10 @@ class CalendarService(db: Database)
       sender ! AppointmentsRemoved
     }
 
+  /** */
+  def getDdl = sender ! Ddl(calendarDdl)
+
+
   def receive =  {
     case GetTagById(id)                          => getTagById(id)
     case GetAppointmentById(id)                  => getAppointmentById(id)
@@ -161,5 +165,6 @@ class CalendarService(db: Database)
     case AddAppointment(description, start, end) => addAppointment(description, start, end)
     case RemoveTags(tagIds)                      => removeTags(tagIds)
     case RemoveAppointments(appointmentIds)      => removeAppointments(appointmentIds)
+    case GetDdl                                  => getDdl
   }
 }

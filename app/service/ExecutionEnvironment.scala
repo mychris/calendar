@@ -1,10 +1,11 @@
-package controllers
+package service
 
 import akka.util.Timeout
 
 import scala.concurrent.duration._
 
-import service.Services
+import play.api.libs.concurrent.Akka
+import play.api.Play.current
 
 /**
   *
@@ -12,9 +13,12 @@ import service.Services
   */
 trait ExecutionEnvironment {
 
+	/** */
+	val system = Akka.system
+
   /** */
   implicit val timeout = Timeout(10 seconds)
   
   /** */
-  implicit val dispatcher = Services.system.dispatcher
+  implicit val dispatcher = system.dispatcher
 }

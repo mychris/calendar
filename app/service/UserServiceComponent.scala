@@ -68,8 +68,12 @@ class UserService(db: Database)
       sender ! usersByName(name).firstOption.fold[Any](NoSuchUserError(s"User with name $name does not exist!"))(UserByName(_))
     }
 
+  /** */
+  def getDdl = sender ! Ddl(userDdl)
+
   def receive =  {
     case GetUserById(id)     => getUserById(id)
     case GetUserByName(name) => getUserByName(name)
+    case GetDdl              => getDdl
   }
 }

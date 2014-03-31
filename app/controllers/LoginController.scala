@@ -21,9 +21,9 @@ object LoginController extends Controller with ExecutionEnvironment {
   /** */
   def authenticate(loginData: LoginData) = {
 
-    val response = (Services.userService ? GetUserByName(loginData.name)).mapTo[Response]
+    val request = (Services.userService ? GetUserByName(loginData.name)).mapTo[Response]
 
-    response.map {
+    request.map {
       case UserByName(user) if user.password == loginData.password => Right(user)
       case UserByName(_) | NoSuchUserError(_)                      => Left("User name or password incorrect!")
       case DatabaseConnectionError(_)                              => Left("No connection to server!")

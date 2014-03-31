@@ -86,10 +86,13 @@ trait CalendarDataAccessComponent {
       def appointmentId : Column[Int]
       def tagId         : Column[Int]
 
-      def pk            : Constraint
+      // def pk            : Constraint
       def appointment   : Query[AppointmentTable, Appointment]
       def tag           : Query[TagTable, Tag]
     }
+
+    /** Data definition language */
+    def calendarDdl = appointments.ddl ++ tags.ddl ++ appointmentBelongsToTag.ddl
 
     /*
      * Queries
@@ -199,7 +202,7 @@ trait CalendarDataAccessComponentImpl extends CalendarDataAccessComponent {
       def appointmentId = column[Int]("appointment_id")
       def tagId         = column[Int]("tag_id"        )
 
-      def pk            = primaryKey("pk_appointment_belongsto_tag", (appointmentId, tagId))
+      // def pk            = primaryKey("pk_appointment_belongsto_tag", (appointmentId, tagId))
       def appointment   = foreignKey("appointment_fk", appointmentId, appointments)(_.id)
       def tag           = foreignKey("tag_fk", tagId, tags)(_.id)
 
