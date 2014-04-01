@@ -1,14 +1,6 @@
 @(username: String)
-<!doctype html>
 
-<html>
-<head>
-	<title>Hello @username</title>
-</head>
-
-<body>
+@main("Hello @username") {
 	<h1>Hello @username</h1>
 	<a href="@routes.LoginController.logout">logout</a>
-</body>
-
-</html>
+}
