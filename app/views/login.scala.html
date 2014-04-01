@@ -1,23 +1,20 @@
-@()(implicit flash:Flash)
+@(loginForm: Form[LoginData])(implicit flash:Flash)
 <!doctype html>
 
 <html>
-    <head>
-        <title>Login-Seite</title>
-    </head>
+  <head>
+    <title>Login-Seite</title>
+  </head>
+  <body>
+    <h1>Login</h1>
+    @if(flash.get("error").isDefined) {
+        <h1>@flash.get("error").get</h1>
+    }
 
-    <body>
-        <h1>Login</h1>
-
-        @if(flash.get("error").isDefined) {
-            <h1>@flash.get("error").get</h1>
-        }
-    <form action="@routes.LoginController.login" method="post">
-        username: <input type="username" name="username"><br/>
-        password: <input type="password" name="password"><br/>
-        <input type="submit" value="Login">
-    </form>
-
-    </body>
-
+    @helper.form(action= routes.LoginController.login) {
+      @helper.inputText(loginForm("name"))
+      @helper.inputText(loginForm("password"))
+      <input type="submit" value="Login">
+    }
+  </body>
 </html>

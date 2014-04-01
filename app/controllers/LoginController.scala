@@ -14,20 +14,26 @@ import scala.concurrent._
 import service._
 import service.protocol._
 
+/** */
+case class LoginData(name: String, password: String)
+
 object LoginController extends Controller with ExecutionEnvironment {
 
   /** */
-  case class LoginData(name: String, password: String)
+  def error(message: String) = Redirect(routes.LoginController.index).flashing("error" -> message)
 
   /** */
-  def authenticate(loginData: LoginData) = {
+  def login(username: String) = Redirect(routes.Application.hello).withSession("username" -> username)
+
+  /** */
+  def authenticate(loginData: LoginData): Future[SimpleResult] = {
 
     val request = (Services.userService ? GetUserByName(loginData.name)).mapTo[Response]
 
     request.map {
-      case UserByName(user) if user.password == loginData.password => Right(user)
-      case UserByName(_) | NoSuchUserError(_)                      => Left("User name or password incorrect!")
-      case DatabaseConnectionError(_)                              => Left("No connection to server!")
+      case UserByName(user) if user.password == loginData.password => login(user.name)
+      case UserByName(_) | NoSuchUserError(_)                      => error("User name or password incorrect!")
+      case DatabaseConnectionError(_)                              => error("No connection to server!")
     }
   }
 
@@ -40,22 +46,16 @@ object LoginController extends Controller with ExecutionEnvironment {
   )
 
   /** */
-  def index = Action { implicit request =>
-    Ok(views.html.login())
-  }
+  def index = Action { implicit request => Ok(views.html.login(form)) }
 
   /** */
   def login = Action.async { implicit request =>
-
-    def error(message: String) = Redirect(routes.LoginController.index).flashing("error" -> message)
-
-    def login(user: User) = Redirect(routes.Application.hello).withSession("username" -> user.name)
-
-    form.bindFromRequest.fold(form => future { error(form.errors.head.message) }, authenticate(_).map(_.fold(error _, login _)))
+    form.bindFromRequest.fold(
+      form => future { error(form.errors.head.message) },
+      authenticate _
+    )
   }
 
   /** */
-  def logout = Action{ implicit request =>
-    Redirect(routes.LoginController.index).withNewSession
-  }
+  def logout = Action{ implicit request => Redirect(routes.LoginController.index).withNewSession }
 }

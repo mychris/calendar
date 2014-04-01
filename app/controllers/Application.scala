@@ -30,7 +30,7 @@ object Application extends Controller with Restricted with ExecutionEnvironment 
     ))
   }
 
-  def hello = isLoggedIn { username => implicit request =>
-    Ok(views.html.hello(username))
+  def hello = Authenticated { implicit request =>
+    Ok(views.html.hello(request.user))
   }
 }
