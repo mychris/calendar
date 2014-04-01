@@ -23,6 +23,7 @@ DELETE  /tag/:id                    controllers.TagController.delete(id: Int)
 
 # Database setup
 GET     /createschema               controllers.Application.createSchema
+GET     /createuser                 controllers.Application.createUser
 GET     /dropschema                 controllers.Application.dropSchema
 
 GET     /hello                      controllers.Application.hello

@@ -44,11 +44,19 @@ class UserService(db: Database)
     }
 
   /** */
+  def addUser(name: String, password: String) = db.withSession { implicit session =>
+    val ret =  UserAdded((users returning users.map(_.id)) += User(-1, name, password))
+    Services.calendarService ! AddTag("default", 1, ret.id)
+    sender ! ret
+  }
+
+  /** */
   def getDdl = sender ! Ddl(userDdl)
 
   def receive =  {
     case GetUserById(id)     => getUserById(id)
     case GetUserByName(name) => getUserByName(name)
+    case AddUser(name, pw)   => addUser(name, pw)
     case GetDdl              => getDdl
   }
 }

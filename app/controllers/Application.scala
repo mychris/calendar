@@ -1,5 +1,7 @@
 package controllers
 
+import akka.pattern.ask
+
 import access.Restricted
 
 import play.api._
@@ -20,6 +22,16 @@ object Application extends Controller with Restricted with ExecutionEnvironment 
       { case Error(message) => InternalServerError(message) },
       _                     => Ok("Database tables have been created!")
     ))
+  }
+
+  /** */
+  def createUser = Action.async {
+    val request = (Services.userService ? AddUser("test", "test")).mapTo[Response]
+
+    request.map {
+      case UserAdded(user)  => Ok(views.html.index("User 'test' created."))
+      case _                => InternalServerError(views.html.index("Error creating User 'test'"))
+    }
   }
 
   /** */
