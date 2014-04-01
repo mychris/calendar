@@ -24,12 +24,6 @@ class ConflictFindingServiceSpec(_system: ActorSystem) extends TestKit(_system)
 
   "A Conflict finding service" must {
 
-  	"send back a message if list is null" in {
-  	  val service = system.actorOf(ConflictFindingService.props)
-  	  service ! FindConflict(null)
-  	  expectMsg(Conflicts(Nil))
-  	}
-
     "send back a message if there are no appointments" in {
       val service = system.actorOf(ConflictFindingService.props)
       service ! FindConflict(Nil)

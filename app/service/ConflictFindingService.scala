@@ -24,7 +24,7 @@ object ConflictFindingService {
 class ConflictFindingService extends Actor with ActorLogging {
 
   def findConflicts(conflicts: Seq[Appointment]) = 
-    if (conflicts == null || conflicts.size <= 1) {
+    if (conflicts.size <= 1) {
       sender ! Conflicts(Nil)
     } else {
       val sorted = conflicts.sortBy(a => a.start)
