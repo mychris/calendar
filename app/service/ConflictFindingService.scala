@@ -30,8 +30,7 @@ class ConflictFindingService extends Actor with ActorLogging {
       val sorted = conflicts.sortBy(a => a.start)
       val result = for (
         first <- sorted;
-        second <- sorted.dropWhile(_ != first).drop(1);
-        if first != second && second.start.lt(first.end)
+        second <- sorted.dropWhile(_ != first).drop(1).takeWhile(x => x.start.lt(first.end))
       ) yield (first, second)
       sender ! Conflicts(result)
     }

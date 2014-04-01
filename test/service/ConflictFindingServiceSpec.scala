@@ -59,6 +59,22 @@ class ConflictFindingServiceSpec(_system: ActorSystem) extends TestKit(_system)
       expectMsg(Conflicts(Nil))
     }
 
+    "send back a conflict if two Appointments start and end at the same point in time" in {
+      val service = system.actorOf(ConflictFindingService.props)
+      val appointments =
+        Appointment(0, "first", new DateTime("2014-04-01 00:00:00"), new DateTime("2014-04-01 03:00:00")) ::
+        Appointment(0, "second", new DateTime("2014-04-01 00:00:00"), new DateTime("2014-04-01 03:00:00")) ::
+        Nil
+      service ! FindConflict(appointments)
+      expectMsg(Conflicts(
+        (
+          Appointment(0, "first", new DateTime("2014-04-01 00:00:00"), new DateTime("2014-04-01 03:00:00")),
+          Appointment(0, "second", new DateTime("2014-04-01 00:00:00"), new DateTime("2014-04-01 03:00:00"))
+        ) ::
+        Nil
+      ))
+    }
+
     "send back the conflicts if there are any #1" in {
       val service = system.actorOf(ConflictFindingService.props)
       val appointments =
@@ -110,7 +126,7 @@ class ConflictFindingServiceSpec(_system: ActorSystem) extends TestKit(_system)
     "be able to operate on large lists" in {
       val service = system.actorOf(ConflictFindingService.props)
       var appointments = Appointment(0, "", new DateTime("2014-04-01 00:00:00"), new DateTime("2014-04-01 05:00:00")) :: Nil
-      for (i <- 1 to 2000) {
+      for (i <- 1 to 9000) {
         val start = appointments.head.start.plusDays(1)
         val end = appointments.head.end.plusDays(1)
         appointments = Appointment(0, "", start, end) :: appointments
