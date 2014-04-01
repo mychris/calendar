@@ -7,6 +7,13 @@ GET     /                           controllers.LoginController.index
 POST    /login                      controllers.LoginController.login
 GET     /logout                     controllers.LoginController.logout
 
+# Appointment
+GET     /appointment/:id            controllers.AppointmentController.show(id: Int)
+GET     /appointment                controllers.AppointmentController.list
+POST    /appointment                controllers.AppointmentController.add
+PUT     /appointment/:id            controllers.AppointmentController.update(id: Int)
+DELETE  /appointment/:id            controllers.AppointmentController.delete(id: Int)
+
 # Database setup
 GET     /createschema               controllers.Application.createSchema
 GET     /dropschema 								controllers.Application.dropSchema
