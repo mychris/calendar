@@ -125,6 +125,24 @@ class ConflictFindingServiceSpec(_system: ActorSystem) extends TestKit(_system)
       expectMsg(Conflicts(Nil))
     }
 
+    "be able to find all conflicts even if one appointment spans several others" in {
+      val service = system.actorOf(ConflictFindingService.props)
+      val appointments = Seq(
+        Appointment(0, "", new DateTime("2014-01-01 08:00:00"), new DateTime("2014-01-01 18:00")),
+        Appointment(0, "", new DateTime("2014-01-01 09:00:00"), new DateTime("2014-01-01 11:00")),
+        Appointment(0, "", new DateTime("2014-01-01 13:00:00"), new DateTime("2014-01-01 14:00"))
+      )
+      service ! FindConflict(appointments)
+      expectMsg(Conflicts(Seq(
+        (
+          Appointment(0, "", new DateTime("2014-01-01 08:00:00"), new DateTime("2014-01-01 18:00")),
+          Appointment(0, "", new DateTime("2014-01-01 09:00:00"), new DateTime("2014-01-01 11:00"))
+        ),
+        (
+          Appointment(0, "", new DateTime("2014-01-01 08:00:00"), new DateTime("2014-01-01 18:00")),
+          Appointment(0, "", new DateTime("2014-01-01 13:00:00"), new DateTime("2014-01-01 14:00"))
+        )
+      )))
+    }
   }
-
 }

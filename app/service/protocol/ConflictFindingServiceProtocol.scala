@@ -7,11 +7,11 @@ import datasource.calendar._
  */
 
 /** */
-case class FindConflict(appointments: List[Appointment]) extends Request
+case class FindConflict(appointments: Seq[Appointment]) extends Request
 
 /*
  * Reponses
  */
 
 /** */
-case class Conflicts(conflicts: List[(Appointment, Appointment)]) extends Response
+case class Conflicts(conflicts: Seq[(Appointment, Appointment)]) extends Response

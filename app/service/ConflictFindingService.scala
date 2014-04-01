@@ -23,7 +23,7 @@ object ConflictFindingService {
   */
 class ConflictFindingService extends Actor with ActorLogging {
 
-  def findConflicts(conflicts: List[Appointment]) = 
+  def findConflicts(conflicts: Seq[Appointment]) = 
     if (conflicts == null || conflicts.size <= 1) {
       sender ! Conflicts(Nil)
     } else {

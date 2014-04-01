@@ -49,7 +49,7 @@ object Services extends ExecutionEnvironment {
     }
   }
 
-  /** Creates the data access component's tables in the database */
+  /** Creates the data access component tables in the database */
   def createSchema: Future[Either[Error, Unit]] =
     collectDdl.map(_.right.flatMap(ddl =>
       exceptionToEither[Exception, Error, Unit](
@@ -58,7 +58,7 @@ object Services extends ExecutionEnvironment {
       )
     ))
 
-  /** Drops the data access component's tables in the database */
+  /** Drops the data access component tables in the database */
   def dropSchema: Future[Either[Error, Unit]] =
     collectDdl.map(_.right.flatMap(ddl =>
       exceptionToEither[Exception, Error, Unit](
