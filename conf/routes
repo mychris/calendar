@@ -23,8 +23,9 @@ DELETE  /tag/:id                    controllers.TagController.delete(id: Int)
 
 # Database setup
 GET     /createschema               controllers.Application.createSchema
-GET     /dropschema 								controllers.Application.dropSchema
+GET     /dropschema                 controllers.Application.dropSchema
 
 GET     /hello                      controllers.Application.hello
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
