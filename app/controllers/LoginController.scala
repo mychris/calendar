@@ -23,7 +23,7 @@ object LoginController extends Controller with ExecutionEnvironment {
   def error(message: String) = Redirect(routes.LoginController.index).flashing("error" -> message)
 
   /** */
-  def login(username: String) = Redirect(routes.Application.hello).withSession("username" -> username)
+  def login(username: String, userid: Int) = Redirect(routes.Application.hello).withSession("username" -> username, "userid" -> userid.toString)
 
   /** */
   def authenticate(loginData: LoginData): Future[SimpleResult] = {
@@ -31,7 +31,7 @@ object LoginController extends Controller with ExecutionEnvironment {
     val request = (Services.userService ? GetUserByName(loginData.name)).mapTo[Response]
 
     request.map {
-      case UserByName(user) if user.password == loginData.password => login(user.name)
+      case UserByName(user) if user.password == loginData.password => login(user.name, user.id)
       case UserByName(_) | NoSuchUserError(_)                      => error("User name or password incorrect!")
       case DatabaseConnectionError(_)                              => error("No connection to server!")
     }

@@ -59,6 +59,10 @@ class CalendarService(db: Database)
   def getAppointmentsWithTag(tagId: Int) =
     db.withSession { implicit session => sender ! AppointmentsWithTag(appointmentsWithTag(tagId).buildColl[Seq]) }
 
+  def getAppointmentsFromUser(userId: Int) = db.withSession { implicit session =>
+    db.withSession { implicit session => sender ! AppointmentsFromUser(appointmentsFromUser(userId).buildColl[Seq]) }
+  }
+
   /** */
   def addTag(name: String, priority: Int, userId: Int) =
     db.withSession { implicit session => TagAdded((tags returning tags.map(_.id)) += Tag(-1, name, priority, userId)) }
@@ -88,6 +92,7 @@ class CalendarService(db: Database)
   def receive =  {
     case GetTagById(id)                          => getTagById(id)
     case GetAppointmentById(id)                  => getAppointmentById(id)
+    case GetAppointmentsFromUser(id)             => getAppointmentsFromUser(id)
     case GetTagsFromUser(userId)                 => getTagsFromUser(userId)
     case GetTagsFromAppointment(appointmentId)   => getTagsFromAppointment(appointmentId)
     case GetAppointmentsWithTag(tagId)           => getAppointmentsWithTag(tagId)

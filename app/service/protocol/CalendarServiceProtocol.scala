@@ -25,6 +25,9 @@ case class GetTagsFromAppointment(appointmentId: Int) extends Request
 case class GetAppointmentsWithTag(tagId: Int) extends Request
 
 /** */
+case class GetAppointmentsFromUser(userId: Int) extends Request
+
+/** */
 case class AddTag(name: String, priority: Int, userId: Int) extends Request
 
 /** */
@@ -54,6 +57,9 @@ case class TagsFromAppointment(tags: Seq[Tag]) extends Response
 
 /** */
 case class AppointmentsWithTag(appointments: Seq[Appointment]) extends Response
+
+/** */
+case class AppointmentsFromUser(appointments: Seq[Appointment]) extends Response
 
 /** */
 case class TagAdded(id: Int) extends Response

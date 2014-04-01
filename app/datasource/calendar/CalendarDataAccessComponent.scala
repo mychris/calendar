@@ -121,6 +121,8 @@ trait CalendarDataAccessComponent {
 
     /** */
     def appointmentsWithTag(tagId: Int): Query[AppointmentTable, Appointment] = for(abtt <- appointmentBelongsToTag; a <- abtt.appointment if abtt.tagId === tagId) yield a
+
+    def appointmentsFromUser(userId: Int): Query[AppointmentTable, Appointment] = for(abtt <- appointmentBelongsToTag; t <- abtt.tag; a<- abtt.appointment if t.userId === userId && abtt.tagId === t.id) yield a
   }
 }
 

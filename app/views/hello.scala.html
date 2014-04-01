@@ -1,6 +1,6 @@
-@(username: String)
+@(username: String, userid: String)
 
 @main("Hello @username") {
-	<h1>Hello @username</h1>
+	<h1>Hello @username - @userid</h1>
 	<a href="@routes.LoginController.logout">logout</a>
 }
