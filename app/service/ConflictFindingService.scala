@@ -23,15 +23,19 @@ object ConflictFindingService {
   */
 class ConflictFindingService extends Actor with ActorLogging {
 
-  def findConflicts(conflicts: List[Appointment]) {
-    val sorted = conflicts.sortBy(a => a.start)
-    val result = sorted.
-      zip(sorted.drop(1)).
-      filter({ pair =>
-        pair._2.start.lt(pair._1.end)
-      })
-    sender ! Conflicts(result)
-  }
+  def findConflicts(conflicts: List[Appointment]) = 
+    if (conflicts == null || conflicts.size <= 1) {
+      sender ! Conflicts(Nil)
+    } else {
+      val sorted = conflicts.sortBy(a => a.start)
+      val result =
+        sorted.
+        zip(sorted.drop(1)).
+        filter({ pair =>
+          pair._2.start.lt(pair._1.end)
+        })
+      sender ! Conflicts(result)
+    }
 
   def receive =  {
     case FindConflict(conflicts) => findConflicts(conflicts)
