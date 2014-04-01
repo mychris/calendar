@@ -12,6 +12,7 @@ import play.Logger
 import scala.concurrent._
 
 import service._
+import service.protocol._
 
 object LoginController extends Controller with ExecutionEnvironment {
 

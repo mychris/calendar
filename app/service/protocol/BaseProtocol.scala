@@ -1,4 +1,4 @@
-package service
+package service.protocol
 
 import scala.reflect.ClassTag
 
@@ -7,9 +7,6 @@ import scala.reflect.ClassTag
   * @author Simon Kaltenbacher
   */
 trait Request
-
-/** */
-case object GetDdl extends Request
 
 /** Base trait for all requests sent to service actors
   *
@@ -32,9 +29,6 @@ trait Response {
   }
 }
 
-/** */
-case class Ddl(ddl: scala.slick.driver.PostgresDriver.SchemaDescription) extends Response
-
 /** Base trait for all error messages sent by service actors
   *
   * @author Simon Kaltenbacher
@@ -45,19 +39,13 @@ trait Error extends Response {
   val message: String
 }
 
-/**
-  *
-  * @author Simon Kaltenbacher
-  */
-case class DatabaseConnectionError(message: String) extends Error
-
 /** Enables pattern matching on instances of [[service.Error]]
   *
   * @author Simon Kaltenbacher
   */
 object Error {
 
-  def unapply(value: Any) = value match {
+  def unapply(response: Response) = response match {
     case error: Error => Some(error.message)
     case _            => None
   }

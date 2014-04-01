@@ -4,23 +4,9 @@ import akka.actor._
 
 import datasource.calendar._
 
-import service._
-
 import scala.slick.driver.PostgresDriver.simple._
 
-/*
- * Requests
- */
-
-/** */
-case class FindConflict(appointments: List[Appointment]) extends Request
-
-/*
- * Reponses
- */
-
-/** */
-case class Conflicts(conflicts: List[(Appointment, Appointment)]) extends Response
+import service.protocol._
 
 /**
   *

@@ -6,6 +6,7 @@ import play.api._
 import play.api.mvc._
 
 import service._
+import service.protocol._
 
 object Application extends Controller with Restricted with ExecutionEnvironment {
 
@@ -16,16 +17,16 @@ object Application extends Controller with Restricted with ExecutionEnvironment 
   /** */
   def createSchema = Action.async {
     Services.createSchema.map(_.fold(
-      _ => Results.InternalServerError,
-      _ => Ok("Database tables have been created!")
+      { case Error(message) => InternalServerError(message) },
+      _                     => Ok("Database tables have been created!")
     ))
   }
 
   /** */
   def dropSchema = Action.async {
     Services.dropSchema.map(_.fold(
-      _ => Results.InternalServerError,
-      _ => Ok("Database tables have been dropped!")
+      { case Error(message) => InternalServerError(message) },
+      _                     => Ok("Database tables have been dropped!")
     ))
   }
 
