@@ -27,12 +27,18 @@ class ConflictFindingService extends Actor with ActorLogging {
     if (conflicts.size <= 1) {
       sender ! Conflicts(Nil)
     } else {
-      val sorted = conflicts.sortBy(a => a.start)
-      val result = for (
-        first <- sorted;
-        second <- sorted.dropWhile(_ != first).drop(1).takeWhile(x => x.start.lt(first.end))
-      ) yield (first, second)
-      sender ! Conflicts(result)
+      var sorted = conflicts.sortBy(a => a.start)
+      var result: List[(Appointment, Appointment)] = Nil
+      while (!sorted.isEmpty) {
+        val first = sorted.head
+        sorted = sorted.tail
+        var innerSorted = sorted
+        while (!innerSorted.isEmpty && innerSorted.head.start.lt(first.end)) {
+          result = (first, innerSorted.head) :: result
+          innerSorted = innerSorted.drop(1)
+        }
+      }
+      sender ! Conflicts(result.reverse)
     }
 
   def receive =  {

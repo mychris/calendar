@@ -126,7 +126,7 @@ class ConflictFindingServiceSpec(_system: ActorSystem) extends TestKit(_system)
     "be able to operate on large lists" in {
       val service = system.actorOf(ConflictFindingService.props)
       var appointments = Appointment(0, "", new DateTime("2014-04-01 00:00:00"), new DateTime("2014-04-01 05:00:00")) :: Nil
-      for (i <- 1 to 9000) {
+      for (i <- 1 to 50000) {
         val start = appointments.head.start.plusDays(1)
         val end = appointments.head.end.plusDays(1)
         appointments = Appointment(0, "", start, end) :: appointments
