@@ -29,8 +29,8 @@ object Application extends Controller with Restricted with ExecutionEnvironment 
     val request = (Services.userService ? AddUser("test", "test")).mapTo[Response]
 
     request.map {
-      case UserAdded(user)  => Ok(views.html.index("User 'test' created."))
-      case _                => InternalServerError(views.html.index("Error creating User 'test'"))
+      case UserAdded(_) => Ok(views.html.index("User 'test' created."))
+      case _            => InternalServerError(views.html.index("Error creating User 'test'"))
     }
   }
 
