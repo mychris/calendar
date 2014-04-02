@@ -15,22 +15,33 @@ import formatters._
 
 object TagController extends Controller with Restricted with ExecutionEnvironment {
 
-  def show(id: Int) = Action.async {
-  	val req = (Services.calendarService ? GetTagById(id)).mapTo[Response]
+  def show(id: Int) = Action.async { implicit request =>
+    // TODO: fix userid
+    val userId = request.session.get("userid").map(_.toInt).getOrElse(1)
+    val req = (Services.calendarService ? GetTagById(id)).mapTo[Response]
 
-    req.map {
-      case TagById(tag)  => Ok(toJson(tag))
-      case DatabaseConnectionError(_)  => Ok("No connection to server!")
+    for {
+      resp <- req
     }
+    yield resp.fold[TagById, SimpleResult](
+      error                                       => InternalServerError("error"),
+      { case TagById(tag) if tag.userId == userId => Ok(toJson(tag))
+        case TagById(_)                           => InternalServerError("not your tag") }
+    )
   }
 
   def list() = Action.async { implicit request =>
-  	val req = (Services.calendarService ? GetTagsFromUser(request.session.get("userid").map(_.toInt).get)).mapTo[Response]
+    // TODO: fix userid
+    val userId = request.session.get("userid").map(_.toInt).getOrElse(1)
+  	val req = (Services.calendarService ? GetTagsFromUser(userId)).mapTo[Response]
 
-    req.map {
-      case TagsFromUser(tags)  => Ok(toJson(tags))
-      case DatabaseConnectionError(_)  => Ok("No connection to server!")
+    for {
+      resp <- req
     }
+    yield resp.fold[TagsFromUser, SimpleResult](
+      error                     => InternalServerError("error"),
+      { case TagsFromUser(tags) => Ok(toJson(tags)) }
+    )
   }
 
   def add() = Action {
