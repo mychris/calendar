@@ -11,7 +11,7 @@ import play.api.libs.json.Json.toJson
 import service._
 import service.protocol._
 
-import formatters.TagFormatter._
+import formatters._
 
 object TagController extends Controller with Restricted with ExecutionEnvironment {
 
