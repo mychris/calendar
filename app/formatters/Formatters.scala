@@ -37,6 +37,7 @@ package object formatters {
   /** */
   implicit object successWrites extends Writes[Success] {
 
+    /** Fucking type erasure! */
     def writes(o: Success): JsValue = o match {
       case UserById(user)                     => user.toJson
       case UserByName(user)                   => user.toJson
