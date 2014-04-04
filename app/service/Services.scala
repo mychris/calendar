@@ -4,6 +4,8 @@ import akka.actor._
 import akka.pattern.ask
 import akka.routing._
 
+import datasource.calendar._
+
 import play.api.db._
 import play.api.Play.current
 

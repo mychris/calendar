@@ -41,11 +41,11 @@ class CalendarService(db: Database)
 
   /** */
   def getTagById(id: Int) =
-    db.withSession { implicit session => sender ! tagsById(id).firstOption.fold[Any](NoSuchTag(s"Tag with id $id does not exist!"))(TagById(_)) }
+    db.withSession { implicit session => sender ! tagsById(id).firstOption.fold[Any](NoSuchTagError(s"Tag with id $id does not exist!"))(TagById(_)) }
 
   /** */
   def getAppointmentById(id: Int) =
-    db.withSession { implicit session => sender ! appointmentsById(id).firstOption.fold[Any](NoSuchTag(s"Appointment with id $id does not exist!"))(AppointmentById(_)) }
+    db.withSession { implicit session => sender ! appointmentsById(id).firstOption.fold[Any](NoSuchTagError(s"Appointment with id $id does not exist!"))(AppointmentById(_)) }
 
   /** */
   def getTagsFromUser(userId: Int) =

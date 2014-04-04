@@ -44,41 +44,41 @@ case class RemoveAppointments(appointmentIds: Seq[Int]) extends Request
  */
 
 /** */
-case class TagById(tag: Tag) extends Response
+case class TagById(tag: Tag) extends Success
 
 /** */
-case class AppointmentById(appointment: Appointment) extends Response
+case class AppointmentById(appointment: Appointment) extends Success
 
 /** */
-case class TagsFromUser(tags: Seq[Tag]) extends Response
+case class TagsFromUser(tags: Seq[Tag]) extends Success
 
 /** */
-case class TagsFromAppointment(tags: Seq[Tag]) extends Response
+case class TagsFromAppointment(tags: Seq[Tag]) extends Success
 
 /** */
-case class AppointmentsWithTag(appointments: Seq[Appointment]) extends Response
+case class AppointmentsWithTag(appointments: Seq[Appointment]) extends Success
 
 /** */
-case class AppointmentsFromUser(appointments: Seq[Appointment]) extends Response
+case class AppointmentsFromUser(appointments: Seq[Appointment]) extends Success
 
 /** */
-case class TagAdded(id: Int) extends Response
+case class TagAdded(id: Int) extends Success
 
 /** */
-case class AppointmentAdded(id: Int) extends Response
+case class AppointmentAdded(id: Int) extends Success
 
 /** */
-case object TagsRemoved extends Response
+case object TagsRemoved extends Success
 
 /** */
-case object AppointmentsRemoved extends Response
+case object AppointmentsRemoved extends Success
 
 /*
  * Errors
  */
 
 /** */
-case class NoSuchTag(message: String) extends Error
+case class NoSuchTagError(message: String) extends Error
 
 /** */
-case class NoSuchAppointment(message: String) extends Error
+case class NoSuchAppointmentError(message: String) extends Error

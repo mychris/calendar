@@ -4,6 +4,8 @@ import akka.pattern.ask
 
 import access.Restricted
 
+import datasource.calendar._
+
 import play.api._
 import play.api.mvc._
 import play.api.libs.json.Json.toJson
@@ -13,24 +15,18 @@ import service.protocol._
 
 import formatters._
 
-object TagController extends Controller with Restricted with ExecutionEnvironment {
+object TagController
+  extends Controller with
+          Restricted with
+          ExecutionEnvironment with
+          ResponseTransformation {
 
   def show(id: Int) = Action.async {
-  	val req = (Services.calendarService ? GetTagById(id)).mapTo[Response]
-
-    req.map {
-      case TagById(tag)  => Ok(toJson(tag))
-      case DatabaseConnectionError(_)  => Ok("No connection to server!")
-    }
+  	(Services.calendarService ? GetTagById(id)).mapTo[Response].map(_.toJsonResult)
   }
 
-  def list() = Action.async { implicit request =>
-  	val req = (Services.calendarService ? GetTagsFromUser(request.session.get("userid").map(_.toInt).get)).mapTo[Response]
-
-    req.map {
-      case TagsFromUser(tags)  => Ok(toJson(tags))
-      case DatabaseConnectionError(_)  => Ok("No connection to server!")
-    }
+  def list() = Authenticated.async { implicit request =>
+  	(Services.calendarService ? GetTagsFromUser(request.user.id)).mapTo[Response].map(_.toJsonResult)
   }
 
   def add() = Action {

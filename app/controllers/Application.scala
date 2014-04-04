@@ -43,6 +43,6 @@ object Application extends Controller with Restricted with ExecutionEnvironment 
   }
 
   def hello = Authenticated { implicit request =>
-    Ok(views.html.hello(request.user, request.session.get("userid").get))
+    Ok(views.html.hello(request.user.id.toString, request.user.name))
   }
 }

@@ -14,4 +14,7 @@ case class FindConflict(appointments: Seq[Appointment]) extends Request
  */
 
 /** */
-case class Conflicts(conflicts: Seq[(Appointment, Appointment)]) extends Response
+case class Conflicts(conflicts: Seq[(Appointment, Appointment)]) extends Success {
+
+	def value = conflicts
+}

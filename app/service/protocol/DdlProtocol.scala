@@ -1,5 +1,7 @@
 package service.protocol
 
+import scala.slick.driver.PostgresDriver.SchemaDescription
+
 /*
  * Requests
  */
@@ -12,4 +14,4 @@ case object GetDdl extends Request
  */
 
 /** */
-case class Ddl(ddl: scala.slick.driver.PostgresDriver.SchemaDescription) extends Response
+case class Ddl(ddl: SchemaDescription) extends Success

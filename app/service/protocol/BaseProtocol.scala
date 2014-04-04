@@ -15,19 +15,25 @@ trait Request
 trait Response {
 
   /** */
-  def fold[A : ClassTag, B](onError: Error => B, onSuccess: A => B): B = this match {
-    case error: Error => onError(error)
-    case response: A  => onSuccess(response)
-    case _            => throw new Exception("Type of right value does not conform to supplied type!")
+  def fold[S <: Success, A](onError: Error => A, onSuccess: S => A)(implicit ct: ClassTag[S]): A = this match {
+    case error : Error => onError(error)
+    case success: S    => onSuccess(success)
+    case _             => throw new Exception("Type of right value does not conform to supplied type!")
   }
 
   /** */
-  def toEither[A : ClassTag]: Either[Error, A] = this match {
+  def toEither[S <: Success](implicit ct: ClassTag[S]): Either[Error, S] = this match {
     case error: Error => Left(error)
-    case response: A  => Right(response)
+    case success: S   => Right(success)
     case _            => throw new Exception("Type of right value does not conform to supplied type!")
   }
 }
+
+/** Base trait for all success messages sent by service actors
+  *
+  * @author Simon Kaltenbacher
+  */
+trait Success extends Response
 
 /** Base trait for all error messages sent by service actors
   *

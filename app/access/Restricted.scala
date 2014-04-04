@@ -3,23 +3,25 @@ package access
 import play.api.mvc._
 import play.api.mvc.Security._
 
+import datasource.user._
+
 /**
   *
   * @author Florian Liebhart, Simon Kaltenbacher
   */
 trait Restricted {
 
+  /** */
+  case class AuthenticatedUser(id: Int, name: String)
+
 	/** */
-  def username(request: RequestHeader) = request.session.get("username")
-
-  // private def onUnauthorized(request: RequestHeader) =
-  //   Results.Redirect(routes.LoginController.index).flashing("error" -> "You are not logged in")
-
-  // def isLoggedIn(f: String => Request[AnyContent] => Result) =
-  //   Security.Authenticated(username, onUnauthorized) { user =>
-  //     Action(request => f(user)(request))
-  //   }
+  def getUser(request: RequestHeader) =
+  	for {
+  		id   <- request.session.get("userid").map(_.toInt)
+  		name <- request.session.get("username")
+  	}
+  	yield AuthenticatedUser(id, name)
 
   /** */
-  object Authenticated extends AuthenticatedBuilder(req => username(req))
+  object Authenticated extends AuthenticatedBuilder(getUser(_))
 }
