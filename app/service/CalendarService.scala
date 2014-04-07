@@ -65,7 +65,7 @@ class CalendarService(db: Database)
 
   /** */
   def addTag(name: String, priority: Int, userId: Int) =
-    db.withSession { implicit session => TagAdded((tags returning tags.map(_.id)) += Tag(-1, name, priority, userId)) }
+    db.withSession { implicit session => sender ! TagAdded((tags returning tags.map(_.id)) += Tag(-1, name, priority, userId)) }
 
   /** */
   def addAppointment(description: String, start: DateTime, end: DateTime) =

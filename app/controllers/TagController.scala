@@ -8,7 +8,10 @@ import datasource.calendar._
 
 import play.api._
 import play.api.mvc._
+import play.api.libs.json._
 import play.api.libs.json.Json.toJson
+
+import scala.concurrent._
 
 import service._
 import service.protocol._
@@ -20,6 +23,14 @@ object TagController
           Restricted with
           ExecutionEnvironment with
           ResponseTransformation {
+
+
+  def parseJson[T](body: AnyContent)(implicit rds: Reads[T]): Either[Error, T] = {
+    body.asJson.flatMap(_.asOpt[T]) match {
+      case Some(json) => Right(json)
+      case None       => Left(BadFormatError(body.toString))
+    }
+  }
 
   def show(id: Int) = Authenticated.async { implicit request =>
 
@@ -39,8 +50,20 @@ object TagController
     (Services.calendarService ? GetTagsFromUser(request.user.id)).mapTo[Response].map(_.toJsonResult)
   }
 
-  def add() = Action {
-    Status(501)("")
+  def add() = Authenticated.async { implicit request =>
+    parseJson[Tag](request.body) match {
+      case Left(e)      => future { e.toJsonResult }
+      case Right(a)     => 
+        val req = (Services.calendarService ? AddTag(a.name, a.priority, request.user.id)).mapTo[Response]
+        for {
+          resp <- req
+        }
+        yield resp.fold[TagAdded, SimpleResult](
+          _.toJsonResult,
+          { case tagById @ TagAdded(tag)  => tagById.toJsonResult
+            case x                        => x.toJsonResult }
+        )
+    }
   }
 
   def update(id: Int) = Action {
