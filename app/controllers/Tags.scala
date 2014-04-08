@@ -18,7 +18,7 @@ import service.protocol._
 
 import formatters._
 
-object TagController
+object Tags
   extends Controller with
           Restricted with
           ExecutionEnvironment with

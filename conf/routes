@@ -3,32 +3,33 @@
 # ~~~~
 
 # Home page
-GET           /                        controllers.LoginController.index
-POST          /login                   controllers.LoginController.login
-GET           /logout                  controllers.LoginController.logout
+GET           /                       controllers.Login.index
+POST          /login                  controllers.Login.login
+GET           /logout                 controllers.Login.logout
 
 # Calendar
-GET           /calendar                controllers.Calendar.calendar()
-GET           /events/list             controllers.Calendar.list(start: Option[String], end: Option[String]) # Temporary!
+GET           /calendar               controllers.Calendar.calendar()
+## Temporary!
+GET           /events/list            controllers.Calendar.list(start: Option[String], end: Option[String])
 
 # Appointment
-GET           /appointment/:id         controllers.AppointmentController.show(id: Int)
-GET           /appointment             controllers.AppointmentController.list
-POST          /appointment             controllers.AppointmentController.add(description: String, start: String, end: String)
-PUT           /appointment/:id         controllers.AppointmentController.update(id: Int)
-DELETE        /appointment/:id         controllers.AppointmentController.delete(id: Int)
+GET           /appointment/:id        controllers.Appointments.show(id: Int)
+GET           /appointment            controllers.Appointments.list
+POST          /appointment            controllers.Appointments.add(description: String, start: String, end: String)
+PUT           /appointment/:id        controllers.Appointments.update(id: Int)
+DELETE        /appointment/:id        controllers.Appointments.delete(id: Int)
 
 # Tag
-GET           /tag/:id                 controllers.TagController.show(id: Int)
-GET           /tag                     controllers.TagController.list
-POST          /tag                     controllers.TagController.add
-PUT           /tag/:id                 controllers.TagController.update(id: Int)
-DELETE        /tag/:id                 controllers.TagController.delete(id: Int)
+GET           /tag/:id                controllers.Tags.show(id: Int)
+GET           /tag                    controllers.Tags.list
+POST          /tag                    controllers.Tags.add
+PUT           /tag/:id                controllers.Tags.update(id: Int)
+DELETE        /tag/:id                controllers.Tags.delete(id: Int)
 
 # Database setup
-GET           /createschema            controllers.Application.createSchema
-GET           /createuser              controllers.Application.createUser
-GET           /dropschema              controllers.Application.dropSchema
+GET           /createschema           controllers.Application.createSchema
+GET           /createuser             controllers.Application.createUser
+GET           /dropschema             controllers.Application.dropSchema
 
 # Map static resources from the /public folder to the /assets URL path
-GET           /assets/*file            controllers.Assets.at(path="/public", file)
+GET           /assets/*file           controllers.Assets.at(path="/public", file)

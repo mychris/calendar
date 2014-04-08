@@ -14,7 +14,7 @@ import service.protocol.GetAppointmentsFromUser
 import hirondelle.date4j._
 
 
-object AppointmentController
+object Appointments
   extends Controller with
           Restricted with
           ExecutionEnvironment with

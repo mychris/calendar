@@ -9,7 +9,7 @@
     <h1>@flash.get("error").get</h1>
   }
 
-  @helper.form(action= routes.LoginController.login) {
+  @helper.form(action= routes.Login.login) {
     @helper.inputText(loginForm("name"))
     @helper.inputText(loginForm("password"))
     <input type="submit" value="Login">

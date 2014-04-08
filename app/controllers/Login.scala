@@ -17,10 +17,10 @@ import service.protocol._
 /** */
 case class LoginData(name: String, password: String)
 
-object LoginController extends Controller with ExecutionEnvironment {
+object Login extends Controller with ExecutionEnvironment {
 
   /** */
-  def error(message: String) = Redirect(routes.LoginController.index).flashing("error" -> message)
+  def error(message: String) = Redirect(routes.Login.index).flashing("error" -> message)
 
   /** */
   def login(user: User) = Redirect(routes.Calendar.calendar).withSession("username" -> user.name, "userid" -> user.id.toString)
@@ -57,5 +57,5 @@ object LoginController extends Controller with ExecutionEnvironment {
   }
 
   /** */
-  def logout = Action{ implicit request => Redirect(routes.LoginController.index).withNewSession }
+  def logout = Action{ implicit request => Redirect(routes.Login.index).withNewSession }
 }
