@@ -4,16 +4,15 @@ import akka.pattern.ask
 
 import access.Restricted
 
-import datasource.calendar._
-
-import play.api._
 import play.api.mvc._
-import play.api.libs.json.Json.toJson
 
 import service._
 import service.protocol._
 
-import formatters._
+import service.protocol.GetAppointmentById
+import service.protocol.GetAppointmentsFromUser
+import hirondelle.date4j._
+
 
 object AppointmentController
   extends Controller with
@@ -29,8 +28,8 @@ object AppointmentController
     (Services.calendarService ? GetAppointmentsFromUser(request.user.id)).mapTo[Response].map(_.toJsonResult)
   }
 
-  def add() = Action {
-  	Status(501)("")
+  def add(implicit description: String, start: DateTime, end: DateTime) = Authenticated.async { implicit request =>
+    (Services.calendarService ? AddAppointment(description, start, end)).mapTo[Response].map(_.toJsonResult)
   }
 
   def update(id: Int) = Action {

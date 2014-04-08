@@ -23,7 +23,7 @@ object LoginController extends Controller with ExecutionEnvironment {
   def error(message: String) = Redirect(routes.LoginController.index).flashing("error" -> message)
 
   /** */
-  def login(user: User) = Redirect(routes.Application.hello).withSession("username" -> user.name, "userid" -> user.id.toString)
+  def login(user: User) = Redirect(routes.Calendar.calendar).withSession("username" -> user.name, "userid" -> user.id.toString)
 
   /** */
   def authenticate(loginData: LoginData): Future[SimpleResult] = {

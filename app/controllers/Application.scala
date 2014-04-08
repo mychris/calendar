@@ -1,18 +1,16 @@
 package controllers
 
+import play.api.mvc._
 import akka.pattern.ask
 
 import access.Restricted
-
-import play.api._
-import play.api.mvc._
-
 import service._
 import service.protocol._
 
 object Application extends Controller with Restricted with ExecutionEnvironment {
 
   def index = Action {
+
     Ok(views.html.index("Your new application is ready."))
   }
 
@@ -40,9 +38,5 @@ object Application extends Controller with Restricted with ExecutionEnvironment 
       { case Error(message) => InternalServerError(message) },
       _                     => Ok("Database tables have been dropped!")
     ))
-  }
-
-  def hello = Authenticated { implicit request =>
-    Ok(views.html.hello(request.user.id.toString, request.user.name))
   }
 }
