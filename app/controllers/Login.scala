@@ -45,7 +45,13 @@ object Login extends Controller with ExecutionEnvironment {
   )
 
   /** */
-  def index = Action { implicit request => Ok(views.html.login(form)) }
+  def index = Action { implicit request =>
+    if (!request.session.get("username").isEmpty && !request.session.get("userid").isEmpty) {
+      Redirect(routes.Calendar.calendar)
+    } else {
+      Ok(views.html.login(form))
+    }
+  }
 
   /** */
   def login = Action.async { implicit request =>
