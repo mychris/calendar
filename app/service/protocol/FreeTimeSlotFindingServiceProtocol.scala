@@ -9,11 +9,11 @@ import hirondelle.date4j.DateTime
  */
 
 /** */
-case class FindFreeTimeSlots(duration: Int, start: DateTime, end: DateTime, appointments: Seq[Appointment])
+case class FindFreeTimeSlots(duration: Int, start: DateTime, end: DateTime, appointments: Seq[Appointment]) extends Request
 
 /*
  * Responses
  */
 
 /** */
-case class FreeTimeSlots(slots: Seq[(DateTime, DateTime)])
+case class FreeTimeSlots(slots: Seq[(DateTime, DateTime)]) extends Success

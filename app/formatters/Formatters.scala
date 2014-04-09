@@ -21,14 +21,6 @@ package object formatters {
   implicit val tagFormat = Json.format[Tag]
 
   /** */
-  implicit val appointmentFormat = Json.format[Appointment]
-
-  /** */
-  implicit object appointmentTuppleFormat extends Writes[(Appointment, Appointment)] {
-    def writes(o: (Appointment, Appointment)): JsValue = (o._1 :: o._1 :: Nil).toJson
-  }
-
-  /** */
   implicit object dateTimeFormat extends Format[DateTime] {
 
     def writes(o: DateTime): JsValue = o.getNanoseconds.asInstanceOf[Long].toJson
@@ -40,9 +32,17 @@ package object formatters {
   }
 
   /** */
+  implicit val appointmentFormat = Json.format[Appointment]
+
+  /** */
+  implicit def tupleWrites[A : Writes] = new Writes[(A, A)] {
+
+    def writes(o: (A, A)): JsValue = Seq(o._1, o._2).toJson
+  }
+
+  /** */
   implicit object successWrites extends Writes[Success] {
 
-    /** Fucking type erasure! */
     def writes(o: Success): JsValue = o match {
       case UserById(user)                     => user.toJson
       case UserByName(user)                   => user.toJson
@@ -58,6 +58,7 @@ package object formatters {
       case TagsRemoved                        => "".toJson
       case AppointmentsRemoved                => "".toJson
       case Conflicts(conflicts)               => conflicts.toJson
+      case FreeTimeSlots(slots)               => slots.toJson
       case _                                  => throw new Exception("Unkown response type!")
     }
   }
