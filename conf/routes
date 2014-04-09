@@ -13,6 +13,7 @@ GET           /calendar               controllers.Calendar.calendar()
 GET           /events/list            controllers.Calendar.list(start: Option[String], end: Option[String])
 
 # Appointment
+GET           /appointment/conflicts  controllers.Appointments.conflicts
 GET           /appointments           controllers.Appointments.list
 GET           /appointment/:id        controllers.Appointments.show(id: Int)
 POST          /appointment            controllers.Appointments.add()
