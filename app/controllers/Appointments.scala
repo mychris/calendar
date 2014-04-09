@@ -54,7 +54,8 @@ object Appointments
     val description = request.body.asFormUrlEncoded.get("description")(0)
     val start = request.body.asFormUrlEncoded.get("start")(0)
     val end = request.body.asFormUrlEncoded.get("end")(0)
-        val req =     (Services.calendarService ? AddAppointment(description, new DateTime(start), new DateTime(end))).mapTo[Response]
+    val tagId = 1 // Fixme
+        val req = (Services.calendarService ? AddAppointment(description, new DateTime(start), new DateTime(end), tagId)).mapTo[Response]
         for {
           resp <- req
         }

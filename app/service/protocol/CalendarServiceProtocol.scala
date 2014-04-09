@@ -31,7 +31,7 @@ case class GetAppointmentsFromUser(userId: Int) extends Request
 case class AddTag(name: String, priority: Int, userId: Int) extends Request
 
 /** */
-case class AddAppointment(description: String, start: DateTime, end: DateTime) extends Request
+case class AddAppointment(description: String, start: DateTime, end: DateTime, tagId: Int) extends Request
 
 /** */
 case class RemoveTags(tagIds: Seq[Int]) extends Request

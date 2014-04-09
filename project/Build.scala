@@ -21,9 +21,6 @@ object ApplicationBuild extends Build {
 //    (base / "app" / "assets" / "stylesheets" * "main.less")
 //  )
 
-  def itFilter(name: String): Boolean = name endsWith "IntegrationSpec"
-  def unitFilter(name: String): Boolean = !itFilter(name)
-
   lazy val calendar = play.Project(
     "calendar",
     "0.1-SNAPSHOT",
