@@ -13,9 +13,9 @@ import scala.concurrent._
   */
 trait RequestBodyReader {
 
-	def readBody[A](block: A => Future[SimpleResult])(implicit rs: Reads[A], request: Request[JsValue]) =
-		request.body.validate[A] match {
-		  case s: JsSuccess[A] => block(s.get)
+  def readBody[A](block: A => Future[SimpleResult])(implicit rs: Reads[A], request: Request[JsValue]) =
+    request.body.validate[A] match {
+      case s: JsSuccess[A] => block(s.get)
       case e: JsError      => Future.successful(BadRequest("Invalid request body!"))
-		}
+    }
 }

@@ -7,6 +7,9 @@ GET           /                       controllers.Login.index
 POST          /login                  controllers.Login.login
 GET           /logout                 controllers.Login.logout
 
+# User
+POST          /user                   controllers.Users.add()
+
 # Calendar
 GET           /calendar               controllers.Calendar.calendar()
 ## Temporary!

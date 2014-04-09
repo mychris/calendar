@@ -104,4 +104,7 @@ package object formatters {
 
   /* Tags */
   implicit val addTagRequestBody = Json.format[AddTagRequestBody]
+
+  /* Users */
+  implicit val addUserRequestBody = Json.format[AddUserRequestBody]
 }
