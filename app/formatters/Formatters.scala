@@ -23,7 +23,7 @@ package object formatters {
   /** */
   implicit object dateTimeFormat extends Format[DateTime] {
 
-    def writes(o: DateTime): JsValue = o.getNanoseconds.asInstanceOf[Long].toJson
+    def writes(o: DateTime): JsValue = o.getNanosecondsInstant(TimeZone.getDefault).asInstanceOf[Long].toJson
 
     def reads(json: JsValue): JsResult[DateTime] = json match {
       case JsNumber(ns) => JsSuccess(DateTime.forInstantNanos(ns.toLong, TimeZone.getDefault))
