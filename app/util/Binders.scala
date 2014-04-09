@@ -11,4 +11,5 @@ object Binders {
     case None       => None
     case Some(date) => Some(new DateTime(date))   // TODO: How to pass date formatter in date4j?  (Needed is: "yyyy-MM-dd"!)
   }
+
 }

@@ -13,15 +13,15 @@ GET           /calendar               controllers.Calendar.calendar()
 GET           /events/list            controllers.Calendar.list(start: Option[String], end: Option[String])
 
 # Appointment
+GET           /appointments           controllers.Appointments.list
 GET           /appointment/:id        controllers.Appointments.show(id: Int)
-GET           /appointment            controllers.Appointments.list
-POST          /appointment            controllers.Appointments.add(description: String, start: String, end: String)
+POST          /appointment            controllers.Appointments.add()
 PUT           /appointment/:id        controllers.Appointments.update(id: Int)
 DELETE        /appointment/:id        controllers.Appointments.delete(id: Int)
 
 # Tag
+GET           /tags                   controllers.Tags.list
 GET           /tag/:id                controllers.Tags.show(id: Int)
-GET           /tag                    controllers.Tags.list
 POST          /tag                    controllers.Tags.add
 PUT           /tag/:id                controllers.Tags.update(id: Int)
 DELETE        /tag/:id                controllers.Tags.delete(id: Int)

@@ -30,15 +30,16 @@
                         eventData = {
                             title: title,
                             start: start,
-                            end: end
+                            end:   end
                         };
-                        $('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
+
+                        createEvent(eventData);
                     }
                     $('#calendar').fullCalendar('unselect');
                 },
                 editable: true,
                 events: {
-                    url: '/events/list',
+                    url: '/events/list', // TODO: replace with appointment
                     error: function() {
                         $('#script-warning').show();
                     }
@@ -49,6 +50,32 @@
             });
 
         });
+
+        /*
+         * Create and post an event to the server. If successful, show in calendar.
+         * param eventData: Object with 'description', 'start' and 'end'
+         */
+        function createEvent(eventData){
+            $.ajax({
+                type:     "POST",
+                url:      '@routes.Appointments.add()',
+                dataType: "json",
+                data:     {
+                            'description': eventData.title,
+                            'start'      : eventData.start.stripZone().format(),
+                            'end'        : eventData.end.stripZone().format()
+                },
+                error: function(xhr){
+                    // var resp = JSON.parse(xhr.responseText)
+                    // console.log(resp.errorMsg);
+                    console.log("createEvent Error: " + xhr);
+                },
+                success: function(data){
+                    console.log("event successfully created!")
+                    $('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
+                }
+            });
+        }
 
     </script>
 }

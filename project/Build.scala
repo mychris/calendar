@@ -7,7 +7,10 @@ object ApplicationBuild extends Build {
 
   lazy val standardSettings = Seq(
     scalaVersion := "2.10.3",
-    routesImport += "util.Binders._"
+    routesImport ++= Seq(
+      "util.Binders._",
+      "hirondelle.date4j.DateTime"
+    )
   )
 
   lazy val testSettings = Seq[Setting[_]](

@@ -13,8 +13,8 @@ object Calendar extends Controller with Restricted {
    * @return Result
    */
   def calendar = Authenticated { implicit request => {
-      val userName = request.session.get("username").getOrElse("unknown user")
-      Ok(views.html.calendar("Title of this calendar...", userName))
+      val userName = request.session.get("username").getOrElse("n/a")
+      Ok(views.html.calendar("Appointment finding Calendar", userName))
     }
   }
 
