@@ -1,5 +1,8 @@
 @(loginForm: Form[LoginData])(implicit flash:Flash)
 
+@import helper._
+@import views.helper.bootstrap.LoginField._
+
 @scripts = {
     @*<link rel="stylesheet" media="screen" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/css/bootstrap-responsive.min.css">*@
     <link rel="stylesheet" media="screen" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/css/bootstrap.min.css">
@@ -46,14 +49,14 @@
                     <div class="alert alert-error">
                         <a class="close" data-dismiss="alert" href="#">×</a>Incorrect Username or Password!
                     </div>
-                    <form method="POST" action="/login" accept-charset="UTF-8">
-                        <input type="text" id="username" class="span4" name="username" placeholder="Username" />
-                        <input type="password" id="password" class="span4" name="password" placeholder="Password" />
+                    @form(action = routes.Login.login) {
+                        @bootstrap.loginInput(loginForm("username"), 'type -> "text", 'placeholder -> "Username" )
+                        @bootstrap.loginInput(loginForm("password"), 'type -> "password", 'placeholder -> "Password" )
                         <label class="checkbox">
                             <input type="checkbox" name="remember" value="1" /> Remember Me
                         </label>
                         <button type="submit" name="submit" class="btn btn-primary btn-block">Sign in</button>
-                    </form>
+                    }
                 </div>
             </div>
         </div>
