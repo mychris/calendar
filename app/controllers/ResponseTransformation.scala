@@ -24,6 +24,7 @@ trait ResponseTransformation {
     case NoSuchUserError(_)
        | NoSuchTagError(_)
        | NoSuchAppointmentError(_) => NotFound(error.toJson)
+    case BadFormatError(_)         => BadRequest(error.toJson)
     case _                         => InternalServerError(error.toJson)
   }
 

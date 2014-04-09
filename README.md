@@ -46,4 +46,16 @@ Technologiestack:
 
 Aufgaben:
 - Gut dokumentierte Software, Beschreibung: paar Seiten, hauptsache Präsentation am Ende
-- 
+
+
+
+
+## Added database schema creation and deletion
+This functionality is provided via the following routes:
+
+  CREATE /createschema
+  DROP   /dropschema
+
+Notes:
+  1. The tables of the AppointmentProposalDataAccessService are not created at the moment. Support will be added as soon as the component's implementation is finished.
+  2. There seems to be a bug in slick regarding compound primary keys. Therefore the compound keys are commented out in CalendarDataAccessService.

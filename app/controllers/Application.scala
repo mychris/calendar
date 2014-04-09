@@ -1,18 +1,16 @@
 package controllers
 
+import play.api.mvc._
 import akka.pattern.ask
 
 import access.Restricted
-
-import play.api._
-import play.api.mvc._
-
 import service._
 import service.protocol._
 
 object Application extends Controller with Restricted with ExecutionEnvironment {
 
   def index = Action {
+
     Ok(views.html.index("Your new application is ready."))
   }
 
@@ -25,9 +23,20 @@ object Application extends Controller with Restricted with ExecutionEnvironment 
   }
 
   /** */
-  def createUser = Action.async {
-    val request = (Services.userService ? AddUser("test", "test")).mapTo[Response]
+  def createDefaultUser = Action.async {
 
+    for {
+      (Services.userService ? AddUser("test", "test")).mapTo[Response].map(_.toEither[UserAdded])
+    }
+    yield {
+      for {
+        userAdded <- addUserResponse.toEither[UserAdded].right
+      }
+      yield 
+    }
+
+    tagAdded  <- addTagResponse.toEither[TagAdded].right
+    addTagResponse  <- (Services.calendarService ? AddTag("default", 0, userId)).mapTo[Response]
     request.map {
       case UserAdded(_) => Ok(views.html.index("User 'test' created."))
       case _            => InternalServerError(views.html.index("Error creating User 'test'"))
@@ -40,9 +49,5 @@ object Application extends Controller with Restricted with ExecutionEnvironment 
       { case Error(message) => InternalServerError(message) },
       _                     => Ok("Database tables have been dropped!")
     ))
-  }
-
-  def hello = Authenticated { implicit request =>
-    Ok(views.html.hello(request.user.id.toString, request.user.name))
   }
 }

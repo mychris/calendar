@@ -1,0 +1,92 @@
+@(title: String, userName: String)
+
+@scripts = {
+    <link rel="stylesheet" media="screen" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("fullcalendar/fullcalendar.css")">
+    <link rel="stylesheet" media="print"  href="@routes.Assets.at("fullcalendar/fullcalendar.print.css")">
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/calendar.css")">
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+    <script src="@routes.Assets.at("fullcalendar/fullcalendar.min.js")"></script>
+
+    <script>
+        $(document).ready(function() {
+
+            $('#calendar').fullCalendar({
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'month,agendaWeek,agendaDay'
+                },
+                defaultDate: '2014-01-12',
+                selectable: true,
+                selectHelper: true,
+                select: function(start, end) {
+                    var title = prompt('Event Title:');
+                    var eventData;
+                    if (title) {
+                        eventData = {
+                            title: title,
+                            start: start,
+                            end:   end
+                        };
+
+                        createEvent(eventData);
+                    }
+                    $('#calendar').fullCalendar('unselect');
+                },
+                editable: true,
+                events: {
+                    url: '/events/list', // TODO: replace with appointment
+                    error: function() {
+                        $('#script-warning').show();
+                    }
+                },
+                loading: function(bool) {
+                    $('#loading').toggle(bool);
+                }
+            });
+
+        });
+
+        /*
+         * Create and post an event to the server. If successful, show in calendar.
+         * param eventData: Object with 'description', 'start' and 'end'
+         */
+        function createEvent(eventData){
+            $.ajax({
+                type:     "POST",
+                url:      '@routes.Appointments.add()',
+                dataType: "json",
+                data:     {
+                            'description': eventData.title,
+                            'start'      : eventData.start.stripZone().format(),
+                            'end'        : eventData.end.stripZone().format()
+                },
+                error: function(xhr){
+                    // var resp = JSON.parse(xhr.responseText)
+                    // console.log(resp.errorMsg);
+                    console.log("createEvent Error: " + xhr);
+                },
+                success: function(data){
+                    console.log("event successfully created!")
+                    $('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
+                }
+            });
+        }
+
+    </script>
+}
+
+@main(title, scripts, "") {
+    <h3 id="welcome-headline">Welcome, @userName!</h3><a href="/logout">Logout</a>
+    <div id='script-warning'>
+        <code>Server cannot return any events.</code>
+    </div>
+
+    <div id='loading'>loading...</div>
+
+    <div id='calendar'></div>
+}

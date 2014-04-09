@@ -65,11 +65,11 @@ class CalendarService(db: Database)
 
   /** */
   def addTag(name: String, priority: Int, userId: Int) =
-    db.withSession { implicit session => TagAdded((tags returning tags.map(_.id)) += Tag(-1, name, priority, userId)) }
+    db.withSession { implicit session => sender ! TagAdded((tags returning tags.map(_.id)) += Tag(-1, name, priority, userId)) }
 
   /** */
   def addAppointment(description: String, start: DateTime, end: DateTime) =
-    db.withSession { implicit session => AppointmentAdded((appointments returning appointments.map(_.id)) += Appointment(-1, description, start, end)) }
+    db.withSession { implicit session => sender ! AppointmentAdded((appointments returning appointments.map(_.id)) += Appointment(-1, description, start, end)) }
 
   /** */
   def removeTags(tagIds: Seq[Int]) =

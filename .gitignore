@@ -11,7 +11,11 @@ project/plugins/project/
 
 # Sublime
 *.sublime-workspace
+*.sublime-project
 
 # IDEA
 .idea/
 .idea_modules/
+
+# OSX-Specific
+*.DS_STORE

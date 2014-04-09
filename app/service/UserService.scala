@@ -21,7 +21,7 @@ object UserService {
   *
   * @author Simon Kaltenbacher
   */
-class UserService(db: Database)
+class UserService(db: Database, calenderService: ActorRef)
   extends Actor with
           ActorLogging with
           UserDataAccessComponentImpl {
@@ -45,9 +45,7 @@ class UserService(db: Database)
 
   /** */
   def addUser(name: String, password: String) = db.withSession { implicit session =>
-    val ret =  UserAdded((users returning users.map(_.id)) += User(-1, name, password))
-    Services.calendarService ! AddTag("default", 1, ret.id)
-    sender ! ret
+    sender ! UserAdded((users returning users.map(_.id)) += User(-1, name, password)) 
   }
 
   /** */

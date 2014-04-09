@@ -17,17 +17,16 @@ import service.protocol._
 /** */
 case class LoginData(name: String, password: String)
 
-object LoginController extends Controller with ExecutionEnvironment {
+object Login extends Controller with ExecutionEnvironment {
 
   /** */
-  def error(message: String) = Redirect(routes.LoginController.index).flashing("error" -> message)
+  def error(message: String) = Redirect(routes.Login.index).flashing("error" -> message)
 
   /** */
-  def login(user: User) = Redirect(routes.Application.hello).withSession("username" -> user.name, "userid" -> user.id.toString)
+  def login(user: User) = Redirect(routes.Calendar.calendar).withSession("username" -> user.name, "userid" -> user.id.toString)
 
   /** */
   def authenticate(loginData: LoginData): Future[SimpleResult] = {
-
     val request = (Services.userService ? GetUserByName(loginData.name)).mapTo[Response]
 
     request.map {
@@ -40,13 +39,19 @@ object LoginController extends Controller with ExecutionEnvironment {
   /** */
   val form = Form(
     mapping(
-      "name"     -> nonEmptyText,
-      "password" -> nonEmptyText
+      "username"   -> nonEmptyText,
+      "password"   -> nonEmptyText
     )(LoginData.apply)(LoginData.unapply)
   )
 
   /** */
-  def index = Action { implicit request => Ok(views.html.login(form)) }
+  def index = Action { implicit request =>
+    if (!request.session.get("username").isEmpty && !request.session.get("userid").isEmpty) {
+      Redirect(routes.Calendar.calendar)
+    } else {
+      Ok(views.html.login(form))
+    }
+  }
 
   /** */
   def login = Action.async { implicit request =>
@@ -57,5 +62,5 @@ object LoginController extends Controller with ExecutionEnvironment {
   }
 
   /** */
-  def logout = Action{ implicit request => Redirect(routes.LoginController.index).withNewSession }
+  def logout = Action{ implicit request => Redirect(routes.Login.index).withNewSession }
 }
