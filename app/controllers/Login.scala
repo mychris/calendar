@@ -27,7 +27,6 @@ object Login extends Controller with ExecutionEnvironment {
 
   /** */
   def authenticate(loginData: LoginData): Future[SimpleResult] = {
-
     val request = (Services.userService ? GetUserByName(loginData.name)).mapTo[Response]
 
     request.map {
@@ -40,8 +39,8 @@ object Login extends Controller with ExecutionEnvironment {
   /** */
   val form = Form(
     mapping(
-      "name"     -> nonEmptyText,
-      "password" -> nonEmptyText
+      "username"   -> nonEmptyText,
+      "password"   -> nonEmptyText
     )(LoginData.apply)(LoginData.unapply)
   )
 

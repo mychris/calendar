@@ -1,70 +1,65 @@
 @(title: String, userName: String)
 
-<!DOCTYPE html>
-<html>
-    <head>
-        <title> @{title} </title>
+@scripts = {
+    <link rel="stylesheet" media="screen" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("fullcalendar/fullcalendar.css")">
+    <link rel="stylesheet" media="print"  href="@routes.Assets.at("fullcalendar/fullcalendar.print.css")">
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/calendar.css")">
 
-        <meta charset='utf-8' />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+    <script src="@routes.Assets.at("fullcalendar/fullcalendar.min.js")"></script>
 
-        <link rel="stylesheet" media="screen" href="@routes.Assets.at("fullcalendar/fullcalendar.css")">
-        <link rel="stylesheet" media="print"  href="@routes.Assets.at("fullcalendar/fullcalendar.print.css")">
-        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
+    <script>
+        $(document).ready(function() {
 
-        <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment.min.js"></script>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
-        <script src="@routes.Assets.at("fullcalendar/fullcalendar.min.js")"></script>
-
-        <script>
-            $(document).ready(function() {
-
-                $('#calendar').fullCalendar({
-                    header: {
-                        left: 'prev,next today',
-                        center: 'title',
-                        right: 'month,agendaWeek,agendaDay'
-                    },
-                    defaultDate: '2014-01-12',
-                    selectable: true,
-                    selectHelper: true,
-                    select: function(start, end) {
-                        var title = prompt('Event Title:');
-                        var eventData;
-                        if (title) {
-                            eventData = {
-                                title: title,
-                                start: start,
-                                end: end
-                            };
-                            $('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
-                        }
-                        $('#calendar').fullCalendar('unselect');
-                    },
-                    editable: true,
-                    events: {
-                        url: '/events/list',
-                        error: function() {
-                            $('#script-warning').show();
-                        }
-                    },
-                    loading: function(bool) {
-                        $('#loading').toggle(bool);
+            $('#calendar').fullCalendar({
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'month,agendaWeek,agendaDay'
+                },
+                defaultDate: '2014-01-12',
+                selectable: true,
+                selectHelper: true,
+                select: function(start, end) {
+                    var title = prompt('Event Title:');
+                    var eventData;
+                    if (title) {
+                        eventData = {
+                            title: title,
+                            start: start,
+                            end: end
+                        };
+                        $('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
                     }
-                });
-
+                    $('#calendar').fullCalendar('unselect');
+                },
+                editable: true,
+                events: {
+                    url: '/events/list',
+                    error: function() {
+                        $('#script-warning').show();
+                    }
+                },
+                loading: function(bool) {
+                    $('#loading').toggle(bool);
+                }
             });
 
-        </script>
-    </head>
-    <body>
-        <h3 id="welcome-headline">Welcome, @userName!</h3><a href="/logout">Logout</a>
-        <div id='script-warning'>
-            <code>Server cannot return any events.</code>
-        </div>
+        });
 
-        <div id='loading'>loading...</div>
+    </script>
+}
 
-        <div id='calendar'></div>
-    </body>
-</html>
+@main(title, scripts, "") {
+    <h3 id="welcome-headline">Welcome, @userName!</h3><a href="/logout">Logout</a>
+    <div id='script-warning'>
+        <code>Server cannot return any events.</code>
+    </div>
+
+    <div id='loading'>loading...</div>
+
+    <div id='calendar'></div>
+}
