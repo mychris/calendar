@@ -6,7 +6,7 @@ import scala.concurrent._
   *
   * @author Simon Kaltenbacher
   */
-object FutureRight {
+/*object FutureRight {
 
   def futureRight[A, B](body: => RightProjection[A, B]):FutureRight[A, B] = new FutureRight(future { body })
 }
@@ -28,5 +28,5 @@ class FutureRight[A, B](futureRight: Future[RightProjection[A, B]]) {
   def map[C](f: B => C): FutureRight[A, C] = futureRight.map(f)
 
   /** */
-  def withFilter(p: A => Boolean)
-} 
+  def withFilter(p: A => Boolean) 
+}*/

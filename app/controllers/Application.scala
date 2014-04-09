@@ -23,20 +23,9 @@ object Application extends Controller with Restricted with ExecutionEnvironment 
   }
 
   /** */
-  def createDefaultUser = Action.async {
+  def createUser = Action.async {
+    val request = (Services.userService ? AddUser("test", "test")).mapTo[Response]
 
-    for {
-      (Services.userService ? AddUser("test", "test")).mapTo[Response].map(_.toEither[UserAdded])
-    }
-    yield {
-      for {
-        userAdded <- addUserResponse.toEither[UserAdded].right
-      }
-      yield 
-    }
-
-    tagAdded  <- addTagResponse.toEither[TagAdded].right
-    addTagResponse  <- (Services.calendarService ? AddTag("default", 0, userId)).mapTo[Response]
     request.map {
       case UserAdded(_) => Ok(views.html.index("User 'test' created."))
       case _            => InternalServerError(views.html.index("Error creating User 'test'"))
