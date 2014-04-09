@@ -21,7 +21,7 @@ object UserService {
   *
   * @author Simon Kaltenbacher
   */
-class UserService(db: Database, calenderService: ActorRef)
+class UserService(db: Database)
   extends Actor with
           ActorLogging with
           UserDataAccessComponentImpl {
