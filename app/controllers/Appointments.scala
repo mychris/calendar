@@ -6,6 +6,8 @@ import access.Restricted
 
 import play.api.mvc._
 
+import scala.concurrent._
+
 import service._
 import service.protocol._
 
@@ -71,5 +73,15 @@ object Appointments
 
   def delete(id: Int) = Action {
   	Status(501)("")
+  }
+
+  def conflicts() = Authenticated.async { implicit request => 
+    val req = (Services.calendarService ? GetAppointmentsFromUser(request.user.id)).mapTo[Response]
+    req.flatMap{
+      case AppointmentsFromUser(apps) => {
+        ((Services.conflictFindingService ? FindConflict(apps)).mapTo[Response]).map(_.toJsonResult)
+      }
+      case x => future { x.toJsonResult }
+    }
   }
 }
