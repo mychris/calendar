@@ -60,7 +60,7 @@ trait CalendarDataAccessComponent {
       def priority : Column[Int]
       def userId   : Column[Int]
 
-      def user     : Query[UserTable, User]
+      def user : Query[UserTable, User]
     }
 
     trait AbstractAppointmentBelongsToTagTable extends Table[(Int, Int)] {
@@ -112,7 +112,7 @@ trait CalendarDataAccessComponent {
         if t.userId === userId
       }
       yield (a, t)
-    
+
 
     /** Tags */
     val tags: TableQuery[TagTable]
