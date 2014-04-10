@@ -5,6 +5,9 @@ import datasource.calendar._
 
 import hirondelle.date4j.DateTime
 
+/** */
+case class AppointmentWithTags(appointments: Appointment, tags: Seq[Tag])
+
 /*
  * Requests
  */
@@ -22,10 +25,13 @@ case class GetTagsFromUser(userId: Int) extends Request
 case class GetTagsFromAppointment(appointmentId: Int) extends Request
 
 /** */
-case class GetAppointmentsWithTag(tagId: Int) extends Request
+case class GetAppointmentsFromTag(tagId: Int) extends Request
 
 /** */
 case class GetAppointmentsFromUser(userId: Int) extends Request
+
+/** */
+case class GetAppointmentsFromUserWithTags(userId: Int) extends Request
 
 /** */
 case class AddTag(name: String, priority: Int, userId: Int) extends Request
@@ -56,10 +62,13 @@ case class TagsFromUser(tags: Seq[Tag]) extends Success
 case class TagsFromAppointment(tags: Seq[Tag]) extends Success
 
 /** */
-case class AppointmentsWithTag(appointments: Seq[Appointment]) extends Success
+case class AppointmentsFromTag(appointments: Seq[Appointment]) extends Success
 
 /** */
 case class AppointmentsFromUser(appointments: Seq[Appointment]) extends Success
+
+/** */
+case class AppointmentsFromUserWithTag(appointments: Seq[AppointmentWithTags]) extends Success
 
 /** */
 case class TagAdded(id: Int) extends Success

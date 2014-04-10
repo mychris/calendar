@@ -35,6 +35,9 @@ object Services extends ExecutionEnvironment {
   /** Service for basic calendar and tag related operations */
   val conflictFindingService = system.actorOf(ConflictFindingService.props.withRouter(FromConfig()), "conflict-finding-service")
 
+  /** Service for basic calendar and tag related operations */
+  val freeTimeSlotsFindingService = system.actorOf(FreeTimeSlotFindingService.props.withRouter(FromConfig()), "freetimeslots-finding-service")
+
   /** Returns a merged ddl statement consisting of all data access component's ddl statements */
   private def collectDdl: Future[Either[Error, SchemaDescription]] = {
 

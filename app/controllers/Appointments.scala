@@ -1,29 +1,22 @@
 package controllers
 
-import akka.pattern.ask
-
-import access.Restricted
 
 import play.api.mvc._
+import play.api.mvc.SimpleResult
+import play.api.libs.json.Reads
 
+import akka.pattern.ask
+import java.util.TimeZone
 import scala.concurrent._
 
+import hirondelle.date4j._
+
+import access.Restricted
+import formatters._
+import datasource.calendar.Appointment
 import service._
 import service.protocol._
 
-import formatters._
-
-import service.protocol.GetAppointmentById
-import service.protocol.GetAppointmentsFromUser
-import hirondelle.date4j._
-import datasource.calendar.{Appointment}
-import scala.concurrent._
-import service.protocol.GetAppointmentById
-import service.protocol.GetAppointmentsFromUser
-import service.protocol.AddAppointment
-import play.api.mvc.SimpleResult
-import play.api.libs.json.Reads
-import java.util.TimeZone
 
 
 object Appointments
@@ -81,6 +74,28 @@ object Appointments
     req.flatMap{
       case AppointmentsFromUser(apps) => {
         ((Services.conflictFindingService ? FindConflict(apps)).mapTo[Response]).map(_.toJsonResult)
+      }
+      case x => future { x.toJsonResult }
+    }
+  }
+
+  def freeTimeSlots() = Authenticated.async { implicit request =>
+    val appsReq = (Services.calendarService ? GetAppointmentsFromUser(request.user.id)).mapTo[Response]
+
+    val duration: Int      = Integer.parseInt(request.body.asFormUrlEncoded.get("duration")(0))*60*1000
+    val start   : DateTime = new DateTime(request.body.asFormUrlEncoded.get("start")(0))
+    val end     : DateTime = new DateTime(request.body.asFormUrlEncoded.get("end")(0))
+
+    appsReq.flatMap{
+      case AppointmentsFromUser(apps) => {
+//        val timeSlotsReq = (Services.freeTimeSlotsFindingService ? FindFreeTimeSlots(duration, start, end, apps)).mapTo[Response]
+        ((Services.freeTimeSlotsFindingService ? FindFreeTimeSlots(duration, start, end, apps)).mapTo[Response]).map(_.toJsonResult)
+//        timeSlotsReq.flatMap{
+//          case FreeTimeSlots(slots) => { // slots: Seq[(DateTime, DateTime)]
+//            ((Services.calendarService ? FindFreeTimeSlots(apps)).mapTo[Response]).map(_.toJsonResult)
+//          }
+//          case x => future { x.toJsonResult }
+//        }
       }
       case x => future { x.toJsonResult }
     }

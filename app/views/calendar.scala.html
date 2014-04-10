@@ -77,6 +77,40 @@
             });
         }
 
+        function findFreeTimeSlots(){
+            $.ajax({
+                type:     "POST",
+                url:      '@routes.Appointments.freeTimeSlots()',
+                dataType: "json",
+                data:     {
+                            'duration': $('#duration').val().toString(),
+                            'start'   : $('#betweenFrom').val().toString(),
+                            'end'     : $('#betweenTo').val().toString(),
+                },
+                error: function(xhr){
+                    // var resp = JSON.parse(xhr.responseText)
+                    // console.log(resp.errorMsg);
+                    console.log("findFreeTimeSlots Error: ")
+                    console.log(xhr);
+                },
+                success: function(data){
+                    console.log("got free time slots: ");
+                    console.log(data);
+
+                    var eventData;
+
+                    for(var i = 0; i < data.length; i++) {
+                        eventData = {
+                            title: "freetimeslot",
+                            start: data[i].start,
+                            end:   data[i].end
+                        }
+                        $('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
+                    }
+                }
+            });
+        }
+
     </script>
 }
 
@@ -89,4 +123,9 @@
     <div id='loading'>loading...</div>
 
     <div id='calendar'></div>
+
+    <input type="text" id="duration"     placeholder="Duration (Minutes)" />
+    <input type="text" id="betweenFrom"  placeholder="Between From..(yyyy-MM-dd)" />
+    <input type="text" id="betweenTo"    placeholder="Between To.. (yyyy-MM-dd)" />
+    <input type="button" id="getFreeSlotsButton" value="Find Free Timeslots!" onclick="findFreeTimeSlots();"> 
 }

@@ -10,6 +10,7 @@ import hirondelle.date4j.DateTime
 import scala.slick.driver.PostgresDriver.simple.{Tag =>_, _}
 
 import service.protocol._
+import sun.reflect.generics.reflectiveObjects.NotImplementedException
 
 /**
   *
@@ -56,10 +57,27 @@ class CalendarService(db: Database)
     db.withSession { implicit session => sender ! TagsFromAppointment(tagsFromAppointment(appointmentId).buildColl[Seq]) }
 
   /** */
-  def getAppointmentsWithTag(tagId: Int) =
-    db.withSession { implicit session => sender ! AppointmentsWithTag(appointmentsWithTag(tagId).buildColl[Seq]) }
+  def getAppointmentsFromTag(tagId: Int) =
+    db.withSession { implicit session => sender ! AppointmentsFromTag(appointmentsWithTag(tagId).buildColl[Seq]) }
 
   def getAppointmentsFromUser(userId: Int) = db.withSession { implicit session =>
+    db.withSession { implicit session => sender ! AppointmentsFromUser(appointmentsFromUser(userId).buildColl[Seq]) }
+  }
+
+  /** Retrieves a user appointments together with its tags */
+  def getAppointmentsFromUserWithTags(userId: Int) = db.withSession { implicit session =>
+    sender ! AppointmentsFromUserWithTag(
+      appointmentsFromUserWithTag(userId)
+        .buildColl[Seq]
+        .groupBy(_._1)
+        .mapValues(_.map(_._2))
+        .toSeq
+        .map(AppointmentWithTags.tupled)
+    )
+  }
+
+  // TODO: FInish this!
+  def getAppointmentsFromUser(userId: Int, from: DateTime, to: DateTime) = db.withSession { implicit session =>
     db.withSession { implicit session => sender ! AppointmentsFromUser(appointmentsFromUser(userId).buildColl[Seq]) }
   }
 
@@ -94,12 +112,13 @@ class CalendarService(db: Database)
 
 
   def receive =  {
-    case GetTagById(id)                                 => getTagById(id)
     case GetAppointmentById(id)                         => getAppointmentById(id)
     case GetAppointmentsFromUser(id)                    => getAppointmentsFromUser(id)
+    case GetAppointmentsFromTag(tagId)                  => getAppointmentsFromTag(tagId)
+    case GetAppointmentsFromUserWithTags(userId)        => getAppointmentsFromUserWithTags(userId)
+    case GetTagById(id)                                 => getTagById(id)
     case GetTagsFromUser(userId)                        => getTagsFromUser(userId)
     case GetTagsFromAppointment(appointmentId)          => getTagsFromAppointment(appointmentId)
-    case GetAppointmentsWithTag(tagId)                  => getAppointmentsWithTag(tagId)
     case AddTag(name, priority, userId)                 => addTag(name, priority, userId)
     case AddAppointment(description, start, end, tagId) => addAppointment(description, start, end, tagId)
     case RemoveTags(tagIds)                             => removeTags(tagIds)

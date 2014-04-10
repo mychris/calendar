@@ -117,12 +117,40 @@ trait CalendarDataAccessComponent {
     def tagsFromUser(userId: Int): Query[TagTable, Tag] = tags.filter(_.userId === userId)
 
     /** */
-    def tagsFromAppointment(appointmentId: Int): Query[TagTable, Tag] = for(abtt <- appointmentBelongsToTag; t <- abtt.tag if abtt.appointmentId === appointmentId) yield t
+    def tagsFromAppointment(appointmentId: Int): Query[TagTable, Tag] =
+      for{
+        abtt <- appointmentBelongsToTag
+        t    <- abtt.tag
+        if abtt.appointmentId === appointmentId
+      }
+      yield t
 
     /** */
-    def appointmentsWithTag(tagId: Int): Query[AppointmentTable, Appointment] = for(abtt <- appointmentBelongsToTag; a <- abtt.appointment if abtt.tagId === tagId) yield a
+    def appointmentsWithTag(tagId: Int): Query[AppointmentTable, Appointment] =
+      for {
+        abtt <- appointmentBelongsToTag
+        a    <- abtt.appointment
+        if abtt.tagId === tagId
+      }
+      yield a
 
-    def appointmentsFromUser(userId: Int): Query[AppointmentTable, Appointment] = for(abtt <- appointmentBelongsToTag; t <- abtt.tag; a<- abtt.appointment if t.userId === userId && abtt.tagId === t.id) yield a
+    def appointmentsFromUser(userId: Int): Query[AppointmentTable, Appointment] =
+      for {
+        abtt <- appointmentBelongsToTag
+        t    <- abtt.tag
+        a    <- abtt.appointment
+        if t.userId === userId
+      }
+      yield a
+
+    def appointmentsFromUserWithTag(userId: Int): Query[(AppointmentTable, TagTable), (Appointment, Tag)] =
+      for {
+        abtt <- appointmentBelongsToTag
+        t    <- abtt.tag
+        a    <- abtt.appointment
+        if t.userId === userId
+      }
+      yield (a, t)
   }
 }
 

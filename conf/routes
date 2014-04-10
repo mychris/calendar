@@ -14,6 +14,7 @@ GET           /events/list            controllers.Calendar.list(start: Option[St
 
 # Appointment
 GET           /appointment/conflicts  controllers.Appointments.conflicts
+POST          /appointment/freetimeslots  controllers.Appointments.freeTimeSlots()
 GET           /appointments           controllers.Appointments.list
 GET           /appointment/:id        controllers.Appointments.show(id: Int)
 POST          /appointment            controllers.Appointments.add()
