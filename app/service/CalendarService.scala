@@ -37,31 +37,21 @@ class CalendarService(db: Database)
   /** */
   protected object calendarDataAccess extends CalendarDataAccessModuleImpl
 
-  import userDataAccess._
   import calendarDataAccess._
 
-  /** */
-  def getTagById(id: Int) =
-    db.withSession { implicit session => sender ! tagsById(id).firstOption.fold[Any](NoSuchTagError(s"Tag with id $id does not exist!"))(TagById(_)) }
 
-  /** */
-  def getAppointmentById(id: Int) =
-    db.withSession { implicit session => sender ! appointmentsById(id).firstOption.fold[Any](NoSuchTagError(s"Appointment with id $id does not exist!"))(AppointmentById(_)) }
+  /**
+   * Appointments
+   */
 
-  /** */
-  def getTagsFromUser(userId: Int) =
-    db.withSession { implicit session => sender ! TagsFromUser(tagsFromUser(userId).buildColl[Seq]) }
+  def getAppointmentById(id: Int) = db.withSession { implicit session =>
+    sender ! appointmentsById(id).firstOption.fold[Any](NoSuchTagError(s"Appointment with id $id does not exist!"))(AppointmentById(_)) }
 
-  /** */
-  def getTagsFromAppointment(appointmentId: Int) =
-    db.withSession { implicit session => sender ! TagsFromAppointment(tagsFromAppointment(appointmentId).buildColl[Seq]) }
+  def getAppointmentsFromTag(tagId: Int) = db.withSession { implicit session =>
+    sender ! AppointmentsFromTag(appointmentsWithTag(tagId).buildColl[Seq]) }
 
-  /** */
-  def getAppointmentsFromTag(tagId: Int) =
-    db.withSession { implicit session => sender ! AppointmentsFromTag(appointmentsWithTag(tagId).buildColl[Seq]) }
-
-  def getAppointmentsFromUser(userId: Int) = db.withSession { implicit session =>
-    db.withSession { implicit session => sender ! AppointmentsFromUser(appointmentsFromUser(userId).buildColl[Seq]) }
+  def getAppointmentsFromUser(userId: Int) = db.withSession { implicit session => db.withSession { implicit session =>
+    sender ! AppointmentsFromUser(appointmentsFromUser(userId).buildColl[Seq]) }
   }
 
   /** Retrieves a user appointments together with its tags */
@@ -78,36 +68,45 @@ class CalendarService(db: Database)
 
   // TODO: FInish this!
   def getAppointmentsFromUser(userId: Int, from: DateTime, to: DateTime) = db.withSession { implicit session =>
-    db.withSession { implicit session => sender ! AppointmentsFromUser(appointmentsFromUser(userId).buildColl[Seq]) }
+    sender ! AppointmentsFromUser(appointmentsFromUser(userId).buildColl[Seq])
   }
 
-  /** */
-  def addTag(name: String, priority: Int, userId: Int) =
-    db.withSession { implicit session => sender ! TagAdded((tags returning tags.map(_.id)) += Tag(-1, name, priority, userId)) }
+  def addAppointment(description: String, start: DateTime, end: DateTime, tagId: Int) = db.withTransaction { implicit session =>
+    val appointmentId = (appointments returning appointments.map(_.id)) += Appointment(-1, description, start, end)
+    appointmentBelongsToTag += ((appointmentId, tagId))
+    sender ! AppointmentAdded(appointmentId)
+  }
 
-  /** */
-  def addAppointment(description: String, start: DateTime, end: DateTime, tagId: Int) =
-    db.withTransaction { implicit session =>
-      val appointmentId = (appointments returning appointments.map(_.id)) += Appointment(-1, description, start, end)
-      appointmentBelongsToTag += ((appointmentId, tagId))
-      sender ! AppointmentAdded(appointmentId)
-    }
+  def removeAppointments(appointmentIds: Seq[Int]) = db.withSession { implicit session =>
+    appointments.filter(_.id.inSet(appointmentIds)).delete
+    sender ! AppointmentsRemoved
+  }
 
-  /** */
-  def removeTags(tagIds: Seq[Int]) =
-    db.withSession { implicit session =>
-      tags.filter(_.id.inSet(tagIds)).delete
-      sender ! TagsRemoved
-    }
+  /**
+   * Tags
+   */
 
-  /** */
-  def removeAppointments(appointmentIds: Seq[Int]) =
-    db.withSession { implicit session =>
-      appointments.filter(_.id.inSet(appointmentIds)).delete
-      sender ! AppointmentsRemoved
-    }
+  def getTagById(id: Int) = db.withSession { implicit session =>
+    sender ! tagsById(id).firstOption.fold[Any](NoSuchTagError(s"Tag with id $id does not exist!"))(TagById(_)) }
 
-  /** */
+  def getTagsFromUser(userId: Int) = db.withSession { implicit session =>
+    sender ! TagsFromUser(tagsFromUser(userId).buildColl[Seq]) }
+
+  def getTagsFromAppointment(appointmentId: Int) = db.withSession { implicit session =>
+    sender ! TagsFromAppointment(tagsFromAppointment(appointmentId).buildColl[Seq]) }
+
+  def addTag(name: String, priority: Int, userId: Int) = db.withSession { implicit session =>
+    sender ! TagAdded((tags returning tags.map(_.id)) += Tag(-1, name, priority, userId)) }
+
+  def removeTags(tagIds: Seq[Int]) = db.withSession { implicit session =>
+    tags.filter(_.id.inSet(tagIds)).delete
+    sender ! TagsRemoved
+  }
+
+
+
+
+
   def getDdl = sender ! Ddl(calendarDdl)
 
 

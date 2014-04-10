@@ -7,7 +7,6 @@ import access.Restricted
 
 object Calendar extends Controller with Restricted {
 
-
   /**
    * Displays full calendar
    * @return Result
@@ -17,7 +16,6 @@ object Calendar extends Controller with Restricted {
       Ok(views.html.calendar("Appointment finding Calendar", userName))
     }
   }
-
 
   /**
    * List of events in table view

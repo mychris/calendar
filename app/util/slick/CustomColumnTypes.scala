@@ -1,11 +1,12 @@
 package util
 
-import hirondelle.date4j.DateTime
+import scala.slick.driver.PostgresDriver.simple._
 
 import java.sql.Timestamp
 import java.util.TimeZone
 
-import scala.slick.driver.PostgresDriver.simple._
+import hirondelle.date4j.DateTime
+
 
 package object slick {
   

@@ -1,12 +1,10 @@
 package datasource.calendar
 
-import datasource.user._
+import scala.slick.driver.PostgresDriver.simple.{Tag => _, _}
 
 import hirondelle.date4j.DateTime
 
-import scala.slick.driver.PostgresDriver.simple.{Tag => _, _}
-import scala.slick.lifted.Constraint
-
+import datasource.user._
 import util.slick._
 
 /**
@@ -22,43 +20,29 @@ trait CalendarDataAccessComponent {
 
   import userDataAccess._
 
-  /** */
   trait CalendarDataAccessModule {
 
     /*
      * Types
      */
 
-    /** */    
     type Appointment <: AbstractAppointment
-
-    /** */
     type AppointmentTable <: AbstractAppointmentTable
-
-    /** */
     type Tag <: AbstractTag
-
-    /** */
     type TagTable <: AbstractTagTable
-
-    /** */
     type AppointmentBelongsToTagTable <: AbstractAppointmentBelongsToTagTable
 
     /*
      * Shapes
      */
 
-    /** */
     implicit val appointmentShape: Shape[_, AppointmentTable, Appointment, AppointmentTable]
-
-    /** */
     implicit val tagShape: Shape[_, TagTable, Tag, TagTable]
 
     /*
      * Database tables
      */
 
-    /** */
     trait AbstractAppointmentTable extends Table[Appointment] {
 
       def id          : Column[Int]
@@ -69,7 +53,6 @@ trait CalendarDataAccessComponent {
       def tags : Query[TagTable, Tag]
     }
 
-    /** */
     trait AbstractTagTable extends Table[Tag] {
 
       def id       : Column[Int]
@@ -80,7 +63,6 @@ trait CalendarDataAccessComponent {
       def user     : Query[UserTable, User]
     }
 
-    /** */
     trait AbstractAppointmentBelongsToTagTable extends Table[(Int, Int)] {
 
       def appointmentId : Column[Int]
@@ -98,34 +80,13 @@ trait CalendarDataAccessComponent {
      * Queries
      */
 
-    /** */
+
+    /** Appointments */
     val appointments: TableQuery[AppointmentTable]
+    val appointmentBelongsToTag: TableQuery[AppointmentBelongsToTagTable]
 
-    /** */
-    val tags: TableQuery[TagTable]
-
-    /** */    
-    val appointmentBelongsToTag: TableQuery[AppointmentBelongsToTagTable] 
-
-    /** */
     def appointmentsById(id: Int): Query[AppointmentTable, Appointment] = appointments.filter(_.id === id)
 
-    /** */
-    def tagsById(id: Int): Query[TagTable, Tag] = tags.filter(_.id === id)
-
-    /** */
-    def tagsFromUser(userId: Int): Query[TagTable, Tag] = tags.filter(_.userId === userId)
-
-    /** */
-    def tagsFromAppointment(appointmentId: Int): Query[TagTable, Tag] =
-      for{
-        abtt <- appointmentBelongsToTag
-        t    <- abtt.tag
-        if abtt.appointmentId === appointmentId
-      }
-      yield t
-
-    /** */
     def appointmentsWithTag(tagId: Int): Query[AppointmentTable, Appointment] =
       for {
         abtt <- appointmentBelongsToTag
@@ -151,6 +112,22 @@ trait CalendarDataAccessComponent {
         if t.userId === userId
       }
       yield (a, t)
+    
+
+    /** Tags */
+    val tags: TableQuery[TagTable]
+
+    def tagsById(id: Int): Query[TagTable, Tag] = tags.filter(_.id === id)
+
+    def tagsFromUser(userId: Int): Query[TagTable, Tag] = tags.filter(_.userId === userId)
+
+    def tagsFromAppointment(appointmentId: Int): Query[TagTable, Tag] =
+      for{
+        abtt <- appointmentBelongsToTag
+        t    <- abtt.tag
+        if abtt.appointmentId === appointmentId
+      }
+      yield t
   }
 }
 
@@ -164,43 +141,29 @@ trait CalendarDataAccessComponentImpl extends CalendarDataAccessComponent {
 
   import userDataAccess._
 
-  /** */
   trait CalendarDataAccessModuleImpl extends CalendarDataAccessModule {
 
     /*
      * Types
      */
 
-    /** */    
     type Appointment = datasource.calendar.Appointment
-
-    /** */
     type AppointmentTable = AppointmentTableImpl
-
-    /** */
     type Tag = datasource.calendar.Tag
-
-    /** */
     type TagTable = TagTableImpl
-
-    /** */
     type AppointmentBelongsToTagTable = AppointmentBelongsToTagTableImpl
 
     /*
      * Shapes
      */
 
-    /** */
     implicit val appointmentShape: Shape[_, AppointmentTable, Appointment, AppointmentTable] = implicitly[Shape[_, AppointmentTable, Appointment, AppointmentTable]]
-
-    /** */
     implicit val tagShape: Shape[_, TagTable, Tag, TagTable] = implicitly[Shape[_, TagTable, Tag, TagTable]]
 
     /*
      * Database tables
      */
 
-    /** */
     class AppointmentTableImpl(tag: scala.slick.lifted.Tag) extends Table[Appointment](tag, "appointment") with AbstractAppointmentTable {
 
       def id          = column[Int     ]("id"         , O.PrimaryKey, O.AutoInc)
@@ -213,7 +176,6 @@ trait CalendarDataAccessComponentImpl extends CalendarDataAccessComponent {
       def *           = (id, description, start, end) <> (Appointment.tupled, Appointment.unapply)
     }
 
-    /** */
     class TagTableImpl(tag: scala.slick.lifted.Tag) extends Table[Tag](tag, "tag") with AbstractTagTable {
 
       def id       = column[Int   ]("id"      , O.PrimaryKey, O.AutoInc)
@@ -226,7 +188,6 @@ trait CalendarDataAccessComponentImpl extends CalendarDataAccessComponent {
       def *        = (id, name, priority, userId) <> (Tag.tupled, Tag.unapply)
     }
 
-    /** */
     class AppointmentBelongsToTagTableImpl(tag: scala.slick.lifted.Tag) extends Table[(Int, Int)](tag, "appointment_belongsto_tag") with AbstractAppointmentBelongsToTagTable {
 
       def appointmentId = column[Int]("appointment_id")
@@ -243,13 +204,8 @@ trait CalendarDataAccessComponentImpl extends CalendarDataAccessComponent {
      * Queries
      */
 
-    /** */
     val appointments = TableQuery[AppointmentTable]
-
-    /** */
     val tags = TableQuery[TagTable]
-
-    /** */
-    val appointmentBelongsToTag = TableQuery[AppointmentBelongsToTagTable] 
+    val appointmentBelongsToTag = TableQuery[AppointmentBelongsToTagTable]
   }
 }

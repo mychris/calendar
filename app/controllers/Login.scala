@@ -1,16 +1,13 @@
 package controllers
 
-import akka.pattern.ask
-
-import datasource.user._
-
 import play.api.mvc._
 import play.api.data.Form
 import play.api.data.Forms._
-import play.Logger
 
 import scala.concurrent._
+import akka.pattern.ask
 
+import datasource.user._
 import service._
 import service.protocol._
 

@@ -6,17 +6,13 @@ import play.api.mvc.SimpleResult
 import play.api.libs.json.Reads
 
 import akka.pattern.ask
-import java.util.TimeZone
 import scala.concurrent._
 
 import hirondelle.date4j._
 
 import access.Restricted
-import formatters._
-import datasource.calendar.Appointment
 import service._
 import service.protocol._
-
 
 
 object Appointments

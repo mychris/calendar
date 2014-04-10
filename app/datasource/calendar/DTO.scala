@@ -1,13 +1,9 @@
 package datasource.calendar
 
-import util.slick._
+import scala.slick.driver.PostgresDriver.simple.{Tag => _, _}
 
 import hirondelle.date4j.DateTime
 
-import scala.slick.driver.PostgresDriver.simple.{Tag => _, _}
-import scala.slick.lifted.Constraint
-
-/** */
 trait AbstractAppointment {
 
   def id          : Int
@@ -16,7 +12,6 @@ trait AbstractAppointment {
   def end         : DateTime
 }    
 
-/** */
 trait AbstractTag {
 
   def id       : Int
@@ -25,8 +20,5 @@ trait AbstractTag {
   def userId   : Int
 } 
 
-/** */
 case class Appointment(id: Int, description: String, start: DateTime, end: DateTime) extends AbstractAppointment
-
-/** */
 case class Tag(id: Int, name: String, priority: Int, userId: Int) extends AbstractTag

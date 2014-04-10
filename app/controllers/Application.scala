@@ -14,7 +14,6 @@ object Application extends Controller with Restricted with ExecutionEnvironment 
     Ok(views.html.index("Your new application is ready."))
   }
 
-  /** */
   def createSchema = Action.async {
     Services.createSchema.map(_.fold(
       { case Error(message) => InternalServerError(message) },
@@ -22,7 +21,6 @@ object Application extends Controller with Restricted with ExecutionEnvironment 
     ))
   }
 
-  /** */
   def createUser = Action.async {
     val request = (Services.userService ? AddUser("test", "test")).mapTo[Response]
 
@@ -32,7 +30,6 @@ object Application extends Controller with Restricted with ExecutionEnvironment 
     }
   }
 
-  /** */
   def dropSchema = Action.async {
     Services.dropSchema.map(_.fold(
       { case Error(message) => InternalServerError(message) },

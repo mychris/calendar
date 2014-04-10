@@ -29,26 +29,16 @@ trait AppointmentProposalDataAccessComponent {
      * Types
      */
 
-    /** */
     type AppointmentProposal <: AbstractAppointmentProposal
-
-    /** */
     type AppointmentProposalTable <: AbstractAppointmentProposalTable
-
-    /** */
     type AppointmentProposalTime <: AbstractAppointmentProposalTime
-
-    /** */
     type AppointmentProposalTimeTable <: AbstractAppointmentProposalTimeTable
 
     /*
      * Shapes
      */
 
-    /** */
     implicit val appointmentProposalShape: Shape[_, AppointmentProposalTable, AppointmentProposal, AppointmentProposalTable]
-
-    /** */
     implicit val AppointmentProposalTimeShape: Shape[_, AppointmentProposalTimeTable, AppointmentProposalTime, AppointmentProposalTimeTable]
 
     /*
@@ -60,7 +50,6 @@ trait AppointmentProposalDataAccessComponent {
      * Database tables
      */
 
-    /** */
     trait AbstractAppointmentProposalTable extends Table[AppointmentProposal] {
 
       def id          : Column[Int]
@@ -70,7 +59,6 @@ trait AppointmentProposalDataAccessComponent {
       def creator: Query[UserTable, User]
     }
 
-    /** */
     trait AbstractAppointmentProposalTimeTable extends Table[AppointmentProposalTime] {
 
       def id         : Column[Int]
@@ -88,10 +76,7 @@ trait AppointmentProposalDataAccessComponent {
      * Queries
      */
 
-    /** */
     val appointmentProposals: TableQuery[AppointmentProposalTable]
-
-    /** */
     val appointmentProposalTimes: TableQuery[AppointmentProposalTimeTable]
   }
 }
@@ -112,33 +97,22 @@ trait AppointmentProposalDataAccessComponentImpl extends AppointmentProposalData
      * Types
      */
 
-    /** */    
     type AppointmentProposal = datasource.appointmentproposal.AppointmentProposal
-
-    /** */
     type AppointmentProposalTable = AppointmentProposalTableImpl
-
-    /** */
     type AppointmentProposalTime = datasource.appointmentproposal.AppointmentProposalTime
-
-    /** */
     type AppointmentProposalTimeTable = AppointmentProposalTimeTableImpl
 
     /*
      * Shapes
      */
 
-    /** */
     implicit val appointmentProposalShape: Shape[_, AppointmentProposalTable, AppointmentProposal, AppointmentProposalTable] = implicitly[Shape[_, AppointmentProposalTable, AppointmentProposal, AppointmentProposalTable]]
-
-    /** */
     implicit val AppointmentProposalTimeShape: Shape[_, AppointmentProposalTimeTable, AppointmentProposalTime, AppointmentProposalTimeTable] = implicitly[Shape[_, AppointmentProposalTimeTable, AppointmentProposalTime, AppointmentProposalTimeTable]]
 
     /*
      * Database tables
      */
 
-    /** */
     class AppointmentProposalTableImpl(tag: scala.slick.lifted.Tag) extends Table[AppointmentProposal](tag, "appointment_proposal") with AbstractAppointmentProposalTable {
 
       def id          = column[Int     ]("id", O.PrimaryKey, O.AutoInc)
@@ -150,7 +124,6 @@ trait AppointmentProposalDataAccessComponentImpl extends AppointmentProposalData
       def * = (id, description, creatorId) <> (AppointmentProposal.tupled, AppointmentProposal.unapply)
     }
 
-    /** */
     class AppointmentProposalTimeTableImpl(tag: scala.slick.lifted.Tag) extends Table[AppointmentProposalTime](tag, "appointment_proposal_time") with AbstractAppointmentProposalTimeTable {
 
       def id         = column[Int      ]("id", O.PrimaryKey, O.AutoInc)
@@ -180,13 +153,8 @@ trait AppointmentProposalDataAccessComponentImpl extends AppointmentProposalData
      * Queries
      */
 
-    /** */
     val appointmentProposals = TableQuery[AppointmentProposalTable]
-
-    /** */
     val appointmentProposalTimes = TableQuery[AppointmentProposalTimeTable]
-
-    /** */
-    val appointmentProposalTimeBelongsToUser = TableQuery[AppointmentProposalTimeBelongsToUserImpl] 
+    val appointmentProposalTimeBelongsToUser = TableQuery[AppointmentProposalTimeBelongsToUserImpl]
   }
 }

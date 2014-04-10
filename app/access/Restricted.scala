@@ -3,7 +3,6 @@ package access
 import play.api.mvc._
 import play.api.mvc.Security._
 
-import datasource.user._
 
 /**
   *
@@ -11,10 +10,8 @@ import datasource.user._
   */
 trait Restricted {
 
-  /** */
   case class AuthenticatedUser(id: Int, name: String)
 
-	/** */
   def getUser(request: RequestHeader) =
   	for {
   		id   <- request.session.get("userid").map(_.toInt)
@@ -22,6 +19,5 @@ trait Restricted {
   	}
   	yield AuthenticatedUser(id, name)
 
-  /** */
   object Authenticated extends AuthenticatedBuilder(getUser(_))
 }
