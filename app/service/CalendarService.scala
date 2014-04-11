@@ -39,8 +39,7 @@ class CalendarService(db: Database)
 
   import calendarDataAccess._
 
-
-  /**
+  /*
    * Appointments
    */
 
@@ -82,7 +81,7 @@ class CalendarService(db: Database)
     sender ! AppointmentsRemoved
   }
 
-  /**
+  /*
    * Tags
    */
 
@@ -103,12 +102,7 @@ class CalendarService(db: Database)
     sender ! TagsRemoved
   }
 
-
-
-
-
   def getDdl = sender ! Ddl(calendarDdl)
-
 
   def receive =  {
     case GetAppointmentById(id)                         => getAppointmentById(id)

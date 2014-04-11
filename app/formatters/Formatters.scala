@@ -28,6 +28,7 @@ package object formatters {
   }
 
   implicit val appointmentFormat = Json.format[Appointment]
+
   implicit val appointmentWithTagsFormat = Json.format[AppointmentWithTags]
 
   implicit def tupleWrites[A : Writes] = new Writes[(A, A)] {
@@ -35,31 +36,38 @@ package object formatters {
     def writes(o: (A, A)): JsValue = Seq(o._1, o._2).toJson
   }
 
-  implicit object successWrites extends Writes[Success] {
+  implicit val appointmentByIdFormat = Json.format[AppointmentById]
 
-    def writes(o: Success): JsValue = o match {
-      case AppointmentById(appointment)                      => appointment.toJson
-      case AppointmentsFromTag(appointments)                 => appointments.toJson
-      case AppointmentsFromUser(appointments)                => appointments.toJson
-      case AppointmentsFromUserWithTag(appointmentsWithTags) => appointmentsWithTags.toJson
-      case AppointmentAdded(id)                              => id.toJson
-      case AppointmentsRemoved                               => "".toJson
-      case TagById(tag)                                      => tag.toJson
-      case TagsFromUser(tags)                                => tags.toJson
-      case TagsFromAppointment(tags)                         => tags.toJson
-      case TagAdded(id)                                      => id.toJson
-      case TagsRemoved                                       => "".toJson
-      case UserById(user)                                    => user.toJson
-      case UserByName(user)                                  => user.toJson
-      case UserAdded(id)                                     => id.toJson
-      case Conflicts(conflicts)                              => conflicts.toJson
-      case FreeTimeSlots(slots)                              => slots.toJson
-      case _                                                 => throw new Exception("Unkown response type!")
-    }
-  }
+  implicit val appointmentsFromTagFormat = Json.format[AppointmentsFromTag]
 
-  implicit object errorWrites extends Writes[Error] {
+  implicit val appointmentsFromUserFormat = Json.format[AppointmentsFromUser]
 
-    def writes(o: Error): JsValue = o.message.toJson 
+  implicit val appointmentsFromUserWithTagFormat = Json.format[AppointmentsFromUserWithTag]
+
+  implicit val appointmentAddedFormat = Json.format[AppointmentAdded]
+
+  implicit val tagByIdFormat = Json.format[TagById]
+
+  implicit val tagsFromUserFormat = Json.format[TagsFromUser]
+
+  implicit val tagsFromAppointmentFormat = Json.format[TagsFromAppointment]
+
+  implicit val tagAddedFormat = Json.format[TagAdded]
+
+  implicit val userByIdFormat = Json.format[UserById]
+
+  implicit val userByNameFormat = Json.format[UserByName]
+
+  implicit val userAddedFormat = Json.format[UserAdded]
+
+  implicit val conflictsWrites = Json.writes[Conflicts]
+
+  implicit val timeSlotFormat = Json.format[TimeSlot]
+
+  implicit val freeTimeSlotsFormat = Json.format[FreeTimeSlots]
+
+  implicit object exceptionWrites extends Writes[Exception] {
+
+    def writes(o: Exception): JsValue = o.getMessage.toJson 
   }
 }

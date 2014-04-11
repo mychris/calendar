@@ -28,20 +28,20 @@ object FreeTimeSlotFindingService {
 class FreeTimeSlotFindingService extends Actor with ActorLogging {
 
   /** */
-  private type Acc = (Seq[(DateTime, DateTime)], DateTime)
+  private type Acc = (Seq[TimeSlot], DateTime)
 
   /** */
   def millis(dateTime: DateTime) = dateTime.getMilliseconds(TimeZone.getDefault)
 
   def receive = {
-    case FindFreeTimeSlots(duration, start, end, appointments: Seq[Appointment]) =>
+    case FindFreeTimeSlots(duration, start, end, appointments) =>
 
       sender ! FreeTimeSlots(
         (appointments :+ Appointment(-1, "", end, end))
           .foldLeft[Acc]((Seq(), start)) {
             case ((slots, lastEnd), appointment) =>
               if(millis(appointment.start) - millis(lastEnd) >= duration)
-                (slots :+ ((lastEnd, appointment.start)), appointment.end)
+                (slots :+ TimeSlot(lastEnd, appointment.start), appointment.end)
               else
                 (slots, appointment.end)
           }._1

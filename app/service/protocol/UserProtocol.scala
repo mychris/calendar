@@ -33,4 +33,4 @@ case class UserAdded(id: Int) extends Success
  */
 
 /** */
-case class NoSuchUserError(message: String) extends Error
+case class NoSuchUserError(message: String) extends Error(message)

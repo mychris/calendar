@@ -5,4 +5,4 @@ package service.protocol
  */
 
 /** */
-case class BadFormatError(message: String) extends Error
+case class BadFormatError(message: String) extends Error(message)

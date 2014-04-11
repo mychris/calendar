@@ -31,12 +31,12 @@ class UserService(db: Database)
   import userDataAccess._
 
   def getUserById(id: Int) = db.withSession { implicit session =>
-      sender ! usersById(id).firstOption.fold[Any](NoSuchUserError(s"User with id $id does not exist!"))(UserById(_))
-    }
+    sender ! usersById(id).firstOption.fold[Any](NoSuchUserError(s"User with id $id does not exist!"))(UserById(_))
+  }
 
   def getUserByName(name: String) = db.withSession { implicit session =>
-      sender ! usersByName(name).firstOption.fold[Any](NoSuchUserError(s"User with name $name does not exist!"))(UserByName(_))
-    }
+    sender ! usersByName(name).firstOption.fold[Any](NoSuchUserError(s"User with name $name does not exist!"))(UserByName(_))
+  }
 
   def addUser(name: String, password: String) = db.withSession { implicit session =>
     sender ! UserAdded((users returning users.map(_.id)) += User(-1, name, password)) 

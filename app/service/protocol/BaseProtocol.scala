@@ -18,14 +18,21 @@ trait Response {
   def fold[S <: Success, A](onError: Error => A, onSuccess: S => A)(implicit ct: ClassTag[S]): A = this match {
     case error : Error => onError(error)
     case success: S    => onSuccess(success)
-    case _             => throw new Exception("Type of right value does not conform to supplied type!")
+    case _             => throw new Exception("Type of success message does not conform to supplied type!")
   }
 
   /** */
   def toEither[S <: Success](implicit ct: ClassTag[S]): Either[Error, S] = this match {
     case error: Error => Left(error)
     case success: S   => Right(success)
-    case _            => throw new Exception("Type of right value does not conform to supplied type!")
+    case _            => throw new Exception("Type of success message does not conform to supplied type!")
+  }
+
+  /** */
+  def get[S <: Success](implicit ct: ClassTag[S]): S = this match {
+    case error: Error => throw error
+    case success: S   => success
+    case _            => throw new Exception("Type of success message does not conform to supplied type!")
   }
 }
 
@@ -35,15 +42,11 @@ trait Response {
   */
 trait Success extends Response
 
-/** Base trait for all error messages sent by service actors
+/** Base class for all error messages sent by service actors
   *
   * @author Simon Kaltenbacher
   */
-trait Error extends Response {
-
-  /** The error's message */
-  val message: String
-}
+class Error(message: String) extends Exception(message) with Response
 
 /** Enables pattern matching on instances of [[service.Error]]
   *
@@ -52,7 +55,7 @@ trait Error extends Response {
 object Error {
 
   def unapply(response: Response) = response match {
-    case error: Error => Some(error.message)
+    case error: Error => Some(error.getMessage)
     case _            => None
   }
 }

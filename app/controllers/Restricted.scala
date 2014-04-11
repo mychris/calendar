@@ -1,8 +1,7 @@
-package access
+package controllers
 
 import play.api.mvc._
 import play.api.mvc.Security._
-
 
 /**
   *

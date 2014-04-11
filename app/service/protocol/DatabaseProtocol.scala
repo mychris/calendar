@@ -5,7 +5,7 @@ package service.protocol
  */
 
 /** */
-case class SchemaChangeError(message: String) extends Error
+case class SchemaChangeError(message: String) extends Error(message)
 
 /** */
-case class DatabaseConnectionError(message: String) extends Error
+case class DatabaseConnectionError(message: String) extends Error(message)

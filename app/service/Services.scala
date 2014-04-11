@@ -15,13 +15,11 @@ import scala.slick.driver.PostgresDriver.SchemaDescription
 
 import service.protocol._
 
-import util.exception._
-
 /** Global service accessor
   *
   * @author Simon Kaltenbacher
   */
-object Services extends ExecutionEnvironment {
+object Services extends ExecutionEnvironment with ResponseHandling {
 
   /* Database connection pool */
   val db = Database.forDataSource(DB.getDataSource())
@@ -39,39 +37,21 @@ object Services extends ExecutionEnvironment {
   val freeTimeSlotsFindingService = system.actorOf(FreeTimeSlotFindingService.props.withRouter(FromConfig()), "freetimeslots-finding-service")
 
   /** Returns a merged ddl statement consisting of all data access component's ddl statements */
-  private def collectDdl: Future[Either[Error, SchemaDescription]] = {
+  private def collectDdl: Future[SchemaDescription] = {
 
-    val userDdlRequest     = (userService ? GetDdl).mapTo[Response]
-    val calendarDdlRequest = (calendarService ? GetDdl).mapTo[Response]
+    val userDdlRequest     = (userService ? GetDdl).expecting[Ddl]
+    val calendarDdlRequest = (calendarService ? GetDdl).expecting[Ddl]
 
     for {
-      userDdlResponse     <- userDdlRequest
-      calendarDdlResponse <- calendarDdlRequest
+      userDdl     <- userDdlRequest
+      calendarDdl <- calendarDdlRequest
     }
-    yield {
-      for {
-        userDdl     <- userDdlResponse.toEither[Ddl].right
-        calendarDdl <- calendarDdlResponse.toEither[Ddl].right
-      }
-      yield userDdl.ddl ++ calendarDdl.ddl
-    }
+    yield userDdl.ddl ++ calendarDdl.ddl
   }
 
   /** Creates the data access component tables in the database */
-  def createSchema: Future[Either[Error, Unit]] =
-    collectDdl.map(_.right.flatMap(ddl =>
-      exceptionToEither[Exception, Error, Unit](
-        db.withTransaction { implicit session => ddl.create },
-        e => SchemaChangeError(e.getMessage)
-      )
-    ))
+  def createSchema: Future[Unit] = collectDdl.map(ddl => db.withTransaction { implicit session => ddl.create })
 
   /** Drops the data access component tables in the database */
-  def dropSchema: Future[Either[Error, Unit]] =
-    collectDdl.map(_.right.flatMap(ddl =>
-      exceptionToEither[Exception, Error, Unit](
-        db.withTransaction { implicit session => ddl.drop },
-        e => SchemaChangeError(e.getMessage)
-      )
-    ))
+  def dropSchema: Future[Unit] = collectDdl.map(ddl => db.withTransaction { implicit session => ddl.drop })
 }

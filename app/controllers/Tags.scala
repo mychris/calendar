@@ -2,8 +2,6 @@ package controllers
 
 import akka.pattern.ask
 
-import access.Restricted
-
 import datasource.calendar._
 
 import play.api._
@@ -22,19 +20,13 @@ object Tags
   extends Controller with
           Restricted with
           ExecutionEnvironment with
-          ResponseTransformation {
+          ResponseSerialization with
+          ResponseHandling {
 
-
-  def parseJson[T](body: AnyContent)(implicit rds: Reads[T]): Either[Error, T] = {
-    body.asJson.flatMap(_.asOpt[T]) match {
-      case Some(json) => Right(json)
-      case None       => Left(BadFormatError(body.toString))
-    }
-  }
 
   def show(id: Int) = Authenticated.async { implicit request =>
 
-    val req = (Services.calendarService ? GetTagById(id)).mapTo[Response]
+    /*val req = (Services.calendarService ? GetTagById(id)).mapTo[Response]
 
     for {
       resp <- req
@@ -43,15 +35,17 @@ object Tags
       _.toJsonResult,
       { case tagById @ TagById(tag) if tag.userId == request.user.id => tagById.toJsonResult
         case _                                                       => InternalServerError("Not your tag") }
-    )
+    )*/
+    Future.successful(Status(501)(""))
   }
 
-  def list() = Authenticated.async { implicit request =>
-    (Services.calendarService ? GetTagsFromUser(request.user.id)).mapTo[Response].map(_.toJsonResult)
+  def list = Authenticated.async { implicit request =>
+    /* (Services.calendarService ? GetTagsFromUser(request.user.id)).mapTo[Response].map(_.toJsonResult) */
+    Future.successful(Status(501)(""))
   }
 
   def add() = Authenticated.async { implicit request =>
-    parseJson[Tag](request.body) match {
+    /* parseJson[Tag](request.body) match {
       case Left(e)      => future { e.toJsonResult }
       case Right(a)     => 
         val req = (Services.calendarService ? AddTag(a.name, a.priority, request.user.id)).mapTo[Response]
@@ -63,7 +57,8 @@ object Tags
           { case tagById @ TagAdded(tag)  => tagById.toJsonResult
             case x                        => x.toJsonResult }
         )
-    }
+    }*/
+    Future.successful(Status(501)(""))
   }
 
   def update(id: Int) = Action {

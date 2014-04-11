@@ -2,7 +2,6 @@ package controllers
 
 import play.api.mvc._
 import hirondelle.date4j.DateTime
-import access.Restricted
 
 
 object Calendar extends Controller with Restricted {

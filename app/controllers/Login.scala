@@ -14,7 +14,10 @@ import service.protocol._
 /** */
 case class LoginData(name: String, password: String)
 
-object Login extends Controller with ExecutionEnvironment {
+object Login
+  extends Controller with
+          ExecutionEnvironment with
+          ResponseHandling {
 
   /** */
   def error(message: String) = Redirect(routes.Login.index).flashing("error" -> message)
@@ -24,12 +27,17 @@ object Login extends Controller with ExecutionEnvironment {
 
   /** */
   def authenticate(loginData: LoginData): Future[SimpleResult] = {
-    val request = (Services.userService ? GetUserByName(loginData.name)).mapTo[Response]
 
-    request.map {
-      case UserByName(user) if user.password == loginData.password => login(user)
-      case UserByName(_) | NoSuchUserError(_)                      => error("User name or password incorrect!")
-      case DatabaseConnectionError(_)                              => error("No connection to server!")
+    val userByNameRequest = (Services.userService ? GetUserByName(loginData.name)).expecting[UserByName]
+
+    userByNameRequest
+      .map {
+        case UserByName(user) if user.password == loginData.password => login(user)
+        case UserByName(_)                                           => error("User name or password incorrect!")
+      }
+      .recover {
+      case NoSuchUserError(_)         => error("User name or password incorrect!")
+      case DatabaseConnectionError(_) => error("No connection to server!")
     }
   }
 
