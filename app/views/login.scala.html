@@ -9,6 +9,54 @@
     <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/login.css")">
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            $("div#register #register-submit").click(function(e) {
+                registerError("");
+                var name = $("div#register #name").val()
+                var password = $("div#register #password").val()
+                if (name == "") {
+                    registerError("Empty username");
+                    return;
+                }
+                if (password == "") {
+                    registerError("Empty password");
+                    return;
+                }
+                $.ajax({
+                    type:     "POST",
+                    url:      '@routes.Users.add()',
+                    contentType: "application/json",
+                    dataType: "json",
+                    data:     JSON.stringify({
+                                'name':     name,
+                                'password': password,
+                    }),
+                    error: function(xhr, textStatus, errorThrown){
+                        registerError(xhr.responseText);
+                    },
+                    success: function(data){
+                        registerSuccess("User " + name + " succcessfully created");
+                    }
+                });
+            })
+        })
+
+        function registerError(msg) {
+            $("#register .modal-body div.alert").remove()
+            if (msg != "") {
+                $("#register .modal-body p").after("<div class=\"alert alert-error\"><a class=\"close\" data-dismiss=\"alert\" href=\"#\">×</a>" + msg + "</div>");
+            }
+        }
+
+        function registerSuccess(msg) {
+            $("#register .modal-body div.alert").remove()
+            if (msg != "") {
+                $("#register .modal-body p").after("<div class=\"alert alert-success\"><a class=\"close\" data-dismiss=\"alert\" href=\"#\">×</a>" + msg + "</div>");
+            }
+        }
+    </script>
 }
 
 @main("Login", scripts, "") {
@@ -27,6 +75,8 @@
 
                 <div class="nav-collapse collapse pull-right">
                     <ul class="nav">
+                        <li><a href="#register" data-toggle="modal"><i class="icon-plus icon-white"></i> Register</a></li>
+                        <li class="divider-vertical"></li>
                         <li><a href="#forgot" data-toggle="modal"><i class="icon-user icon-white"></i> Forgot Password</a></li>
                         <li class="divider-vertical"></li>
                         <li><a href="#contact" data-toggle="modal"><i class="icon-envelope icon-white"></i> Contact Us</a></li>
@@ -63,6 +113,30 @@
         <p class="text-center muted ">&copy; Copyright 2014 - Calendar</p>
     </section>
     <!-- Main Container Ends -->
+
+    <!-- Register Model Box -->
+    <div id="register" class="modal hide fade in" style="display: none; ">
+        <div class="modal-header">
+            <a class="close" data-dismiss="modal">×</a>
+            <h3>Register</h3>
+        </div>
+        <div class="modal-body">
+            <p>Enter your username and password</p>
+            <form>
+                <div class="controls controls-row">
+                    <input id="name" name="name" type="text" class="span3" placeholder="Name" />
+                </div>
+                <div class="controls controls-row">
+                    <input id="password" name="password" type="password" class="span3" placeholder="Password" />
+                </div>
+
+            </form>
+        </div>
+        <div class="modal-footer">
+            <a href="#" id="register-submit" class="btn btn-primary">Submit</a>
+            <a href="#" class="btn" data-dismiss="modal">Close</a>
+        </div>
+    </div>
 
     <!-- Forgot Password Model Box -->
     <div id="forgot" class="modal hide fade in" style="display: none; ">
