@@ -96,9 +96,11 @@
                 <div class="center span4 well">
                     <legend>Please Sign In</legend>
 
-                    <div class="alert alert-error">
-                        <a class="close" data-dismiss="alert" href="#">×</a>Incorrect Username or Password!
-                    </div>
+                    @if(!flash.get("error").isEmpty) {
+                        <div class="alert alert-error">
+                            <a class="close" data-dismiss="alert" href="#">×</a>@flash.get("error")
+                        </div>
+                    }
                     @form(action = routes.Login.login) {
                         @bootstrap.loginInput(loginForm("username"), 'type -> "text", 'placeholder -> "Username" )
                         @bootstrap.loginInput(loginForm("password"), 'type -> "password", 'placeholder -> "Password" )

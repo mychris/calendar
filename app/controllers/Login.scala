@@ -61,7 +61,7 @@ object Login
   /** */
   def login = Action.async { implicit request =>
     form.bindFromRequest.fold(
-      form => future { error(form.errors.head.message) },
+      form => future { error(form.errors.head.key + " is required") },
       authenticate _
     )
   }
