@@ -39,7 +39,12 @@ class UserService(db: Database)
   }
 
   def addUser(name: String, password: String) = db.withSession { implicit session =>
-    sender ! UserAdded((users returning users.map(_.id)) += User(-1, name, password)) 
+    try {
+      sender ! UserAdded((users returning users.map(_.id)) += User(-1, name, password)) 
+    }
+    catch {
+      case e: SlickException => sender ! DuplicateUsername("There already exists a user with name $name")
+    }
   }
 
   def getDdl = sender ! Ddl(userDdl)

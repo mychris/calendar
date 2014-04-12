@@ -92,6 +92,8 @@ trait UserDataAccessComponentImpl extends UserDataAccessComponent {
       def name     = column[String]("name"    , O.NotNull              )
       def password = column[String]("password", O.NotNull              )
 
+      def uniqueName = index("unique_name", name, unique = true)
+
       def *        = (id, name, password) <> (User.tupled, User.unapply)
     }
 

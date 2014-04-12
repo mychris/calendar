@@ -28,11 +28,9 @@ object Users
   
   def add() = Action.async(parse.json) { implicit request =>
     readBody[AddUserRequestBody] { addUser =>
-      (Services.userService ? GetUserByName(addUser.name)).mapTo[Response]
-        .flatMap {
-          case NoSuchUserError(_) => toJsonResult{(Services.userService ? AddUser(addUser.name, addUser.password)).expecting[UserAdded]}
-          case _                  => Future.successful(BadRequest(s"A user with name $addUser.name already exists"))
-        }
+      toJsonResult{
+        (Services.userService ? AddUser(addUser.name, addUser.password)).expecting[UserAdded]
+      }
     }
   }
 
