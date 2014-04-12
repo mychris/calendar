@@ -39,6 +39,6 @@ class ConflictFindingService extends Actor with ActorLogging {
     }
 
   def receive =  {
-    case FindConflict(conflicts) => findConflicts(conflicts)
+    case FindConflicts(conflicts) => findConflicts(conflicts)
   }
 }

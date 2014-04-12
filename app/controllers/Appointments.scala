@@ -19,7 +19,8 @@ object Appointments
           Restricted with
           ExecutionEnvironment with
           ResponseSerialization with
-          ResponseHandling {
+          ResponseHandling with
+          RequestBodyReader {
 
   def show(id: Int) = Action.async {
     toJsonResult {
@@ -33,22 +34,12 @@ object Appointments
     }
   }
 
-  def add = Authenticated.async { implicit request =>
-    /* val description = request.body.asFormUrlEncoded.get("description")(0)
-    val start = request.body.asFormUrlEncoded.get("start")(0)
-    val end = request.body.asFormUrlEncoded.get("end")(0)
-    val tagId = 1 // Fixme
-        val req = (Services.calendarService ? AddAppointment(description, new DateTime(start), new DateTime(end), tagId)).mapTo[Response]
-        for {
-          resp <- req
-        }
-        yield resp.fold[AppointmentAdded, SimpleResult](
-        _.toJsonResult,
-        {
-          case appointmentById @ AppointmentAdded(appointment)  => appointmentById.toJsonResult
-          case x                                                => x.toJsonResult }
-        )*/
-    Future.successful(Status(501)(""))
+  def add = Authenticated.async(parse.json) { implicit request =>
+    readBody[AddAppointment] { addAppointment =>
+      toJsonResult {
+        (Services.calendarService ? addAppointment).expecting[AppointmentAdded]
+      }
+    }
   }
 
   def update(id: Int) = Action {
