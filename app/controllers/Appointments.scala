@@ -13,6 +13,7 @@ import formatters._
 
 import service._
 import service.protocol._
+import java.util.TimeZone
 
 case class AddAppointmentRequestBody(title: String, start: DateTime, end: DateTime, tagId: Int)
 
@@ -30,9 +31,17 @@ object Appointments
     }
   }
 
-  def list = Authenticated.async { implicit request =>
+  /** case: "from" is not given: all appointments within left opened time interval are being received (all since 1970, until "to"),
+    * case: "to" respectively.
+    * case: both are not given: All appointments are being received.
+    */
+  def list(from: Option[DateTime], to: Option[DateTime]) = Authenticated.async { implicit request =>
     toJsonResult {
-      (Services.calendarService ? GetAppointmentsFromUser(request.user.id)).expecting[AppointmentsFromUser]
+      (Services.calendarService ? GetAppointmentsFromUserWithTags(
+        request.user.id,
+        from.getOrElse(DateTime.forInstant(0, TimeZone.getDefault)),
+        to.getOrElse(DateTime.now(TimeZone.getDefault)
+      ))).expecting[AppointmentsFromUser]
     }
   }
 

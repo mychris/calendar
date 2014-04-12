@@ -1,16 +1,14 @@
 package service
 
 import akka.actor._
+import scala.slick.driver.PostgresDriver.simple.{Tag =>_, _}
 
 import datasource.user._
 import datasource.calendar._
 
 import hirondelle.date4j.DateTime
 
-import scala.slick.driver.PostgresDriver.simple.{Tag =>_, _}
-
 import service.protocol._
-import sun.reflect.generics.reflectiveObjects.NotImplementedException
 
 /**
   *
@@ -49,14 +47,14 @@ class CalendarService(db: Database)
   def getAppointmentsFromTag(tagId: Int) = db.withSession { implicit session =>
     sender ! AppointmentsFromTag(appointmentsWithTag(tagId).buildColl[Seq]) }
 
-  def getAppointmentsFromUser(userId: Int) = db.withSession { implicit session => db.withSession { implicit session =>
-    sender ! AppointmentsFromUser(appointmentsFromUser(userId).buildColl[Seq]) }
+  def getAppointmentsFromUser(userId: Int) = db.withSession { implicit session =>
+    sender ! AppointmentsFromUser(appointmentsFromUser(userId).buildColl[Seq])
   }
 
   /** Retrieves a user appointments together with its tags */
-  def getAppointmentsFromUserWithTags(userId: Int) = db.withSession { implicit session =>
+  def getAppointmentsFromUserWithTags(userId: Int, from: DateTime, to: DateTime) = db.withSession { implicit session =>
     sender ! AppointmentsFromUserWithTag(
-      appointmentsFromUserWithTag(userId)
+      appointmentsFromUserWithTag(userId, from, to)
         .buildColl[Seq]
         .groupBy(_._1)
         .mapValues(_.map(_._2))
@@ -65,7 +63,7 @@ class CalendarService(db: Database)
     )
   }
 
-  // TODO: FInish this!
+  // TODO: Finish this!
   def getAppointmentsFromUser(userId: Int, from: DateTime, to: DateTime) = db.withSession { implicit session =>
     sender ! AppointmentsFromUser(appointmentsFromUser(userId).buildColl[Seq])
   }
@@ -120,19 +118,19 @@ class CalendarService(db: Database)
   def getDdl = sender ! Ddl(calendarDdl)
 
   def receive =  {
-    case GetAppointmentById(id)                   => getAppointmentById(id)
-    case GetAppointmentsFromUser(id)              => getAppointmentsFromUser(id)
-    case GetAppointmentsFromTag(tagId)            => getAppointmentsFromTag(tagId)
-    case GetAppointmentsFromUserWithTags(userId)  => getAppointmentsFromUserWithTags(userId)
-    case GetTagById(id)                           => getTagById(id)
-    case GetTagsFromUser(userId)                  => getTagsFromUser(userId)
-    case GetTagsFromAppointment(appointmentId)    => getTagsFromAppointment(appointmentId)
-    case AddTag(name, priority, userId)           => addTag(name, priority, userId)
-    case UpdateTag(newTag)                        => updateTag(newTag)
-    case AddAppointment(title, start, end, tagId) => addAppointment(title, start, end, tagId)
-    case RemoveTags(tagIds)                       => removeTags(tagIds)
-    case RemoveTagsFromUser(tagIds, userId)       => removeTags(tagIds, userId)
-    case RemoveAppointments(appointmentIds)       => removeAppointments(appointmentIds)
-    case GetDdl                                   => getDdl
+    case GetAppointmentById(id)                             => getAppointmentById(id)
+    case GetAppointmentsFromUser(id)                        => getAppointmentsFromUser(id)
+    case GetAppointmentsFromTag(tagId)                      => getAppointmentsFromTag(tagId)
+    case GetAppointmentsFromUserWithTags(userId, from, to)  => getAppointmentsFromUserWithTags(userId, from, to)
+    case GetTagById(id)                                     => getTagById(id)
+    case GetTagsFromUser(userId)                            => getTagsFromUser(userId)
+    case GetTagsFromAppointment(appointmentId)              => getTagsFromAppointment(appointmentId)
+    case AddTag(name, priority, userId)                     => addTag(name, priority, userId)
+    case UpdateTag(newTag)                                  => updateTag(newTag)
+    case AddAppointment(title, start, end, tagId)           => addAppointment(title, start, end, tagId)
+    case RemoveTags(tagIds)                                 => removeTags(tagIds)
+    case RemoveTagsFromUser(tagIds, userId)                 => removeTags(tagIds, userId)
+    case RemoveAppointments(appointmentIds)                 => removeAppointments(appointmentIds)
+    case GetDdl                                             => getDdl
   }
 }
