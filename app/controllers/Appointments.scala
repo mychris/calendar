@@ -41,7 +41,7 @@ object Appointments
         request.user.id,
         from.getOrElse(DateTime.forInstant(0, TimeZone.getDefault)),
         to.getOrElse(DateTime.now(TimeZone.getDefault)
-      ))).expecting[AppointmentsFromUser]
+      ))).expecting[AppointmentsFromUserWithTag]
     }
   }
 

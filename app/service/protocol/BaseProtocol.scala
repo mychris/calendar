@@ -18,21 +18,18 @@ trait Response {
   def fold[S <: Success, A](onError: Error => A, onSuccess: S => A)(implicit ct: ClassTag[S]): A = this match {
     case error : Error => onError(error)
     case success: S    => onSuccess(success)
-    case _             => throw new Exception("Type of success message does not conform to supplied type!")
   }
 
   /** */
   def toEither[S <: Success](implicit ct: ClassTag[S]): Either[Error, S] = this match {
     case error: Error => Left(error)
     case success: S   => Right(success)
-    case _            => throw new Exception("Type of success message does not conform to supplied type!")
   }
 
   /** */
   def get[S <: Success](implicit ct: ClassTag[S]): S = this match {
     case error: Error => throw error
     case success: S   => success
-    case _            => throw new Exception("Type of success message does not conform to supplied type!")
   }
 }
 

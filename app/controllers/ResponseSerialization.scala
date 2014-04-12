@@ -30,6 +30,5 @@ trait ResponseSerialization {
         case NoSuchTagError(message)          => NotFound(message.toJson)
         case NoSuchAppointmentError(message)  => NotFound(message.toJson)
         case DatabaseConnectionError(message) => InternalServerError("Database connection lost!")
-        case e: Exception                     => InternalServerError(e.toJson)
       }
 }
