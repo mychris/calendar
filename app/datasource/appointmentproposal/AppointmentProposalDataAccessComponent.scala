@@ -8,7 +8,7 @@ import hirondelle.date4j.DateTime
 import scala.slick.driver.PostgresDriver.simple.{Tag => _, _}
 import scala.slick.lifted.Shape
 
-import util.slick._
+import util.CustomColumnTypes._
 
 /**
   *

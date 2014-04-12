@@ -1,11 +1,13 @@
 package datasource.calendar
 
-import scala.slick.driver.PostgresDriver.simple.{Tag => _, _}
+import datasource.user._
 
 import hirondelle.date4j.DateTime
 
-import datasource.user._
-import util.slick._
+import scala.slick.driver.PostgresDriver.simple.{Tag => _, _}
+
+import util._
+import util.CustomColumnTypes._
 
 /**
   *
@@ -58,6 +60,7 @@ trait CalendarDataAccessComponent {
       def id       : Column[Int]
       def name     : Column[String]
       def priority : Column[Int]
+      def color    : Column[Color]
       def userId   : Column[Int]
 
       def user : Query[UserTable, User]
@@ -182,11 +185,12 @@ trait CalendarDataAccessComponentImpl extends CalendarDataAccessComponent {
       def id       = column[Int   ]("id"      , O.PrimaryKey, O.AutoInc)
       def name     = column[String]("name"    , O.NotNull              )
       def priority = column[Int   ]("priority", O.NotNull              )
+      def color    = column[Color ]("color"   , O.NotNull              )
       def userId   = column[Int   ]("user_id" , O.NotNull              )
 
       def user     = foreignKey("user_fk", userId, users)(_.id)
 
-      def *        = (id, name, priority, userId) <> (Tag.tupled, Tag.unapply)
+      def *        = (id, name, priority, color, userId) <> (Tag.tupled, Tag.unapply)
     }
 
     class AppointmentBelongsToTagTableImpl(tag: scala.slick.lifted.Tag) extends Table[(Int, Int)](tag, "appointment_belongsto_tag") with AbstractAppointmentBelongsToTagTable {

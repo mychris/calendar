@@ -6,18 +6,20 @@ import datasource.calendar._
 
 import play.api._
 import play.api.mvc._
-import play.api.libs.json._
+import play.api.libs.json.{util => _, _}
 import play.api.libs.json.Json.toJson
 
-import scala.concurrent._
+import scala.concurrent.{util => _, _}
 
 import service._
 import service.protocol._
 
 import formatters._
 
-case class AddTagRequestBody(name: String, priority: Int)
-case class UpdateTagRequestBody(name: String, priority: Int)
+import util._
+
+case class AddTagRequestBody(name: String, priority: Int, color: Color)
+case class UpdateTagRequestBody(name: String, priority: Int, color: Color)
 
 object Tags
   extends Controller with
@@ -51,7 +53,12 @@ object Tags
   def add = Authenticated.async(parse.json) { implicit request =>
     readBody[AddTagRequestBody] { addTag =>
       toJsonResult {
-        (Services.calendarService ? AddTag(addTag.name, addTag.priority, request.user.id)).expecting[TagAdded]
+        (Services.calendarService ? AddTag(
+          addTag.name,
+          addTag.priority,
+          addTag.color,
+          request.user.id
+        )).expecting[TagAdded]
       }
     }
   }
@@ -59,7 +66,15 @@ object Tags
   def update(id: Int) = Authenticated.async(parse.json) { implicit request =>
     readBody[UpdateTagRequestBody] { updateTag =>
       toJsonResult {
-        (Services.calendarService ? UpdateTag(Tag(id, updateTag.name, updateTag.priority, request.user.id))).expecting[TagUpdated]
+        (Services.calendarService ? UpdateTag(
+          Tag(
+            id,
+            updateTag.name,
+            updateTag.priority,
+            updateTag.color,
+            request.user.id
+          )
+        )).expecting[TagUpdated]
       }
     }
   }

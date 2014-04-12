@@ -6,6 +6,8 @@ import akka.pattern.ask
 import service._
 import service.protocol._
 
+import util._
+
 object Application
   extends Controller with
           Restricted with
@@ -37,7 +39,7 @@ object Application
 
     val result = for {
       userAdded <- (Services.userService ? AddUser("test", "test")).expecting[UserAdded]
-      tagAdded  <- (Services.calendarService ? AddTag("default", 0, userAdded.id)).expecting[TagAdded]
+      tagAdded  <- (Services.calendarService ? AddTag("default", 0, Color.parse("#000000"), userAdded.id)).expecting[TagAdded]
     }
     yield Ok(views.html.index("User \"test\" created."))
 

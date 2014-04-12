@@ -11,7 +11,7 @@ import scala.concurrent.{util => _, _}
 import service._
 import service.protocol._
 
-import util.json._
+import util.JsonConversion._
 
 /**
   *

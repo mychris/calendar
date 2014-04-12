@@ -12,7 +12,8 @@ import play.api.libs.json.{util => _, _}
 
 import service.protocol._
 
-import util.json._
+import util._
+import util.JsonConversion._
 
 package object formatters {
 
@@ -27,6 +28,16 @@ package object formatters {
     def reads(json: JsValue): JsResult[DateTime] = json match {
       case JsNumber(ns) => JsSuccess(DateTime.forInstantNanos(ns.toLong, TimeZone.getDefault))
       case _            => JsError(Seq(JsPath() -> Seq(ValidationError("error.expected.jsnumber"))))
+    }
+  }
+
+  implicit object colorFormat extends Format[Color] {
+
+    def writes(o: Color): JsValue = o.code.toJson
+
+    def reads(json: JsValue): JsResult[Color] = json match {
+      case JsString(Color(color)) => JsSuccess(color)
+      case _                      => JsError(Seq(JsPath() -> Seq(ValidationError("error.expected.jsstring"))))
     }
   }
 

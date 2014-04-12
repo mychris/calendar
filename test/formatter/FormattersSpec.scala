@@ -9,8 +9,6 @@ import datasource.calendar._
 
 import formatters._
 
-import util.json._
-
 class ConflictFindingServiceSpec() extends WordSpecLike with Matchers {
 
   val tagAsObject = datasource.calendar.Tag(1, "something", 6, 1)

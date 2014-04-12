@@ -5,6 +5,8 @@ import datasource.calendar._
 
 import hirondelle.date4j.DateTime
 
+import util._
+
 /** */
 case class AppointmentWithTags(appointments: Appointment, tags: Seq[Tag])
 
@@ -24,7 +26,7 @@ case class RemoveAppointments(appointmentIds: Seq[Int]) extends Request
 case class GetTagById(id: Int) extends Request
 case class GetTagsFromUser(userId: Int) extends Request
 case class GetTagsFromAppointment(appointmentId: Int) extends Request
-case class AddTag(name: String, priority: Int, userId: Int) extends Request
+case class AddTag(name: String, priority: Int, color: Color, userId: Int) extends Request
 case class UpdateTag(tag: Tag) extends Request
 case class RemoveTags(tagIds: Seq[Int]) extends Request
 case class RemoveTagsFromUser(tagId: Seq[Int], userId: Int) extends Request

@@ -4,6 +4,8 @@ import scala.slick.driver.PostgresDriver.simple.{Tag => _, _}
 
 import hirondelle.date4j.DateTime
 
+import util._
+
 trait AbstractAppointment {
 
   def id    : Int
@@ -17,8 +19,9 @@ trait AbstractTag {
   def id       : Int
   def name     : String
   def priority : Int
+  def color    : Color
   def userId   : Int
 } 
 
 case class Appointment(id: Int, title: String, start: DateTime, end: DateTime) extends AbstractAppointment
-case class Tag(id: Int, name: String, priority: Int, userId: Int) extends AbstractTag
+case class Tag(id: Int, name: String, priority: Int, color: Color, userId: Int) extends AbstractTag

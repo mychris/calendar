@@ -1,14 +1,17 @@
 package service
 
 import akka.actor._
-import scala.slick.driver.PostgresDriver.simple.{Tag =>_, _}
 
 import datasource.user._
 import datasource.calendar._
 
 import hirondelle.date4j.DateTime
 
+import scala.slick.driver.PostgresDriver.simple.{Tag =>_, _}
+
 import service.protocol._
+
+import util._
 
 /**
   *
@@ -92,8 +95,8 @@ class CalendarService(db: Database)
   def getTagsFromAppointment(appointmentId: Int) = db.withSession { implicit session =>
     sender ! TagsFromAppointment(tagsFromAppointment(appointmentId).buildColl[Seq]) }
 
-  def addTag(name: String, priority: Int, userId: Int) = db.withSession { implicit session =>
-    sender ! TagAdded((tags returning tags.map(_.id)) += Tag(-1, name, priority, userId)) }
+  def addTag(name: String, priority: Int, color: Color, userId: Int) = db.withSession { implicit session =>
+    sender ! TagAdded((tags returning tags.map(_.id)) += Tag(-1, name, priority, color, userId)) }
 
   def updateTag(newTag: Tag) = db.withSession { implicit session =>
     sender ! TagUpdated(
@@ -118,19 +121,19 @@ class CalendarService(db: Database)
   def getDdl = sender ! Ddl(calendarDdl)
 
   def receive =  {
-    case GetAppointmentById(id)                             => getAppointmentById(id)
-    case GetAppointmentsFromUser(id)                        => getAppointmentsFromUser(id)
-    case GetAppointmentsFromTag(tagId)                      => getAppointmentsFromTag(tagId)
-    case GetAppointmentsFromUserWithTags(userId, from, to)  => getAppointmentsFromUserWithTags(userId, from, to)
-    case GetTagById(id)                                     => getTagById(id)
-    case GetTagsFromUser(userId)                            => getTagsFromUser(userId)
-    case GetTagsFromAppointment(appointmentId)              => getTagsFromAppointment(appointmentId)
-    case AddTag(name, priority, userId)                     => addTag(name, priority, userId)
-    case UpdateTag(newTag)                                  => updateTag(newTag)
-    case AddAppointment(title, start, end, tagId)           => addAppointment(title, start, end, tagId)
-    case RemoveTags(tagIds)                                 => removeTags(tagIds)
-    case RemoveTagsFromUser(tagIds, userId)                 => removeTags(tagIds, userId)
-    case RemoveAppointments(appointmentIds)                 => removeAppointments(appointmentIds)
-    case GetDdl                                             => getDdl
+    case GetAppointmentById(id)                            => getAppointmentById(id)
+    case GetAppointmentsFromUser(id)                       => getAppointmentsFromUser(id)
+    case GetAppointmentsFromTag(tagId)                     => getAppointmentsFromTag(tagId)
+    case GetAppointmentsFromUserWithTags(userId, from, to) => getAppointmentsFromUserWithTags(userId, from, to)
+    case GetTagById(id)                                    => getTagById(id)
+    case GetTagsFromUser(userId)                           => getTagsFromUser(userId)
+    case GetTagsFromAppointment(appointmentId)             => getTagsFromAppointment(appointmentId)
+    case AddTag(name, priority, color, userId)             => addTag(name, priority, color, userId)
+    case UpdateTag(newTag)                                 => updateTag(newTag)
+    case AddAppointment(title, start, end, tagId)          => addAppointment(title, start, end, tagId)
+    case RemoveTags(tagIds)                                => removeTags(tagIds)
+    case RemoveTagsFromUser(tagIds, userId)                => removeTags(tagIds, userId)
+    case RemoveAppointments(appointmentIds)                => removeAppointments(appointmentIds)
+    case GetDdl                                            => getDdl
   }
 }

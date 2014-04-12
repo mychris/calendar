@@ -1,8 +1,8 @@
 package util
 
-import play.api.libs.json._
+import play.api.libs.json.{Json => _, _}
 
-package object json {
+object JsonConversion {
 
   /** */
   implicit def value2JsonConverter[V : Writes](value: V) = new JsonSerializer(value)
@@ -10,6 +10,6 @@ package object json {
   /** */
   class JsonSerializer[V : Writes](value: V) {
 
-    def toJson = Json.toJson(value)
+    def toJson = play.api.libs.json.Json.toJson(value)
   }
 }
