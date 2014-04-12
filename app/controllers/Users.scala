@@ -25,13 +25,15 @@ object Users
           ResponseSerialization with
           ResponseHandling with 
           RequestBodyReader {
-  
+
   def add() = Action.async(parse.json) { implicit request =>
     readBody[AddUserRequestBody] { addUser =>
-      toJsonResult{
-        (Services.userService ? AddUser(addUser.name, addUser.password)).expecting[UserAdded]
-      }
-    }
-  }
+      (Services.userService ? GetUserByName(addUser.name)).mapTo[Response]
+        .flatMap {
+          case NoSuchUserError(_) => toJsonResult{(Services.userService ? AddUser(addUser.name, addUser.password)).expecting[UserAdded]}
+          case _                  => Future.successful(BadRequest(s"A user with name ${addUser.name} already exists"))
+        }
+     }
+   }
 
 }
