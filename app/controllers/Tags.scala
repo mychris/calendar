@@ -59,7 +59,9 @@ object Tags
     Status(501)("")
   }
 
-  def delete(id: Int) = Action {
-    Status(501)("")
+  def delete(id: Int) = Authenticated.async { implicit request =>
+    toJsonResult {
+      (Services.calendarService ? RemoveTagsFromUser(List(id), request.user.id)).expecting[TagsRemoved]
+    }
   }
 }

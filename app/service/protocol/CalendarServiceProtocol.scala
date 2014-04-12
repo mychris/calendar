@@ -26,6 +26,7 @@ case class GetTagsFromUser(userId: Int) extends Request
 case class GetTagsFromAppointment(appointmentId: Int) extends Request
 case class AddTag(name: String, priority: Int, userId: Int) extends Request
 case class RemoveTags(tagIds: Seq[Int]) extends Request
+case class RemoveTagsFromUser(tagId: Seq[Int], userId: Int) extends Request
 
 /*
  * Reponses
@@ -40,11 +41,11 @@ case class  AppointmentAdded(id: Int) extends Success
 case object AppointmentsRemoved extends Success
 
 /* Tags */
-case class  TagById(tag: Tag) extends Success
-case class  TagsFromUser(tags: Seq[Tag]) extends Success
-case class  TagsFromAppointment(tags: Seq[Tag]) extends Success
-case class  TagAdded(id: Int) extends Success
-case object TagsRemoved extends Success
+case class TagById(tag: Tag) extends Success
+case class TagsFromUser(tags: Seq[Tag]) extends Success
+case class TagsFromAppointment(tags: Seq[Tag]) extends Success
+case class TagAdded(id: Int) extends Success
+case class TagsRemoved() extends Success
 
 /*
  * Errors

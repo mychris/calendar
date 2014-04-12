@@ -102,6 +102,11 @@ class CalendarService(db: Database)
     sender ! TagsRemoved
   }
 
+  def removeTags(tagIds: Seq[Int], userId: Int) = db.withSession { implicit session =>
+    tags.filter(_.id.inSet(tagIds)).filter(_.userId === userId).delete
+    sender ! TagsRemoved
+  }
+
   def getDdl = sender ! Ddl(calendarDdl)
 
   def receive =  {
@@ -115,6 +120,7 @@ class CalendarService(db: Database)
     case AddTag(name, priority, userId)           => addTag(name, priority, userId)
     case AddAppointment(title, start, end, tagId) => addAppointment(title, start, end, tagId)
     case RemoveTags(tagIds)                       => removeTags(tagIds)
+    case RemoveTagsFromUser(tagIds, userId)       => removeTags(tagIds, userId)
     case RemoveAppointments(appointmentIds)       => removeAppointments(appointmentIds)
     case GetDdl                                   => getDdl
   }
