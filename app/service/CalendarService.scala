@@ -97,6 +97,16 @@ class CalendarService(db: Database)
   def addTag(name: String, priority: Int, userId: Int) = db.withSession { implicit session =>
     sender ! TagAdded((tags returning tags.map(_.id)) += Tag(-1, name, priority, userId)) }
 
+  def updateTag(newTag: Tag) = db.withSession { implicit session =>
+    sender ! TagUpdated(
+      tags
+        .filter(_.id === newTag.id)
+        .filter(_.userId === newTag.userId)
+        .map(t => (t.name, t.priority))
+        .update((newTag.name, newTag.priority))
+    )
+  }
+
   def removeTags(tagIds: Seq[Int]) = db.withSession { implicit session =>
     tags.filter(_.id.inSet(tagIds)).delete
     sender ! TagsRemoved
@@ -118,6 +128,7 @@ class CalendarService(db: Database)
     case GetTagsFromUser(userId)                  => getTagsFromUser(userId)
     case GetTagsFromAppointment(appointmentId)    => getTagsFromAppointment(appointmentId)
     case AddTag(name, priority, userId)           => addTag(name, priority, userId)
+    case UpdateTag(newTag)                        => updateTag(newTag)
     case AddAppointment(title, start, end, tagId) => addAppointment(title, start, end, tagId)
     case RemoveTags(tagIds)                       => removeTags(tagIds)
     case RemoveTagsFromUser(tagIds, userId)       => removeTags(tagIds, userId)

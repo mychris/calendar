@@ -17,6 +17,7 @@ import service.protocol._
 import formatters._
 
 case class AddTagRequestBody(name: String, priority: Int)
+case class UpdateTagRequestBody(name: String, priority: Int)
 
 object Tags
   extends Controller with
@@ -55,8 +56,12 @@ object Tags
     }
   }
 
-  def update(id: Int) = Action {
-    Status(501)("")
+  def update(id: Int) = Authenticated.async(parse.json) { implicit request =>
+    readBody[UpdateTagRequestBody] { updateTag =>
+      toJsonResult {
+        (Services.calendarService ? UpdateTag(Tag(id, updateTag.name, updateTag.priority, request.user.id))).expecting[TagUpdated]
+      }
+    }
   }
 
   def delete(id: Int) = Authenticated.async { implicit request =>

@@ -69,6 +69,7 @@ package object formatters {
   implicit val tagsFromUserFormat = Json.format[TagsFromUser]
   implicit val tagsFromAppointmentFormat = Json.format[TagsFromAppointment]
   implicit val tagAddedFormat = Json.format[TagAdded]
+  implicit val tagUpdatedFormat = Json.format[TagUpdated]
   implicit object tagsRemoved extends Writes[TagsRemoved] {
     def writes(o: TagsRemoved): JsValue = "".toJson
   }
@@ -107,6 +108,7 @@ package object formatters {
 
   /* Tags */
   implicit val addTagRequestBody = Json.format[AddTagRequestBody]
+  implicit val updateTagRequestBody = Json.format[UpdateTagRequestBody]
 
   /* Users */
   implicit val addUserRequestBody = Json.format[AddUserRequestBody]
