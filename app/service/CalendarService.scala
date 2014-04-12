@@ -70,8 +70,8 @@ class CalendarService(db: Database)
     sender ! AppointmentsFromUser(appointmentsFromUser(userId).buildColl[Seq])
   }
 
-  def addAppointment(description: String, start: DateTime, end: DateTime, tagId: Int) = db.withTransaction { implicit session =>
-    val appointmentId = (appointments returning appointments.map(_.id)) += Appointment(-1, description, start, end)
+  def addAppointment(title: String, start: DateTime, end: DateTime, tagId: Int) = db.withTransaction { implicit session =>
+    val appointmentId = (appointments returning appointments.map(_.id)) += Appointment(-1, title, start, end)
     appointmentBelongsToTag += ((appointmentId, tagId))
     sender ! AppointmentAdded(appointmentId)
   }
@@ -105,17 +105,17 @@ class CalendarService(db: Database)
   def getDdl = sender ! Ddl(calendarDdl)
 
   def receive =  {
-    case GetAppointmentById(id)                         => getAppointmentById(id)
-    case GetAppointmentsFromUser(id)                    => getAppointmentsFromUser(id)
-    case GetAppointmentsFromTag(tagId)                  => getAppointmentsFromTag(tagId)
-    case GetAppointmentsFromUserWithTags(userId)        => getAppointmentsFromUserWithTags(userId)
-    case GetTagById(id)                                 => getTagById(id)
-    case GetTagsFromUser(userId)                        => getTagsFromUser(userId)
-    case GetTagsFromAppointment(appointmentId)          => getTagsFromAppointment(appointmentId)
-    case AddTag(name, priority, userId)                 => addTag(name, priority, userId)
-    case AddAppointment(description, start, end, tagId) => addAppointment(description, start, end, tagId)
-    case RemoveTags(tagIds)                             => removeTags(tagIds)
-    case RemoveAppointments(appointmentIds)             => removeAppointments(appointmentIds)
-    case GetDdl                                         => getDdl
+    case GetAppointmentById(id)                   => getAppointmentById(id)
+    case GetAppointmentsFromUser(id)              => getAppointmentsFromUser(id)
+    case GetAppointmentsFromTag(tagId)            => getAppointmentsFromTag(tagId)
+    case GetAppointmentsFromUserWithTags(userId)  => getAppointmentsFromUserWithTags(userId)
+    case GetTagById(id)                           => getTagById(id)
+    case GetTagsFromUser(userId)                  => getTagsFromUser(userId)
+    case GetTagsFromAppointment(appointmentId)    => getTagsFromAppointment(appointmentId)
+    case AddTag(name, priority, userId)           => addTag(name, priority, userId)
+    case AddAppointment(title, start, end, tagId) => addAppointment(title, start, end, tagId)
+    case RemoveTags(tagIds)                       => removeTags(tagIds)
+    case RemoveAppointments(appointmentIds)       => removeAppointments(appointmentIds)
+    case GetDdl                                   => getDdl
   }
 }

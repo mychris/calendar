@@ -6,10 +6,10 @@ import hirondelle.date4j.DateTime
 
 trait AbstractAppointment {
 
-  def id          : Int
-  def description : String
-  def start       : DateTime
-  def end         : DateTime
+  def id    : Int
+  def title : String
+  def start : DateTime
+  def end   : DateTime
 }    
 
 trait AbstractTag {
@@ -20,5 +20,5 @@ trait AbstractTag {
   def userId   : Int
 } 
 
-case class Appointment(id: Int, description: String, start: DateTime, end: DateTime) extends AbstractAppointment
+case class Appointment(id: Int, title: String, start: DateTime, end: DateTime) extends AbstractAppointment
 case class Tag(id: Int, name: String, priority: Int, userId: Int) extends AbstractTag

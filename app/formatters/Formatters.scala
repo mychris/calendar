@@ -1,3 +1,5 @@
+import controllers._
+
 import datasource.calendar._
 import datasource.user._
 
@@ -43,11 +45,6 @@ package object formatters {
 
   implicit val userFormat = Json.format[User]
 
-  /* Requests */
-  implicit val getUserByIdFormat = Json.format[GetUserById]
-  implicit val getUserByNameFormat = Json.format[GetUserByName]
-  implicit val addUserFormat = Json.format[AddUser]
-
   /* Responses */
   implicit val userByIdFormat = Json.format[UserById]
   implicit val userByNameFormat = Json.format[UserByName]
@@ -59,20 +56,6 @@ package object formatters {
 
   implicit val tagFormat = Json.format[Tag]
   implicit val appointmentFormat = Json.format[Appointment]
-
-  /* Requests */
-  implicit val getAppointmentById = Json.format[GetAppointmentById]
-  implicit val getAppointmentsFromTag = Json.format[GetAppointmentsFromTag]
-  implicit val getAppointmentsFromUser = Json.format[GetAppointmentsFromUser]
-  implicit val getAppointmentsFromUserWithTags = Json.format[GetAppointmentsFromUserWithTags]
-  implicit val addAppointment = Json.format[AddAppointment]
-  implicit val removeAppointments = Json.format[RemoveAppointments]
-
-  implicit val getTagById = Json.format[GetTagById]
-  implicit val getTagsFromUser = Json.format[GetTagsFromUser]
-  implicit val getTagsFromAppointment = Json.format[GetTagsFromAppointment]
-  implicit val addTag = Json.format[AddTag]
-  implicit val removeTags = Json.format[RemoveTags]
 
   /* Responses */
   implicit val appointmentWithTagsFormat = Json.format[AppointmentWithTags]
@@ -91,9 +74,6 @@ package object formatters {
    * ConflictFindingService
    */
 
-  /* Requests */
-  implicit val findConflicts = Json.format[FindConflicts]
-
   /* Responses */
   implicit val conflictsWrites = Json.writes[Conflicts]
 
@@ -102,9 +82,6 @@ package object formatters {
    */
 
   implicit val timeSlotFormat = Json.format[TimeSlot]
-
-  /* Requests */
-  implicit val findFreeTimeSlots = Json.format[FindFreeTimeSlots]
 
   /* Responses */
   implicit val freeTimeSlotsFormat = Json.format[FreeTimeSlots]
@@ -117,4 +94,14 @@ package object formatters {
 
     def writes(o: Exception): JsValue = o.getMessage.toJson 
   }
+
+  /*
+   * Json request bodies
+   */
+
+  /* Appointments */
+  implicit val addAppointmentRequestBody = Json.format[AddAppointmentRequestBody]
+
+  /* Tags */
+  implicit val addTagRequestBody = Json.format[AddTagRequestBody]
 }

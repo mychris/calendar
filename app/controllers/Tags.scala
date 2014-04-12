@@ -16,12 +16,15 @@ import service.protocol._
 
 import formatters._
 
+case class AddTagRequestBody(name: String, priority: Int)
+
 object Tags
   extends Controller with
           Restricted with
           ExecutionEnvironment with
           ResponseSerialization with
-          ResponseHandling {
+          ResponseHandling with
+          RequestBodyReader {
 
 
   def show(id: Int) = Authenticated.async { implicit request =>
@@ -44,21 +47,12 @@ object Tags
     Future.successful(Status(501)(""))
   }
 
-  def add() = Authenticated.async { implicit request =>
-    /* parseJson[Tag](request.body) match {
-      case Left(e)      => future { e.toJsonResult }
-      case Right(a)     => 
-        val req = (Services.calendarService ? AddTag(a.name, a.priority, request.user.id)).mapTo[Response]
-        for {
-          resp <- req
-        }
-        yield resp.fold[TagAdded, SimpleResult](
-          _.toJsonResult,
-          { case tagById @ TagAdded(tag)  => tagById.toJsonResult
-            case x                        => x.toJsonResult }
-        )
-    }*/
-    Future.successful(Status(501)(""))
+  def add = Authenticated.async(parse.json) { implicit request =>
+    readBody[AddTagRequestBody] { addTag =>
+      toJsonResult {
+        (Services.calendarService ? AddTag(addTag.name, addTag.priority, request.user.id)).expecting[TagAdded]
+      }
+    }
   }
 
   def update(id: Int) = Action {

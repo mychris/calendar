@@ -52,9 +52,9 @@ trait AppointmentProposalDataAccessComponent {
 
     trait AbstractAppointmentProposalTable extends Table[AppointmentProposal] {
 
-      def id          : Column[Int]
-      def description : Column[String]
-      def creatorId   : Column[Int]
+      def id        : Column[Int]
+      def title     : Column[String]
+      def creatorId : Column[Int]
 
       def creator: Query[UserTable, User]
     }
@@ -115,13 +115,13 @@ trait AppointmentProposalDataAccessComponentImpl extends AppointmentProposalData
 
     class AppointmentProposalTableImpl(tag: scala.slick.lifted.Tag) extends Table[AppointmentProposal](tag, "appointment_proposal") with AbstractAppointmentProposalTable {
 
-      def id          = column[Int     ]("id", O.PrimaryKey, O.AutoInc)
-      def description = column[String  ]("description", O.NotNull)
-      def creatorId   = column[Int     ]("creator_id", O.NotNull)
+      def id        = column[Int     ]("id", O.PrimaryKey, O.AutoInc)
+      def title     = column[String  ]("title", O.NotNull)
+      def creatorId = column[Int     ]("creator_id", O.NotNull)
 
       def creator = foreignKey("creator_fk", creatorId, users)(_.id)
 
-      def * = (id, description, creatorId) <> (AppointmentProposal.tupled, AppointmentProposal.unapply)
+      def * = (id, title, creatorId) <> (AppointmentProposal.tupled, AppointmentProposal.unapply)
     }
 
     class AppointmentProposalTimeTableImpl(tag: scala.slick.lifted.Tag) extends Table[AppointmentProposalTime](tag, "appointment_proposal_time") with AbstractAppointmentProposalTimeTable {

@@ -6,9 +6,9 @@ import hirondelle.date4j.DateTime
 
 trait AbstractAppointmentProposal {
 
-  def id          : Int
-  def description : String
-  def creatorId   : Int
+  def id        : Int
+  def title     : String
+  def creatorId : Int
 }
 
 trait AbstractAppointmentProposalTime {
@@ -19,7 +19,7 @@ trait AbstractAppointmentProposalTime {
   def proposalId : Int
 }
 
-case class AppointmentProposal(id: Int, description: String, creatorId: Int) extends AbstractAppointmentProposal
+case class AppointmentProposal(id: Int, title: String, creatorId: Int) extends AbstractAppointmentProposal
 case class AppointmentProposalTime(id: Int, start: DateTime, end: DateTime, proposalId: Int) extends AbstractAppointmentProposalTime
 
 object Vote extends Enumeration {

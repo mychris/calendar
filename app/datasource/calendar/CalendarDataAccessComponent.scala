@@ -45,10 +45,10 @@ trait CalendarDataAccessComponent {
 
     trait AbstractAppointmentTable extends Table[Appointment] {
 
-      def id          : Column[Int]
-      def description : Column[String]
-      def start       : Column[DateTime]
-      def end         : Column[DateTime]
+      def id    : Column[Int]
+      def title : Column[String]
+      def start : Column[DateTime]
+      def end   : Column[DateTime]
 
       def tags : Query[TagTable, Tag]
     }
@@ -166,14 +166,14 @@ trait CalendarDataAccessComponentImpl extends CalendarDataAccessComponent {
 
     class AppointmentTableImpl(tag: scala.slick.lifted.Tag) extends Table[Appointment](tag, "appointment") with AbstractAppointmentTable {
 
-      def id          = column[Int     ]("id"         , O.PrimaryKey, O.AutoInc)
-      def description = column[String  ]("description", O.NotNull              )
-      def start       = column[DateTime]("start_date" , O.NotNull              )
-      def end         = column[DateTime]("end_date"   , O.NotNull              )
+      def id    = column[Int     ]("id"        , O.PrimaryKey, O.AutoInc)
+      def title = column[String  ]("title"     , O.NotNull              )
+      def start = column[DateTime]("start_date", O.NotNull              )
+      def end   = column[DateTime]("end_date"  , O.NotNull              )
 
       def tags        = for(abtt <- appointmentBelongsToTag; t <- abtt.tag if abtt.appointmentId === id) yield t
 
-      def *           = (id, description, start, end) <> (Appointment.tupled, Appointment.unapply)
+      def *           = (id, title, start, end) <> (Appointment.tupled, Appointment.unapply)
     }
 
     class TagTableImpl(tag: scala.slick.lifted.Tag) extends Table[Tag](tag, "tag") with AbstractTagTable {

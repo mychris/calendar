@@ -14,6 +14,8 @@ import formatters._
 import service._
 import service.protocol._
 
+case class AddAppointmentRequestBody(title: String, start: DateTime, end: DateTime, tagId: Int)
+
 object Appointments
   extends Controller with
           Restricted with
@@ -35,52 +37,37 @@ object Appointments
   }
 
   def add = Authenticated.async(parse.json) { implicit request =>
-    readBody[AddAppointment] { addAppointment =>
+    readBody[AddAppointmentRequestBody] { addAppointment =>
       toJsonResult {
-        (Services.calendarService ? addAppointment).expecting[AppointmentAdded]
+        (Services.calendarService ? AddAppointment(
+          addAppointment.title,
+          addAppointment.start,
+          addAppointment.end,
+          addAppointment.tagId
+        )).expecting[AppointmentAdded]
       }
     }
   }
 
   def update(id: Int) = Action {
-  	Status(501)("")
+    Status(501)("")
   }
 
   def delete(id: Int) = Action {
-  	Status(501)("")
+    Status(501)("")
   }
 
-  def conflicts() = Authenticated.async { implicit request => 
-    /*val req = (Services.calendarService ? GetAppointmentsFromUser(request.user.id)).mapTo[Response]
-    req.flatMap{
-      case AppointmentsFromUser(apps) => {
-        ((Services.conflictFindingService ? FindConflict(apps)).mapTo[Response]).map(_.toJsonResult)
+  def conflicts = Authenticated.async { implicit request => 
+    toJsonResult {
+      for {
+        AppointmentsFromUser(appointments) <- (Services.calendarService ? GetAppointmentsFromUser(request.user.id)).expecting[AppointmentsFromUser]
+        conflicts                          <- (Services.conflictFindingService ? FindConflicts(appointments)).expecting[Conflicts]
       }
-      case x => future { x.toJsonResult }
-    }*/
-    Future.successful(Status(501)(""))
+      yield conflicts
+    }
   }
 
   def freeTimeSlots() = Authenticated.async { implicit request =>
-    /* val appsReq = (Services.calendarService ? GetAppointmentsFromUser(request.user.id)).mapTo[Response]
-
-    val duration: Int      = Integer.parseInt(request.body.asFormUrlEncoded.get("duration")(0))*60*1000
-    val start   : DateTime = new DateTime(request.body.asFormUrlEncoded.get("start")(0))
-    val end     : DateTime = new DateTime(request.body.asFormUrlEncoded.get("end")(0))
-
-    appsReq.flatMap{
-      case AppointmentsFromUser(apps) => {
-//        val timeSlotsReq = (Services.freeTimeSlotsFindingService ? FindFreeTimeSlots(duration, start, end, apps)).mapTo[Response]
-        ((Services.freeTimeSlotsFindingService ? FindFreeTimeSlots(duration, start, end, apps)).mapTo[Response]).map(_.toJsonResult)
-//        timeSlotsReq.flatMap{
-//          case FreeTimeSlots(slots) => { // slots: Seq[(DateTime, DateTime)]
-//            ((Services.calendarService ? FindFreeTimeSlots(apps)).mapTo[Response]).map(_.toJsonResult)
-//          }
-//          case x => future { x.toJsonResult }
-//        }
-      }
-      case x => future { x.toJsonResult }
-    }*/
     Future.successful(Status(501)(""))
   }
 }
