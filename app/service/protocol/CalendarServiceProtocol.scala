@@ -8,7 +8,7 @@ import hirondelle.date4j.DateTime
 import util._
 
 /** */
-case class AppointmentWithTags(appointments: Appointment, tags: Seq[Tag])
+case class AppointmentWithTags(appointment: Appointment, tags: Seq[Tag])
 
 /*
  * Requests
