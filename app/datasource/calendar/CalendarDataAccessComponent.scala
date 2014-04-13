@@ -108,7 +108,7 @@ trait CalendarDataAccessComponent {
       yield a
 
     /** From a user, receives all appointments including its tags, between a given time, where both, from and to are inclusive */
-    def appointmentsFromUserWithTag(userId: Int, from: DateTime, to: DateTime): Query[(AppointmentTable, TagTable), (Appointment, Tag)] =
+    def appointmentFromUserWithTag(userId: Int, from: DateTime, to: DateTime): Query[(AppointmentTable, TagTable), (Appointment, Tag)] =
       for {
         abtt <- appointmentBelongsToTag
         t    <- abtt.tag
