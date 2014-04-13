@@ -7,6 +7,7 @@ import service._
 import service.protocol._
 
 import util._
+import play.api.templates.Html
 
 object Application
   extends Controller with
@@ -19,7 +20,7 @@ object Application
   /** Create database tables */
   def createSchema = Action.async {
     Services.createSchema
-      .map(_ => Ok(views.html.index("Database tables have been created!")))
+      .map(_ => Ok(views.html.index("Database tables have been created!", Html("<a href=\"/\">Go to Login</a>"))))
       .recover {
         case e: Exception => InternalServerError(e.getMessage)
       }
@@ -28,7 +29,7 @@ object Application
   /** Drop database tables */
   def dropSchema = Action.async {
     Services.dropSchema
-      .map(_ => Ok(views.html.index("Database tables have been dropped!")))
+      .map(_ => Ok(views.html.index("Database tables have been dropped!", Html("<a href=\"/createschema\">Create Schema</a>"))))
       .recover {
         case e: Exception => InternalServerError(e.getMessage)
       }
