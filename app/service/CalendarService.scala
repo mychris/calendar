@@ -30,7 +30,8 @@ class CalendarService(db: Database)
   extends Actor with 
           ActorLogging with
           UserDataAccessComponentImpl with
-          CalendarDataAccessComponentImpl {
+          CalendarDataAccessComponentImpl with
+          ExceptionHandling {
 
   /** */
   protected object userDataAccess extends UserDataAccessModuleImpl
@@ -120,7 +121,7 @@ class CalendarService(db: Database)
 
   def getDdl = sender ! Ddl(calendarDdl)
 
-  def receive =  {
+  def receive = handled {
     case GetAppointmentById(id)                            => getAppointmentById(id)
     case GetAppointmentsFromUser(id)                       => getAppointmentsFromUser(id)
     case GetAppointmentsFromTag(tagId)                     => getAppointmentsFromTag(tagId)

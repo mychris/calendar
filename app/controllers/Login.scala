@@ -36,8 +36,8 @@ object Login
         case UserByName(_)                                           => error("User name or password incorrect!")
       }
       .recover {
-      case NoSuchUserError(_)         => error("User name or password incorrect!")
-      case DatabaseConnectionError(_) => error("No connection to server!")
+        case NoSuchUserError(_) => error("User name or password incorrect!")
+        case DatabaseError(_)   => error("Internal server error")
     }
   }
 

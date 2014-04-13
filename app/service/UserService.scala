@@ -24,7 +24,8 @@ object UserService {
 class UserService(db: Database)
   extends Actor with
           ActorLogging with
-          UserDataAccessComponentImpl {
+          UserDataAccessComponentImpl with
+          ExceptionHandling {
 
   protected object userDataAccess extends UserDataAccessModuleImpl
 
@@ -39,17 +40,12 @@ class UserService(db: Database)
   }
 
   def addUser(name: String, password: String) = db.withSession { implicit session =>
-    try {
-      sender ! UserAdded((users returning users.map(_.id)) += User(-1, name, password)) 
-    }
-    catch {
-      case e: SlickException => sender ! DuplicateUsername("There already exists a user with name $name")
-    }
+    sender ! UserAdded((users returning users.map(_.id)) += User(-1, name, password)) 
   }
 
   def getDdl = sender ! Ddl(userDdl)
 
-  def receive =  {
+  def receive = handled {
     case GetUserById(id)     => getUserById(id)
     case GetUserByName(name) => getUserByName(name)
     case AddUser(name, pw)   => addUser(name, pw)
