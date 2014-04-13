@@ -10,8 +10,8 @@ import scala.slick.driver.PostgresDriver.simple._
 object CustomColumnTypes {
   
   implicit val dateTimeColumnType = MappedColumnType.base[DateTime, Timestamp](
-    dateTime  => new Timestamp(dateTime.getNanoseconds.asInstanceOf[Long]),
-    timestamp => DateTime.forInstantNanos(timestamp.getNanos, TimeZone.getDefault)
+    dateTime  => new Timestamp(String.valueOf(dateTime.getNanoseconds).toLong),
+    timestamp => DateTime.forInstantNanos(String.valueOf(timestamp.getNanos).toLong, TimeZone.getDefault)
   )
 
   implicit val colorColumnType = MappedColumnType.base[Color, String](
