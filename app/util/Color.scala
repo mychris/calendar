@@ -1,12 +1,14 @@
 package util
 
+import scala.util.matching.Regex
+
 /**
   *
   * @author Simon Kaltenbacher
   */
 object Color {
 
-  val HexCode = "#[0-9]{6}".r
+  val HexCode = """(#[0-9]{6})""".r
 
 	def parse(code: String) = code match {
 		case HexCode(code) => new Color(code)
