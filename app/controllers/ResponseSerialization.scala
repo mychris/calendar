@@ -29,6 +29,6 @@ trait ResponseSerialization {
         case NoSuchUserError(message)         => NotFound(message.toJson)
         case NoSuchTagError(message)          => NotFound(message.toJson)
         case NoSuchAppointmentError(message)  => NotFound(message.toJson)
-        case DatabaseError(message)          => InternalServerError("Database connection lost!")
+        case DatabaseError(message)           => InternalServerError(message.toJson)
       }
 }
