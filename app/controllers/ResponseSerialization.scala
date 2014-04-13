@@ -30,11 +30,11 @@ trait ResponseSerialization {
     block
       .map(result => Ok(result.toJson))
       .recover {
-        case NoSuchUserError(message)         => NotFound(message.toJson)
-        case NoSuchTagError(message)          => NotFound(message.toJson)
-        case NoSuchAppointmentError(message)  => NotFound(message.toJson)
-        case DatabaseError(message)           => InternalServerError(message.toJson)
-        case e: AskTimeoutException           => InternalServerError(e.getMessage)
-        case e: Exception                     => InternalServerError(e.getMessage)
+        case NoSuchUserError(message)        => NotFound(message.toJson)
+        case NoSuchTagError(message)         => NotFound(message.toJson)
+        case NoSuchAppointmentError(message) => NotFound(message.toJson)
+        case DatabaseError(message)          => InternalServerError(message.toJson)
+        case e: AskTimeoutException          => InternalServerError(e.getMessage)
+        case e: Exception                    => InternalServerError(e.getMessage)
       }
 }
