@@ -57,18 +57,21 @@
          */
         function createEvent(eventData){
             $.ajax({
-                type:     "POST",
-                url:      '@routes.Appointments.add()',
-                dataType: "json",
-                data:     {
-                            'description': eventData.title,
-                            'start'      : eventData.start.stripZone().format(),
-                            'end'        : eventData.end.stripZone().format()
-                },
+                type:        "POST",
+                url:         "@routes.Appointments.add()",
+                dataType:    "json",
+                contentType: "application/json",
+                data:        JSON.stringify({
+                               'title' : eventData.title,
+                               'start' : eventData.start.stripZone().format(),
+                               'end'   : eventData.end.stripZone().format(),
+                               'tagId' : 5
+                }),
                 error: function(xhr){
                     // var resp = JSON.parse(xhr.responseText)
                     // console.log(resp.errorMsg);
-                    console.log("createEvent Error: " + xhr);
+                    console.log("createEvent Error: ");
+                    console.log(xhr.responseText);
                 },
                 success: function(data){
                     console.log("event successfully created!")
@@ -79,19 +82,20 @@
 
         function findFreeTimeSlots(){
             $.ajax({
-                type:     "POST",
-                url:      '@routes.Appointments.freeTimeSlots()',
-                dataType: "json",
-                data:     {
-                            'duration': $('#duration').val().toString(),
-                            'start'   : $('#betweenFrom').val().toString(),
-                            'end'     : $('#betweenTo').val().toString(),
-                },
+                type:        "POST",
+                url:         "@routes.Appointments.freeTimeSlots()",
+                dataType:    "json",
+                contentType: "application/json",
+                data:        JSON.stringify({
+                               'duration': $('#duration').val().toString(),
+                               'start'   : $('#betweenFrom').val().toString(),
+                               'end'     : $('#betweenTo').val().toString(),
+                }),
                 error: function(xhr){
                     // var resp = JSON.parse(xhr.responseText)
                     // console.log(resp.errorMsg);
                     console.log("findFreeTimeSlots Error: ")
-                    console.log(xhr);
+                    console.log(xhr.responseText);
                 },
                 success: function(data){
                     console.log("got free time slots: ");

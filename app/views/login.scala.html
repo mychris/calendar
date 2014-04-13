@@ -25,13 +25,13 @@
                     return;
                 }
                 $.ajax({
-                    type:     "POST",
-                    url:      '@routes.Users.add()',
+                    type:        "POST",
+                    url:         '@routes.Users.add()',
                     contentType: "application/json",
-                    dataType: "json",
-                    data:     JSON.stringify({
-                                'name':     name,
-                                'password': password,
+                    dataType:    "json",
+                    data:        JSON.stringify({
+                                   'name':     name,
+                                   'password': password,
                     }),
                     error: function(xhr, textStatus, errorThrown){
                         registerError(xhr.responseText);
