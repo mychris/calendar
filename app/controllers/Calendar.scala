@@ -15,17 +15,4 @@ object Calendar extends Controller with Restricted {
       Ok(views.html.calendar("Appointment finding Calendar", userName))
     }
   }
-
-  /**
-   * List of events in table view
-   * @return Result
-   * TODO: Get list of Events from database
-   */
-  def list(implicit start: Option[DateTime], end: Option[DateTime]) = Action {
-    val source = scala.io.Source.fromFile("./public/json/events.json")
-    val lines = source.getLines() mkString "\n"
-    source.close()
-
-    Ok(lines)
-  }
 }

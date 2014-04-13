@@ -13,9 +13,6 @@ POST          /user                             controllers.Users.add()
 # Calendar
 GET           /calendar                         controllers.Calendar.calendar()
 
-## Temporary!
-GET           /events/list                      controllers.Calendar.list(start: String, end: String)
-
 # Appointment
 GET           /appointment/conflicts            controllers.Appointments.conflicts
 POST          /appointment/freetimeslots        controllers.Appointments.freeTimeSlots()
@@ -36,6 +33,7 @@ DELETE        /tag/:id                          controllers.Tags.delete(id: Int)
 GET           /createschema                     controllers.Application.createSchema
 GET           /createuser                       controllers.Application.createUser
 GET           /dropschema                       controllers.Application.dropSchema
+GET           /createsampledata                 controllers.Application.createSampleData
 
 # Map static resources from the /public folder to the /assets URL path
 GET           /assets/*file                     controllers.Assets.at(path="/public", file)

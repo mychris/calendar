@@ -1,8 +1,6 @@
 package controllers
 
 import play.api.mvc._
-import play.api.mvc.SimpleResult
-import play.api.libs.json.Reads
 
 import akka.pattern.ask
 import scala.concurrent._

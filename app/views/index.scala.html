@@ -1,7 +1,9 @@
-@(message: String, html: Html = Html(""))
+@(message: String, html: Html = Html(""), messageList: Seq[Html] = Nil)
 
 @main("Welcome to Play") {
 
-@message @html
+    @{messageList.map(_ += Html("<br />"))}
+    <br />
+    @message @html
 
 }
