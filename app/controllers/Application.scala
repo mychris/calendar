@@ -20,7 +20,7 @@ object Application
   /** Create database tables */
   def createSchema = Action.async {
     Services.createSchema
-      .map(_ => Ok(views.html.index("Database tables have been created!", Html("<a href=\"/\">Go to Login</a>"))))
+      .map(_ => Ok(views.html.index("Database tables have been created!", Html("<a href=\"/createuser\">Create test user</a>"))))
       .recover {
         case e: Exception => InternalServerError(e.getMessage)
       }
@@ -42,7 +42,7 @@ object Application
       userAdded <- (Services.userService ? AddUser("test", "test")).expecting[UserAdded]
       tagAdded  <- (Services.calendarService ? AddTag("default", 0, Color.parse("#000000"), userAdded.id)).expecting[TagAdded]
     }
-    yield Ok(views.html.index("User \"test\" created."))
+    yield Ok(views.html.index("User \"test\" created.", Html("<a href=\"/\">Go to Login</a>")))
 
     result.recover {
       case e: Exception => InternalServerError(e.getMessage)

@@ -22,7 +22,6 @@ package object formatters {
    */
 
   implicit object dateTimeFormat extends Format[DateTime] {
-
     def writes(o: DateTime): JsValue = o.getNanosecondsInstant(TimeZone.getDefault).asInstanceOf[Long].toJson
 
     def reads(json: JsValue): JsResult[DateTime] = json match {
@@ -32,7 +31,6 @@ package object formatters {
   }
 
   implicit object colorFormat extends Format[Color] {
-
     def writes(o: Color): JsValue = o.code.toJson
 
     def reads(json: JsValue): JsResult[Color] = json match {
@@ -46,7 +44,6 @@ package object formatters {
    */
 
   implicit def tupleWrites[A : Writes] = new Writes[(A, A)] {
-
     def writes(o: (A, A)): JsValue = Seq(o._1, o._2).toJson
   }
 
@@ -106,8 +103,7 @@ package object formatters {
    */
 
   implicit object exceptionWrites extends Writes[Exception] {
-
-    def writes(o: Exception): JsValue = o.getMessage.toJson 
+    def writes(o: Exception): JsValue = o.getMessage.toJson
   }
 
   /*
