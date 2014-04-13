@@ -67,7 +67,6 @@ class CalendarService(db: Database)
     )
   }
 
-  // TODO: Finish this!
   def getAppointmentsFromUser(userId: Int, from: DateTime, to: DateTime) = db.withSession { implicit session =>
     sender ! AppointmentsFromUser(appointmentsFromUser(userId).buildColl[Seq])
   }

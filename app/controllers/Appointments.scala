@@ -59,11 +59,11 @@ object Appointments
   }
 
   def update(id: Int) = Action {
-    Status(501)("")
+    Status(501)("Updating appointments not implemented")
   }
 
   def delete(id: Int) = Action {
-    Status(501)("")
+    Status(501)("Deleting appointments not implemented")
   }
 
   def conflicts = Authenticated.async { implicit request => 
