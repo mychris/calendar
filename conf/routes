@@ -8,7 +8,7 @@ POST          /login                            controllers.Login.login
 GET           /logout                           controllers.Login.logout
 
 # User
-POST          /user                   controllers.Users.add()
+POST          /user                             controllers.Users.add()
 
 # Calendar
 GET           /calendar                         controllers.Calendar.calendar()
@@ -19,8 +19,7 @@ GET           /events/list                      controllers.Calendar.list(start:
 # Appointment
 GET           /appointment/conflicts            controllers.Appointments.conflicts
 POST          /appointment/freetimeslots        controllers.Appointments.freeTimeSlots()
-#GET           /appointments                     controllers.Appointments.list(from: Option[String], to: Option[String])
-GET           /appointments                     controllers.Appointments.list(from: String, to: String)
+GET           /appointments                     controllers.Appointments.list(from: Option[Long], to: Option[Long])
 GET           /appointment/:id                  controllers.Appointments.show(id: Int)
 POST          /appointment                      controllers.Appointments.add()
 PUT           /appointment/:id                  controllers.Appointments.update(id: Int)

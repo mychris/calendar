@@ -21,9 +21,10 @@
                     right: 'month,agendaWeek,agendaDay'
                 },
                 defaultDate: '2014-01-12',
+                timezone: "UTC",
                 selectable: true,
                 selectHelper: true,
-                select: function(start, end) {
+                select: function(start, end) {  // Reaction to the "select/click" event on the calendar (create new event)
                     var title = prompt('Event Title:');
                     var eventData;
                     if (title) {
@@ -38,11 +39,28 @@
                     $('#calendar').fullCalendar('unselect');
                 },
                 editable: true,
-                events: {
-                    url: '/events/list', // TODO: replace with appointment
-                    error: function() {
-                        $('#script-warning').show();
-                    }
+                events: function(start, end, timezone, callback) {      // getting the events from the server
+                    $.ajax({
+                        url:  '/appointments?from=' + start + '&to=' + end + '&timezone=' + timezone,
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            var events = [];
+                            var appointmentsWithTags = data.appointments
+                            for(var i = 0; i < appointmentsWithTags.length; i++) {
+                                events.push( {
+                                    title : appointmentsWithTags[i].appointment.title,
+                                    start : appointmentsWithTags[i].appointment.start,
+                                    end   : appointmentsWithTags[i].appointment.end
+                                })
+
+                            }
+                            callback(events);
+                        },
+                        error: function() {
+                            $('#script-warning').show();
+                        }
+                    });
                 },
                 loading: function(bool) {
                     $('#loading').toggle(bool);
@@ -63,9 +81,9 @@
                 contentType: "application/json",
                 data:        JSON.stringify({
                                'title' : eventData.title,
-                               'start' : eventData.start.stripZone().format(),
-                               'end'   : eventData.end.stripZone().format(),
-                               'tagId' : 5
+                               'start' : eventData.start.utc().valueOf(),
+                               'end'   : eventData.end.utc().valueOf(),
+                               'tagId' : 1
                 }),
                 error: function(xhr){
                     // var resp = JSON.parse(xhr.responseText)

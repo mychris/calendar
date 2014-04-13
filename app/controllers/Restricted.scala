@@ -5,7 +5,8 @@ import play.api.mvc.Security._
 
 /**
   *
-  * @author Florian Liebhart, Simon Kaltenbacher
+  * @author Florian Liebhart
+  * @author Simon Kaltenbacher
   */
 trait Restricted {
 

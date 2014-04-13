@@ -22,10 +22,17 @@ package object formatters {
    */
 
   implicit object dateTimeFormat extends Format[DateTime] {
-    def writes(o: DateTime): JsValue = o.getNanosecondsInstant(TimeZone.getDefault).asInstanceOf[Long].toJson
+    def writes(o: DateTime): JsValue = o.toString.toJson  // sending time as String
 
-    def reads(json: JsValue): JsResult[DateTime] = json match {
-      case JsNumber(ns) => JsSuccess(DateTime.forInstantNanos(ns.toLong, TimeZone.getDefault))
+//    def reads(json: JsValue): JsResult[DateTime] = json match { // receiving time as String
+//      case JsString(s)  => JsSuccess(new DateTime(s))
+//      case _            => JsError(Seq(JsPath() -> Seq(ValidationError("error.expected.jsstring"))))
+//    }
+
+//    def writes(o: DateTime): JsValue = o.getMilliseconds(TimeZone.getTimeZone("UTC")).asInstanceOf[Long].toJson  // sending time as Long
+
+    def reads(json: JsValue): JsResult[DateTime] = json match { // receiving time as Long
+      case JsNumber(ms) => JsSuccess(DateTime.forInstant(ms.toLong, TimeZone.getTimeZone("UTC"))) // Frontend sends millis, not nanos!
       case _            => JsError(Seq(JsPath() -> Seq(ValidationError("error.expected.jsnumber"))))
     }
   }

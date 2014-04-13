@@ -5,6 +5,7 @@ import scala.util.matching.Regex
 /**
   *
   * @author Simon Kaltenbacher
+  * @author Florian Liebhart
   */
 object Color {
 

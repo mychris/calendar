@@ -14,9 +14,9 @@ import service.protocol._
 import util._
 
 /**
-  *
-  * @author Simon Kaltenbacher
-  */
+ *
+ * @author Simon Kaltenbacher
+ */
 object CalendarService {
 
   def props(db: Database): Props = Props(classOf[CalendarService], db)
@@ -25,6 +25,7 @@ object CalendarService {
 /**
   *
   * @author Simon Kaltenbacher
+  * @author Florian Liebhart
   */
 class CalendarService(db: Database)
   extends Actor with 

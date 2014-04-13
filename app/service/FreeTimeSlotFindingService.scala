@@ -31,7 +31,7 @@ class FreeTimeSlotFindingService extends Actor with ActorLogging {
   private type Acc = (Seq[TimeSlot], DateTime)
 
   /** */
-  def millis(dateTime: DateTime) = dateTime.getMilliseconds(TimeZone.getDefault)
+  def millis(dateTime: DateTime) = dateTime.getMilliseconds(TimeZone.getTimeZone("UTC"))
 
   def receive = {
     case FindFreeTimeSlots(duration, start, end, appointments) =>

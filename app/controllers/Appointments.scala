@@ -7,7 +7,7 @@ import play.api.libs.json.Reads
 import akka.pattern.ask
 import scala.concurrent._
 
-import hirondelle.date4j._
+import hirondelle.date4j.DateTime
 
 import formatters._
 
@@ -39,9 +39,9 @@ object Appointments
     toJsonResult {
       (Services.calendarService ? GetAppointmentsFromUserWithTags(
         request.user.id,
-        from.getOrElse(DateTime.forInstant(0, TimeZone.getDefault)),
-        to.getOrElse(DateTime.now(TimeZone.getDefault)
-      ))).expecting[AppointmentsFromUserWithTag]
+        from.getOrElse(DateTime.forInstant(0, TimeZone.getTimeZone("UTC"))),
+        to.getOrElse(DateTime.now(TimeZone.getTimeZone("UTC"))
+        ))).expecting[AppointmentsFromUserWithTag]
     }
   }
 

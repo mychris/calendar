@@ -8,9 +8,10 @@ import play.api.mvc.Results._
 import scala.concurrent._
 
 /**
-  *
-  * @author Simon Kaltenbacher
-  */
+ *
+ * @author Simon Kaltenbacher
+ * @author Florian Liebhart
+ */
 trait RequestBodyReader {
 
   def readBody[A](block: A => Future[SimpleResult])(implicit rs: Reads[A], request: Request[JsValue]) =

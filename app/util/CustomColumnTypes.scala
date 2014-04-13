@@ -8,10 +8,12 @@ import hirondelle.date4j.DateTime
 import scala.slick.driver.PostgresDriver.simple._
 
 object CustomColumnTypes {
+
+  val bla = dateColumnType
   
   implicit val dateTimeColumnType = MappedColumnType.base[DateTime, Timestamp](
-    dateTime  => new Timestamp(String.valueOf(dateTime.getNanoseconds).toLong),
-    timestamp => DateTime.forInstantNanos(String.valueOf(timestamp.getNanos).toLong, TimeZone.getDefault)
+    dateTime  => new Timestamp(dateTime.getMilliseconds(TimeZone.getTimeZone("UTC")).toLong),
+    timestamp => DateTime.forInstant(timestamp.getTime.toLong, TimeZone.getTimeZone("UTC"))
   )
 
   implicit val colorColumnType = MappedColumnType.base[Color, String](
