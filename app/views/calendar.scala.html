@@ -22,7 +22,7 @@
           var tags = d3.select("#tags").append("ul").selectAll("li").data(data.tags);
           tags.enter()
             .append("li")
-            .style("color", "#ffffff")
+            .attr("class", "tag")
             .style("background-color", function(tag) { return tag.color; })
             .text(function(tag) { return tag.name; });
         }
