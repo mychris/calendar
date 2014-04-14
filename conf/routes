@@ -4,36 +4,36 @@
 
 # Home page
 GET           /                                 controllers.Login.index
-POST          /login                            controllers.Login.login
-GET           /logout                           controllers.Login.logout
+POST          /login                            controllers.Login.login()
+GET           /logout                           controllers.Login.logout()
 
 # User
 POST          /user                             controllers.Users.add()
 
 # Calendar
-GET           /calendar                         controllers.Calendar.calendar()
+GET           /calendar                         controllers.Calendar.calendar
 
 # Appointment
-GET           /appointment/conflicts            controllers.Appointments.conflicts
-POST          /appointment/freetimeslots        controllers.Appointments.freeTimeSlots()
 GET           /appointments                     controllers.Appointments.list(from: Option[Long], to: Option[Long])
-GET           /appointment/:id                  controllers.Appointments.show(id: Int)
 POST          /appointment                      controllers.Appointments.add()
+GET           /appointment/:id                  controllers.Appointments.show(id: Int)
 PUT           /appointment/:id                  controllers.Appointments.update(id: Int)
 DELETE        /appointment/:id                  controllers.Appointments.delete(id: Int)
+GET           /appointment/conflicts            controllers.Appointments.conflicts
+POST          /appointment/freetimeslots        controllers.Appointments.freeTimeSlots()
 
 # Tag
 GET           /tags                             controllers.Tags.list
+POST          /tag                              controllers.Tags.add()
 GET           /tag/:id                          controllers.Tags.show(id: Int)
-POST          /tag                              controllers.Tags.add
 PUT           /tag/:id                          controllers.Tags.update(id: Int)
 DELETE        /tag/:id                          controllers.Tags.delete(id: Int)
 
 # Database setup
-GET           /createschema                     controllers.Application.createSchema
-GET           /createuser                       controllers.Application.createUser
-GET           /dropschema                       controllers.Application.dropSchema
-GET           /createsampledata                 controllers.Application.createSampleData
+GET           /createschema                     controllers.Application.createSchema()
+GET           /dropschema                       controllers.Application.dropSchema()
+GET           /createuser                       controllers.Application.createUser()
+GET           /createsampledata                 controllers.Application.createSampleData()
 
 # Map static resources from the /public folder to the /assets URL path
 GET           /assets/*file                     controllers.Assets.at(path="/public", file)
