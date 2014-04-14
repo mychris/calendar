@@ -12,9 +12,9 @@
   <script src="@routes.Assets.at("fullcalendar/fullcalendar.min.js")"></script>
 
   <script>
-    $(document).ready(function () {
+    $(document).ready(function() {
 
-      d3.json("@routes.Tags.list", function (error, data) {
+      d3.json("@routes.Tags.list", function(error, data) {
         if (error) {
           d3.select("#tags ul").remove;
           d3.select("#tags").append("p").text("No tags found!");
@@ -23,12 +23,8 @@
           tags.enter()
             .append("li")
             .style("color", "#ffffff")
-            .style("background-color", function (tag) {
-              return tag.color;
-            })
-            .text(function (tag) {
-              return tag.name;
-            });
+            .style("background-color", function(tag) { return tag.color; })
+            .text(function(tag) { return tag.name; });
         }
       })
 
@@ -42,7 +38,7 @@
         timezone: "UTC",
         selectable: true,
         selectHelper: true,
-        select: function (start, end) { // Reaction to the "select/click" event on the calendar (create new event)
+        select: function(start, end) { // Reaction to the "select/click" event on the calendar (create new event)
           var title = prompt('Event Title:');
           var eventData;
           if (title) {
@@ -57,12 +53,12 @@
           $('#calendar').fullCalendar('unselect');
         },
         editable: true,
-        events: function (start, end, timezone, callback) { // getting the events from the server
+        events: function(start, end, timezone, callback) { // getting the events from the server
           $.ajax({
             url: '/appointments?from=' + start + '&to=' + end + '&timezone=' + timezone,
             type: 'GET',
             dataType: 'json',
-            success: function (data) {
+            success: function(data) {
               var events = [];
               var appointmentsWithTags = data.appointments
               for (var i = 0; i < appointmentsWithTags.length; i++) {
@@ -75,12 +71,12 @@
               }
               callback(events);
             },
-            error: function () {
+            error: function() {
               $('#script-warning').show();
             }
           });
         },
-        loading: function (bool) {
+        loading: function(bool) {
           $('#loading').toggle(bool);
         }
       });
@@ -107,13 +103,13 @@
           'end': eventData.end.utc().valueOf(),
           'tagId': 1 // TODO: Specify Tag from List
         }),
-        error: function (xhr) {
+        error: function(xhr) {
           // var resp = JSON.parse(xhr.responseText)
           // console.log(resp.errorMsg);
           console.log("createEvent Error: ");
           console.log(xhr.responseText);
         },
-        success: function (data) {
+        success: function(data) {
           console.log("event successfully created!")
           $('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
         }
@@ -134,13 +130,13 @@
           'start': $('#betweenFrom').val().toString(),
           'end': $('#betweenTo').val().toString(),
         }),
-        error: function (xhr) {
+        error: function(xhr) {
           // var resp = JSON.parse(xhr.responseText)
           // console.log(resp.errorMsg);
           console.log("findFreeTimeSlots Error: ")
           console.log(xhr.responseText);
         },
-        success: function (data) {
+        success: function(data) {
           console.log("got free time slots: ");
           console.log(data);
 
