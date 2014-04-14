@@ -78,12 +78,16 @@
                 type:        "POST",
                 url:         "@routes.Appointments.add()",
                 dataType:    "json",
-                contentType: "application/json",
+                accepts: "application/json; charset=utf-8",
+                headers: { 
+                    Accept        : "application/json; charset=utf-8",
+                    "Content-Type": "application/json; charset=utf-8"
+                },
                 data:        JSON.stringify({
                                'title' : eventData.title,
                                'start' : eventData.start.utc().valueOf(),
                                'end'   : eventData.end.utc().valueOf(),
-                               'tagId' : 1
+                               'tagId' : 1 // TODO: Specify Tag from List
                 }),
                 error: function(xhr){
                     // var resp = JSON.parse(xhr.responseText)
@@ -103,7 +107,10 @@
                 type:        "POST",
                 url:         "@routes.Appointments.freeTimeSlots()",
                 dataType:    "json",
-                contentType: "application/json",
+                headers: {
+                    Accept        : "application/json; charset=utf-8",
+                    "Content-Type": "application/json; charset=utf-8"
+                },
                 data:        JSON.stringify({
                                'duration': $('#duration').val().toString(),
                                'start'   : $('#betweenFrom').val().toString(),
