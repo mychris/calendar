@@ -16,14 +16,13 @@
 
       d3.json("@routes.Tags.list", function(error, data) {
         if (error) {
-          d3.select("#tags ul").remove;
+          d3.select("#tags li").remove;
           d3.select("#tags").append("p").text("No tags found!");
         } else {
-          var tags = d3.select("#tags").append("ul").selectAll("li").data(data.tags);
+          var tags = d3.select("#tags ul").selectAll("li").data(data.tags);
           tags.enter()
             .append("li")
-            .attr("class", "tag")
-            .style("background-color", function(tag) { return tag.color; })
+            .style("color", function(tag) { return tag.color; })
             .text(function(tag) { return tag.name; });
         }
       })
@@ -166,7 +165,10 @@
 
 <div class="container">
   <div class="row">
-    <div id="tags" class="col-md-2"></div>
+    <div id="tags" class="col-md-2">
+      <p>Tags</p>
+      <ul></ul>
+    </div>
     <div id="calendar" class="col-md-10"></div>
   </div>
   <div class="row">
