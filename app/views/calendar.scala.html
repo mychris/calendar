@@ -1,160 +1,162 @@
 @(title: String, userName: String)
 
 @scripts = {
-    <link rel="stylesheet" media="screen" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/css/bootstrap.min.css">
-    <link rel="stylesheet" media="screen" href="@routes.Assets.at("fullcalendar/fullcalendar.css")">
-    <link rel="stylesheet" media="print"  href="@routes.Assets.at("fullcalendar/fullcalendar.print.css")">
-    <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/calendar.css")">
+  <link rel="stylesheet" media="screen" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/css/bootstrap.min.css">
+  <link rel="stylesheet" media="screen" href="@routes.Assets.at("fullcalendar/fullcalendar.css")">
+  <link rel="stylesheet" media="print"  href="@routes.Assets.at("fullcalendar/fullcalendar.print.css")">
+  <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/calendar.css")">
 
-    <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
-    <script src="@routes.Assets.at("fullcalendar/fullcalendar.min.js")"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+  <script src="@routes.Assets.at("fullcalendar/fullcalendar.min.js")"></script>
 
-    <script>
-        $(document).ready(function() {
+  <script>
+    $(document).ready(function () {
 
-          d3.json("@routes.Tags.list", function(error, data) {
-            if(error) {
-              d3.select("#tags ul").remove;
-              d3.select("#tags").append("p").text("No tags found!");
-            }
-            else {
-              var tags = d3.select("#tags").append("ul").selectAll("li").data(data.tags);
-              tags.enter()
-                .append("li")
-                .style("color", "#ffffff")
-                .style("background-color", function(tag){ return tag.color; })
-                .text(function(tag) { return tag.name; });
-            }
-          })
-
-            $('#calendar').fullCalendar({
-                header: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'month,agendaWeek,agendaDay'
-                },
-                defaultDate: '2014-01-12',
-                timezone: "UTC",
-                selectable: true,
-                selectHelper: true,
-                select: function(start, end) {  // Reaction to the "select/click" event on the calendar (create new event)
-                    var title = prompt('Event Title:');
-                    var eventData;
-                    if (title) {
-                        eventData = {
-                            title: title,
-                            start: start,
-                            end:   end
-                        };
-
-                        createEvent(eventData);
-                    }
-                    $('#calendar').fullCalendar('unselect');
-                },
-                editable: true,
-                events: function(start, end, timezone, callback) {      // getting the events from the server
-                    $.ajax({
-                        url:  '/appointments?from=' + start + '&to=' + end + '&timezone=' + timezone,
-                        type: 'GET',
-                        dataType: 'json',
-                        success: function(data) {
-                            var events = [];
-                            var appointmentsWithTags = data.appointments
-                            for(var i = 0; i < appointmentsWithTags.length; i++) {
-                                events.push( {
-                                    title : appointmentsWithTags[i].appointment.title,
-                                    start : appointmentsWithTags[i].appointment.start,
-                                    end   : appointmentsWithTags[i].appointment.end
-                                })
-
-                            }
-                            callback(events);
-                        },
-                        error: function() {
-                            $('#script-warning').show();
-                        }
-                    });
-                },
-                loading: function(bool) {
-                    $('#loading').toggle(bool);
-                }
-            });
-
-        });
-
-        /*
-         * Create and post an event to the server. If successful, show in calendar.
-         * param eventData: Object with 'description', 'start' and 'end'
-         */
-        function createEvent(eventData){
-            $.ajax({
-                type:        "POST",
-                url:         "@routes.Appointments.add()",
-                dataType:    "json",
-                accepts: "application/json; charset=utf-8",
-                headers: { 
-                    Accept        : "application/json; charset=utf-8",
-                    "Content-Type": "application/json; charset=utf-8"
-                },
-                data:        JSON.stringify({
-                               'title' : eventData.title,
-                               'start' : eventData.start.utc().valueOf(),
-                               'end'   : eventData.end.utc().valueOf(),
-                               'tagId' : 1 // TODO: Specify Tag from List
-                }),
-                error: function(xhr){
-                    // var resp = JSON.parse(xhr.responseText)
-                    // console.log(resp.errorMsg);
-                    console.log("createEvent Error: ");
-                    console.log(xhr.responseText);
-                },
-                success: function(data){
-                    console.log("event successfully created!")
-                    $('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
-                }
+      d3.json("@routes.Tags.list", function (error, data) {
+        if (error) {
+          d3.select("#tags ul").remove;
+          d3.select("#tags").append("p").text("No tags found!");
+        } else {
+          var tags = d3.select("#tags").append("ul").selectAll("li").data(data.tags);
+          tags.enter()
+            .append("li")
+            .style("color", "#ffffff")
+            .style("background-color", function (tag) {
+              return tag.color;
+            })
+            .text(function (tag) {
+              return tag.name;
             });
         }
+      })
 
-        function findFreeTimeSlots(){
-            $.ajax({
-                type:        "POST",
-                url:         "@routes.Appointments.freeTimeSlots()",
-                dataType:    "json",
-                headers: {
-                    Accept        : "application/json; charset=utf-8",
-                    "Content-Type": "application/json; charset=utf-8"
-                },
-                data:        JSON.stringify({
-                               'duration': $('#duration').val().toString(),
-                               'start'   : $('#betweenFrom').val().toString(),
-                               'end'     : $('#betweenTo').val().toString(),
-                }),
-                error: function(xhr){
-                    // var resp = JSON.parse(xhr.responseText)
-                    // console.log(resp.errorMsg);
-                    console.log("findFreeTimeSlots Error: ")
-                    console.log(xhr.responseText);
-                },
-                success: function(data){
-                    console.log("got free time slots: ");
-                    console.log(data);
+      $('#calendar').fullCalendar({
+        header: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'month,agendaWeek,agendaDay'
+        },
+        defaultDate: '2014-01-12',
+        timezone: "UTC",
+        selectable: true,
+        selectHelper: true,
+        select: function (start, end) { // Reaction to the "select/click" event on the calendar (create new event)
+          var title = prompt('Event Title:');
+          var eventData;
+          if (title) {
+            eventData = {
+              title: title,
+              start: start,
+              end: end
+            };
 
-                    var eventData;
+            createEvent(eventData);
+          }
+          $('#calendar').fullCalendar('unselect');
+        },
+        editable: true,
+        events: function (start, end, timezone, callback) { // getting the events from the server
+          $.ajax({
+            url: '/appointments?from=' + start + '&to=' + end + '&timezone=' + timezone,
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+              var events = [];
+              var appointmentsWithTags = data.appointments
+              for (var i = 0; i < appointmentsWithTags.length; i++) {
+                events.push({
+                  title: appointmentsWithTags[i].appointment.title,
+                  start: appointmentsWithTags[i].appointment.start,
+                  end: appointmentsWithTags[i].appointment.end
+                })
 
-                    for(var i = 0; i < data.length; i++) {
-                        eventData = {
-                            title: "freetimeslot",
-                            start: data[i].start,
-                            end:   data[i].end
-                        }
-                        $('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
-                    }
-                }
-            });
+              }
+              callback(events);
+            },
+            error: function () {
+              $('#script-warning').show();
+            }
+          });
+        },
+        loading: function (bool) {
+          $('#loading').toggle(bool);
         }
+      });
 
+    });
+
+    /*
+     * Create and post an event to the server. If successful, show in calendar.
+     * param eventData: Object with 'description', 'start' and 'end'
+     */
+    function createEvent(eventData) {
+      $.ajax({
+        type: "POST",
+        url: "@routes.Appointments.add()",
+        dataType: "json",
+        accepts: "application/json; charset=utf-8",
+        headers: {
+          Accept: "application/json; charset=utf-8",
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        data: JSON.stringify({
+          'title': eventData.title,
+          'start': eventData.start.utc().valueOf(),
+          'end': eventData.end.utc().valueOf(),
+          'tagId': 1 // TODO: Specify Tag from List
+        }),
+        error: function (xhr) {
+          // var resp = JSON.parse(xhr.responseText)
+          // console.log(resp.errorMsg);
+          console.log("createEvent Error: ");
+          console.log(xhr.responseText);
+        },
+        success: function (data) {
+          console.log("event successfully created!")
+          $('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
+        }
+      });
+    }
+
+    function findFreeTimeSlots() {
+      $.ajax({
+        type: "POST",
+        url: "@routes.Appointments.freeTimeSlots()",
+        dataType: "json",
+        headers: {
+          Accept: "application/json; charset=utf-8",
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        data: JSON.stringify({
+          'duration': $('#duration').val().toString(),
+          'start': $('#betweenFrom').val().toString(),
+          'end': $('#betweenTo').val().toString(),
+        }),
+        error: function (xhr) {
+          // var resp = JSON.parse(xhr.responseText)
+          // console.log(resp.errorMsg);
+          console.log("findFreeTimeSlots Error: ")
+          console.log(xhr.responseText);
+        },
+        success: function (data) {
+          console.log("got free time slots: ");
+          console.log(data);
+
+          var eventData;
+
+          for (var i = 0; i < data.length; i++) {
+            eventData = {
+              title: "freetimeslot",
+              start: data[i].start,
+              end: data[i].end
+            }
+            $('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
+          }
+        }
+      });
+    }
   </script>
 }
 
