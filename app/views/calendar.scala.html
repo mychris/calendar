@@ -14,6 +14,21 @@
     <script>
         $(document).ready(function() {
 
+          d3.json("@routes.Tags.list", function(error, data) {
+            if(error) {
+              d3.select("#tags ul").remove;
+              d3.select("#tags").append("p").text("No tags found!");
+            }
+            else {
+              var tags = d3.select("#tags").append("ul").selectAll("li").data(data.tags);
+              tags.enter()
+                .append("li")
+                .style("color", "#ffffff")
+                .style("background-color", function(tag){ return tag.color; })
+                .text(function(tag) { return tag.name; });
+            }
+          })
+
             $('#calendar').fullCalendar({
                 header: {
                     left: 'prev,next today',
@@ -140,21 +155,30 @@
             });
         }
 
-    </script>
+  </script>
 }
 
 @main(title, scripts, "") {
-    <h3 id="welcome-headline">Welcome, @userName!</h3><a href="/logout">Logout</a>
-    <div id='script-warning'>
-        <code>Server cannot return any events.</code>
+<h3 id="welcome-headline">Welcome, @userName!</h3><a href="/logout">Logout</a>
+<div id="script-warning">
+  <code>Server cannot return any events.</code>
+</div>
+
+<div id="loading">loading...</div>
+
+<div class="container">
+  <div class="row">
+    <div id="tags" class="col-md-2"></div>
+    <div id="calendar" class="col-md-10"></div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <input type="text" id="duration"     placeholder="Duration (Minutes)" />
+      <input type="text" id="betweenFrom"  placeholder="Between From..(yyyy-MM-dd)" />
+      <input type="text" id="betweenTo"    placeholder="Between To.. (yyyy-MM-dd)" />
+      <input type="button" id="getFreeSlotsButton" value="Find Free Timeslots!" onclick="findFreeTimeSlots();"> 
     </div>
+  </div>
+</div>
 
-    <div id='loading'>loading...</div>
-
-    <div id='calendar'></div>
-
-    <input type="text" id="duration"     placeholder="Duration (Minutes)" />
-    <input type="text" id="betweenFrom"  placeholder="Between From..(yyyy-MM-dd)" />
-    <input type="text" id="betweenTo"    placeholder="Between To.. (yyyy-MM-dd)" />
-    <input type="button" id="getFreeSlotsButton" value="Find Free Timeslots!" onclick="findFreeTimeSlots();"> 
 }

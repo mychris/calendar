@@ -74,7 +74,7 @@ object Appointments
     }
   }
 
-  def freeTimeSlots() = Authenticated.async { implicit request =>
+  def freeTimeSlots = Authenticated.async { implicit request =>
     Future.successful(Status(501)(""))
   }
 }

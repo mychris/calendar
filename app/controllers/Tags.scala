@@ -46,8 +46,9 @@ object Tags
   }
 
   def list = Authenticated.async { implicit request =>
-    /* (Services.calendarService ? GetTagsFromUser(request.user.id)).mapTo[Response].map(_.toJsonResult) */
-    Future.successful(Status(501)(""))
+    toJsonResult { 
+      (Services.calendarService ? GetTagsFromUser(request.user.id)).expecting[TagsFromUser]
+    }
   }
 
   def add = Authenticated.async(parse.json) { implicit request =>
