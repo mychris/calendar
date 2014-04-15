@@ -176,7 +176,12 @@
           .append("li")
           .classed({"list-group-item":true})
           .on("click", function(conflict) {
-            $("#calendar").fullCalendar('gotoDate', $.fullCalendar.moment(conflict[0].start));
+            var start1 = $.fullCalendar.moment(conflict[0].start);
+            var start2 = $.fullCalendar.moment(conflict[1].start);
+            if (start1.dayOfYear() == start2.dayOfYear()) {
+              $("#calendar").fullCalendar('changeView', 'agendaDay');
+            }
+            $("#calendar").fullCalendar('gotoDate', $.fullCalendar.moment(start1));
           })
           .text(function(conflict) { return conflict[0].title + " - " + conflict[1].title; });
       })
