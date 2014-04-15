@@ -26,14 +26,14 @@ class ConflictFindingServiceSpec(_system: ActorSystem) extends TestKit(_system)
 
     "send back a message if there are no appointments" in {
       val service = system.actorOf(ConflictFindingService.props)
-      service ! FindConflict(Nil)
+      service ! FindConflicts(Nil)
       expectMsg(Conflicts(Nil))
     }
 
     "send back an empty list if there is only on appointment" in {
       val service = system.actorOf(ConflictFindingService.props)
       val appointments = Appointment(0, "", new DateTime("2014-04-01"), new DateTime("2014-04-01")) :: Nil
-      service ! FindConflict(appointments)
+      service ! FindConflicts(appointments)
       expectMsg(Conflicts(Nil))
     }
 
@@ -44,7 +44,7 @@ class ConflictFindingServiceSpec(_system: ActorSystem) extends TestKit(_system)
         Appointment(0, "", new DateTime("2014-04-01 02:00:00"), new DateTime("2014-04-01 03:00:00")) ::
         Appointment(0, "", new DateTime("2014-04-01 03:00:00"), new DateTime("2014-04-01 04:00:00")) ::
         Nil
-      service ! FindConflict(appointments)
+      service ! FindConflicts(appointments)
       expectMsg(Conflicts(Nil))
     }
 
@@ -55,7 +55,7 @@ class ConflictFindingServiceSpec(_system: ActorSystem) extends TestKit(_system)
         Appointment(0, "", new DateTime("2014-04-01 01:00:00"), new DateTime("2014-04-01 02:00:00")) ::
         Appointment(0, "", new DateTime("2014-04-01 03:00:00"), new DateTime("2014-04-01 04:00:00")) ::
         Nil
-      service ! FindConflict(appointments)
+      service ! FindConflicts(appointments)
       expectMsg(Conflicts(Nil))
     }
 
@@ -65,7 +65,7 @@ class ConflictFindingServiceSpec(_system: ActorSystem) extends TestKit(_system)
         Appointment(0, "first", new DateTime("2014-04-01 00:00:00"), new DateTime("2014-04-01 03:00:00")) ::
         Appointment(0, "second", new DateTime("2014-04-01 00:00:00"), new DateTime("2014-04-01 03:00:00")) ::
         Nil
-      service ! FindConflict(appointments)
+      service ! FindConflicts(appointments)
       expectMsg(Conflicts(
         (
           Appointment(0, "first", new DateTime("2014-04-01 00:00:00"), new DateTime("2014-04-01 03:00:00")),
@@ -81,7 +81,7 @@ class ConflictFindingServiceSpec(_system: ActorSystem) extends TestKit(_system)
         Appointment(0, "", new DateTime("2014-04-01 01:00:00"), new DateTime("2014-04-01 02:00:00")) ::
         Appointment(0, "", new DateTime("2014-04-01 01:50:00"), new DateTime("2014-04-01 01:55:00")) ::
         Nil
-      service ! FindConflict(appointments)
+      service ! FindConflicts(appointments)
       expectMsg(Conflicts(
         (
           Appointment(0, "", new DateTime("2014-04-01 01:00:00"), new DateTime("2014-04-01 02:00:00")),
@@ -97,7 +97,7 @@ class ConflictFindingServiceSpec(_system: ActorSystem) extends TestKit(_system)
         Appointment(0, "", new DateTime("2014-04-01 01:00:00"), new DateTime("2014-04-01 02:00:00")) ::
         Appointment(0, "", new DateTime("2014-04-01 01:50:00"), new DateTime("2014-04-01 03:00:00")) ::
         Nil
-      service ! FindConflict(appointments)
+      service ! FindConflicts(appointments)
       expectMsg(Conflicts(
         (
           Appointment(0, "", new DateTime("2014-04-01 01:00:00"), new DateTime("2014-04-01 02:00:00")),
@@ -113,7 +113,7 @@ class ConflictFindingServiceSpec(_system: ActorSystem) extends TestKit(_system)
         Appointment(0, "", new DateTime("2014-04-01 01:50:00"), new DateTime("2014-04-01 01:55:00")) ::
         Appointment(0, "", new DateTime("2014-04-01 01:00:00"), new DateTime("2014-04-01 02:00:00")) ::
         Nil
-      service ! FindConflict(appointments)
+      service ! FindConflicts(appointments)
       expectMsg(Conflicts(
         (
           Appointment(0, "", new DateTime("2014-04-01 01:00:00"), new DateTime("2014-04-01 02:00:00")),
@@ -131,7 +131,7 @@ class ConflictFindingServiceSpec(_system: ActorSystem) extends TestKit(_system)
         val end = appointments.head.end.plusDays(1)
         appointments = Appointment(0, "", start, end) :: appointments
       }
-      service ! FindConflict(appointments)
+      service ! FindConflicts(appointments)
       expectMsg(Conflicts(Nil))
     }
 
@@ -142,7 +142,7 @@ class ConflictFindingServiceSpec(_system: ActorSystem) extends TestKit(_system)
         Appointment(0, "", new DateTime("2014-01-01 09:00:00"), new DateTime("2014-01-01 11:00")),
         Appointment(0, "", new DateTime("2014-01-01 13:00:00"), new DateTime("2014-01-01 14:00"))
       )
-      service ! FindConflict(appointments)
+      service ! FindConflicts(appointments)
       expectMsg(Conflicts(Seq(
         (
           Appointment(0, "", new DateTime("2014-01-01 08:00:00"), new DateTime("2014-01-01 18:00")),
@@ -154,5 +154,6 @@ class ConflictFindingServiceSpec(_system: ActorSystem) extends TestKit(_system)
         )
       )))
     }
+
   }
 }

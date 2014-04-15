@@ -36,7 +36,7 @@ class FreeTimeSlotFindingServiceSpec(_system: ActorSystem)
 
       service ! FindFreeTimeSlots(duration, start, end, Seq())
       expectMsg(FreeTimeSlots(Seq(
-        (
+        TimeSlot(
           new DateTime("2014-04-01 00:00"),
           new DateTime("2014-04-01 23:00")
         )
@@ -56,15 +56,15 @@ class FreeTimeSlotFindingServiceSpec(_system: ActorSystem)
 
       service ! FindFreeTimeSlots(duration, start, end, appointments)
       expectMsg(FreeTimeSlots(Seq(
-        (
+        TimeSlot(
           new DateTime("2014-04-01 00:00"),
           new DateTime("2014-04-01 10:00")
         ),
-        (
+        TimeSlot(
           new DateTime("2014-04-01 12:00"),
           new DateTime("2014-04-01 16:00")
         ),
-        (
+        TimeSlot(
           new DateTime("2014-04-01 18:00"),
           new DateTime("2014-04-01 23:00")
         )
