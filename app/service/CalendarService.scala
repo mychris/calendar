@@ -77,11 +77,12 @@ class CalendarService(db: Database)
     sender ! AppointmentsFromUser(appointmentsFromUser(userId).buildColl[Seq])
   }
 
-  def addAppointment(title: String, start: DateTime, end: DateTime, tagId: Int) = db.withTransaction { implicit session =>
-    val appointmentId = (appointments returning appointments.map(_.id)) += Appointment(-1, title, start, end)
-    appointmentBelongsToTag += ((appointmentId, tagId))
-    sender ! AppointmentAdded(appointmentId)
-  }
+  def addAppointment(title: String, start: DateTime, end: DateTime, tagId: Int) =
+    sender ! AppointmentAdded(db.withTransaction { implicit session =>
+      val appointmentId = (appointments returning appointments.map(_.id)) += Appointment(-1, title, start, end)
+      appointmentBelongsToTag += ((appointmentId, tagId))
+      appointmentId
+    })
 
   def removeAppointments(appointmentIds: Seq[Int]) = db.withSession { implicit session =>
     appointments.filter(_.id.inSet(appointmentIds)).delete

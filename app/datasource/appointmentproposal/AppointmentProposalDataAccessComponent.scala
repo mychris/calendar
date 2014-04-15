@@ -6,6 +6,7 @@ import datasource.calendar._
 import hirondelle.date4j.DateTime
 
 import scala.slick.driver.PostgresDriver.simple.{Tag => _, _}
+import scala.slick.model.ForeignKeyAction
 import scala.slick.lifted.Shape
 
 import util.CustomColumnTypes._
@@ -139,7 +140,7 @@ trait AppointmentProposalDataAccessComponentImpl extends AppointmentProposalData
       def title     = column[String  ]("title", O.NotNull)
       def creatorId = column[Int     ]("creator_id", O.NotNull)
 
-      def creator = foreignKey("creator_fk", creatorId, users)(_.id)
+      def creator = foreignKey("creator_fk", creatorId, users)(_.id, onDelete = ForeignKeyAction.Cascade)
 
       def * = (id, title, creatorId) <> (Proposal.tupled, Proposal.unapply)
     }
@@ -151,7 +152,7 @@ trait AppointmentProposalDataAccessComponentImpl extends AppointmentProposalData
       def end        = column[DateTime ]("end", O.NotNull)
       def proposalId = column[Int      ]("proposal_id", O.NotNull)
 
-      def proposal = foreignKey("proposal_fk", proposalId, proposals)(_.id)
+      def proposal = foreignKey("proposal_fk", proposalId, proposals)(_.id, onDelete = ForeignKeyAction.Cascade)
 
       def * = (id, start, end, proposalId) <> (ProposalTime.tupled, ProposalTime.unapply)
     }
@@ -163,8 +164,8 @@ trait AppointmentProposalDataAccessComponentImpl extends AppointmentProposalData
       def vote           = column[Vote]("vote", O.NotNull)
 
       // def pk             = primaryKey("pk_proposal_time_belongsto_user", (proposalTimeId, userId))
-      def proposalTime   = foreignKey("proposal_time_fk", proposalTimeId, proposalTimes)(_.id)
-      def user           = foreignKey("user_fk", userId, users)(_.id)
+      def proposalTime   = foreignKey("proposal_time_fk", proposalTimeId, proposalTimes)(_.id, onDelete = ForeignKeyAction.Cascade)
+      def user           = foreignKey("user_fk", userId, users)(_.id, onDelete = ForeignKeyAction.Cascade)
 
       def * = (proposalTimeId, userId, vote) <> (ProposalTimeVote.tupled, ProposalTimeVote.unapply)
     }

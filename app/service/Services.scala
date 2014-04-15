@@ -36,6 +36,9 @@ object Services extends ExecutionEnvironment with ResponseHandling {
   /** Service for basic calendar and tag related operations */
   val freeTimeSlotsFindingService = system.actorOf(FreeTimeSlotFindingService.props.withRouter(FromConfig()), "freetimeslots-finding-service")
 
+  /** Service for inserting sample data into the database */
+  val sampleDataService = system.actorOf(SampleDataService.props(db), "sample-data-service")
+
   /** Returns a merged ddl statement consisting of all data access component's ddl statements */
   private def collectDdl: Future[SchemaDescription] = {
 

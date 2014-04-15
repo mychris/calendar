@@ -5,6 +5,7 @@ import datasource.user._
 import hirondelle.date4j.DateTime
 
 import scala.slick.driver.PostgresDriver.simple.{Tag => _, _}
+import scala.slick.model.ForeignKeyAction
 
 import util._
 import util.CustomColumnTypes._
@@ -199,7 +200,7 @@ trait CalendarDataAccessComponentImpl extends CalendarDataAccessComponent {
       def color    = column[Color ]("color"   , O.NotNull              )
       def userId   = column[Int   ]("user_id" , O.NotNull              )
 
-      def user     = foreignKey("user_fk", userId, users)(_.id)
+      def user     = foreignKey("user_fk", userId, users)(_.id, onDelete = ForeignKeyAction.Cascade)
 
       def *        = (id, name, priority, color, userId) <> (Tag.tupled, Tag.unapply)
     }
@@ -210,8 +211,8 @@ trait CalendarDataAccessComponentImpl extends CalendarDataAccessComponent {
       def tagId         = column[Int]("tag_id"        )
 
       // def pk            = primaryKey("pk_appointment_belongsto_tag", (appointmentId, tagId))
-      def appointment   = foreignKey("appointment_fk", appointmentId, appointments)(_.id)
-      def tag           = foreignKey("tag_fk", tagId, tags)(_.id)
+      def appointment   = foreignKey("appointment_fk", appointmentId, appointments)(_.id, onDelete = ForeignKeyAction.Cascade)
+      def tag           = foreignKey("tag_fk", tagId, tags)(_.id, onDelete = ForeignKeyAction.Cascade)
 
       def *             = (appointmentId, tagId)
     }

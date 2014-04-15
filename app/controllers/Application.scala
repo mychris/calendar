@@ -1,17 +1,20 @@
 package controllers
 
 import akka.pattern.ask
-import play.api.mvc._
-import play.api.libs.json.{JsValue, Json}
-import play.api.templates.Html
-import scala.concurrent.Future
+
+import formatters._
 
 import hirondelle.date4j.DateTime
 
+import play.api.mvc._
+import play.api.libs.json.{JsValue, Json}
+import play.api.templates.Html
+
 import service._
 import service.protocol._
+
 import util._
-import formatters._
+
 
 object Application
   extends Controller with
@@ -20,43 +23,29 @@ object Application
           ResponseSerialization with
           ResponseHandling {
 
+  def recoverException: PartialFunction[Throwable, SimpleResult] = {
+    case e: Exception => InternalServerError(e.getMessage)
+  }
+
   def index = Action { Ok(views.html.index("Your new application is ready.")) }
 
   /** Create database tables */
   def createSchema = Action.async {
     Services.createSchema
-      .map(_ => Ok(views.html.index("Database tables have been created!", Html("<a href=\"/createuser\">Create test user</a>"))))
-      .recover {
-        case e: Exception => InternalServerError(e.getMessage)
-      }
+      .map(_ => Ok(views.html.index("Database tables have been created!", Html("<a href=\"/createsampledata\">Create sample data</a>"))))
+      .recover(recoverException)
   }
 
   /** Drop database tables */
   def dropSchema = Action.async {
     Services.dropSchema
       .map(_ => Ok(views.html.index("Database tables have been dropped!", Html("<a href=\"/createschema\">Create Schema</a>"))))
-      .recover {
-        case e: Exception => InternalServerError(e.getMessage)
-      }
-  }
-
-  /** Create test user with default tag */
-  def createUser = Action.async {
-
-    val result = for {
-      userAdded <- (Services.userService ? AddUser("test", "test")).expecting[UserAdded]
-      tagAdded  <- (Services.calendarService ? AddTag("default", 0, Color.parse("#000000"), userAdded.id)).expecting[TagAdded]
-    }
-    yield Ok(views.html.index("User \"test\" created.", Html("<a href=\"/createsampledata\">Create sample data</a><br /><a href=\"/\">Go to Login</a>")))
-
-    result.recover {
-      case e: Exception => InternalServerError(e.getMessage)
-    }
+      .recover(recoverException)
   }
 
   def createSampleData = Action.async {
 
-    val source = scala.io.Source.fromFile("./public/json/sampleevents.json")
+    /*val source = scala.io.Source.fromFile("./public/json/sampleevents.json")
     val lines = source.getLines mkString "\n"
     source.close
     val json: JsValue = Json.parse(lines)
@@ -85,6 +74,12 @@ object Application
         Html("<a href=\"/\">Go to Login</a>"),
         results
       ))
-    )
+    )*/
+
+    (Services.sampleDataService ? CreateSampleData).expecting[SampleDataCreated.type]
+      .map(_ =>
+        Ok(views.html.index("Sample data created.", Html("<a href=\"/\">Go to Login</a>")))
+      )
+      .recover(recoverException)
   }
 }
