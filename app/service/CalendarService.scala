@@ -46,8 +46,13 @@ class CalendarService(db: Database)
    * Appointments
    */
 
-  def getAppointmentById(id: Int) = db.withSession { implicit session =>
-    sender ! appointmentsById(id).firstOption.fold[Any](NoSuchTagError(s"Appointment with id $id does not exist!"))(AppointmentById(_)) }
+  def getAppointmentById(id: Int, userId: Int) = db.withSession { implicit session =>
+    appointmentsByIdWithUserId(id).firstOption match {
+      case Some((appointment, `userId`)) => sender !  AppointmentById(appointment)
+      case Some(_)                       => sender !  PermissionDeniedError("Appointment does not belong to specified user!")
+      case _                             => sender !  NoSuchTagError(s"Appointment with id $id does not exist!")
+    }  
+  }
 
   def getAppointmentsFromTag(tagId: Int) = db.withSession { implicit session =>
     sender ! AppointmentsFromTag(appointmentsWithTag(tagId).buildColl[Seq]) }
@@ -87,8 +92,13 @@ class CalendarService(db: Database)
    * Tags
    */
 
-  def getTagById(id: Int) = db.withSession { implicit session =>
-    sender ! tagsById(id).firstOption.fold[Any](NoSuchTagError(s"Tag with id $id does not exist!"))(TagById(_)) }
+  def getTagById(id: Int, userId: Int) = db.withSession { implicit session =>
+    tagsById(id).firstOption match {
+      case Some(tag @ Tag(_, _, _, _, `userId`)) => sender ! TagById(tag)
+      case Some(_)                               => sender ! PermissionDeniedError("Tag does not belong to specified user!")
+      case _                                     => sender ! NoSuchTagError(s"Tag with id $id does not exist!")
+    }
+  }
 
   def getTagsFromUser(userId: Int) = db.withSession { implicit session =>
     sender ! TagsFromUser(tagsFromUser(userId).buildColl[Seq]) }
@@ -122,11 +132,11 @@ class CalendarService(db: Database)
   def getDdl = sender ! Ddl(calendarDdl)
 
   def receive = handled {
-    case GetAppointmentById(id)                            => getAppointmentById(id)
+    case GetAppointmentById(id, userId)                    => getAppointmentById(id, userId)
     case GetAppointmentsFromUser(id)                       => getAppointmentsFromUser(id)
     case GetAppointmentsFromTag(tagId)                     => getAppointmentsFromTag(tagId)
     case GetAppointmentsFromUserWithTags(userId, from, to) => getAppointmentsFromUserWithTags(userId, from, to)
-    case GetTagById(id)                                    => getTagById(id)
+    case GetTagById(id, userId)                            => getTagById(id, userId)
     case GetTagsFromUser(userId)                           => getTagsFromUser(userId)
     case GetTagsFromAppointment(appointmentId)             => getTagsFromAppointment(appointmentId)
     case AddTag(name, priority, color, userId)             => addTag(name, priority, color, userId)

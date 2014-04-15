@@ -25,8 +25,7 @@ trait ResponseSerialization {
 
   self: ExecutionEnvironment =>
 
-  /**
-   * TODO: Carefully observe exceptions sent to the client, and catch them here to handle them better! */
+  /* TODO: Carefully observe exceptions sent to the client, and catch them here to handle them better! */
   def toJsonResult[W](block: => Future[W])(implicit ws: Writes[W]) =
     block
       .map(result => Ok(result.toJson))
@@ -34,6 +33,7 @@ trait ResponseSerialization {
         case NoSuchUserError(message)        => NotFound(message.toJson)
         case NoSuchTagError(message)         => NotFound(message.toJson)
         case NoSuchAppointmentError(message) => NotFound(message.toJson)
+        case PermissionDeniedError(message)  => Forbidden(message.toJson)
         case DatabaseError(message)          => InternalServerError(message.toJson)
         case e: AskTimeoutException          => InternalServerError(e.getMessage)
         case e: Exception                    => InternalServerError(e.getMessage)

@@ -31,18 +31,9 @@ object Tags
 
 
   def show(id: Int) = Authenticated.async { implicit request =>
-
-    /*val req = (Services.calendarService ? GetTagById(id)).mapTo[Response]
-
-    for {
-      resp <- req
+    toJsonResult {
+      (Services.calendarService ? GetTagById(id, request.user.id)).expecting[TagById]
     }
-    yield resp.fold[TagById, SimpleResult](
-      _.toJsonResult,
-      { case tagById @ TagById(tag) if tag.userId == request.user.id => tagById.toJsonResult
-        case _                                                       => InternalServerError("Not your tag") }
-    )*/
-    Future.successful(Status(501)(""))
   }
 
   def list = Authenticated.async { implicit request =>

@@ -23,9 +23,9 @@ object Appointments
           ResponseHandling with
           RequestBodyReader {
 
-  def show(id: Int) = Action.async {
+  def show(id: Int) = Authenticated.async { implicit request =>
     toJsonResult {
-      (Services.calendarService ? GetAppointmentById(id)).expecting[AppointmentById]
+      (Services.calendarService ? GetAppointmentById(id, request.user.id)).expecting[AppointmentById]
     }
   }
 
@@ -39,7 +39,7 @@ object Appointments
         request.user.id,
         from.getOrElse(DateTime.forInstant(0, TimeZone.getTimeZone("UTC"))),
         to.getOrElse(DateTime.now(TimeZone.getTimeZone("UTC"))
-        ))).expecting[AppointmentsFromUserWithTag]
+      ))).expecting[AppointmentsFromUserWithTag]
     }
   }
 

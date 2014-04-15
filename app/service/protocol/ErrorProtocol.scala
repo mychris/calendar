@@ -6,3 +6,6 @@ package service.protocol
 
 /** */
 case class DatabaseError(message: String) extends Error(message)
+
+/** */
+case class PermissionDeniedError(message: String) extends Error(message)

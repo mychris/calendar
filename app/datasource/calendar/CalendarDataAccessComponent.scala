@@ -89,7 +89,17 @@ trait CalendarDataAccessComponent {
     val appointments: TableQuery[AppointmentTable]
     val appointmentBelongsToTag: TableQuery[AppointmentBelongsToTagTable]
 
-    def appointmentsById(id: Int): Query[AppointmentTable, Appointment] = appointments.filter(_.id === id)
+    def appointmentsById(id: Int): Query[AppointmentTable, Appointment] =
+      appointments.filter(_.id === id)
+
+    def appointmentsByIdWithUserId(id: Int): Query[(AppointmentTable, Column[Int]), (Appointment, Int)] =
+      for {
+        abtt <- appointmentBelongsToTag
+        t    <- abtt.tag
+        a    <- abtt.appointment
+        if a.id === id
+      }
+      yield (a, t.userId)
 
     def appointmentsWithTag(tagId: Int): Query[AppointmentTable, Appointment] =
       for {
