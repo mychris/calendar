@@ -62,10 +62,18 @@
               var events = [];
               var appointmentsWithTags = data.appointments
               for (var i = 0; i < appointmentsWithTags.length; i++) {
+                var highestPriorityTag = { priority:0, color:"#3A87AD" };
+                $.each(appointmentsWithTags[i].tags, function(index, value) {
+                  if (highestPriorityTag.priority < value.priority) {
+                    highestPriorityTag = value;
+                  }
+                });
+                console.log(JSON.stringify(highestPriorityTag));
                 events.push({
                   title: appointmentsWithTags[i].appointment.title,
                   start: appointmentsWithTags[i].appointment.start,
-                  end: appointmentsWithTags[i].appointment.end
+                  end: appointmentsWithTags[i].appointment.end,
+                  color: highestPriorityTag.color
                 })
 
               }
