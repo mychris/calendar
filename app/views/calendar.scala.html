@@ -27,6 +27,22 @@
         }
       })
 
+      d3.json("@routes.Appointments.conflicts", function(error, data) {
+        if (error) {
+            d3.select("#conflicts li").remove;
+            d3.select("#conflicts").append("p").text("No conflicts found!");
+            return;
+        }
+        var conflicts = d3.select("#conflicts ul").selectAll("li").data(data.conflicts);
+        conflicts.enter()
+          .append("li")
+          .classed({"list-group-item":true})
+          .on("click", function(conflict) {
+            $("#calendar").fullCalendar('gotoDate', $.fullCalendar.moment(conflict[0].start));
+          })
+          .text(function(conflict) { return conflict[0].title + " - " + conflict[1].title; });
+      })
+
       $('#calendar').fullCalendar({
         header: {
           left: 'prev,next today',
@@ -170,6 +186,10 @@
       <ul></ul>
     </div>
     <div id="calendar" class="col-md-10"></div>
+    <div id="conflicts" class="col-md-2">
+      <p>Conflicts</p>
+      <ul class="list-group"></ul>
+    </div>
   </div>
   <div class="row">
     <div class="col-md-12">

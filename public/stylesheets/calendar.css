@@ -18,7 +18,7 @@
 }
 
 #calendar {
-  width  : 900px;
+  width  : 780px;
   margin : 20px auto;
 }
 
@@ -30,6 +30,10 @@
 }
 
 #tags {
+  padding-top : 65px;
+}
+
+#conflicts {
   padding-top : 65px;
 }
 

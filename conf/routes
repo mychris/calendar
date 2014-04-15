@@ -16,11 +16,11 @@ GET           /calendar                         controllers.Calendar.calendar
 # Appointment
 GET           /appointments                     controllers.Appointments.list(from: Option[Long], to: Option[Long])
 POST          /appointment                      controllers.Appointments.add()
+GET           /appointment/conflicts            controllers.Appointments.conflicts
+POST          /appointment/freetimeslots        controllers.Appointments.freeTimeSlots()
 GET           /appointment/:id                  controllers.Appointments.show(id: Int)
 PUT           /appointment/:id                  controllers.Appointments.update(id: Int)
 DELETE        /appointment/:id                  controllers.Appointments.delete(id: Int)
-GET           /appointment/conflicts            controllers.Appointments.conflicts
-POST          /appointment/freetimeslots        controllers.Appointments.freeTimeSlots()
 
 # Tag
 GET           /tags                             controllers.Tags.list
