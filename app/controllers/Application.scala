@@ -54,11 +54,11 @@ object Application
     }
   }
 
-  def createSampleData() = Action.async {
+  def createSampleData = Action.async {
 
     val source = scala.io.Source.fromFile("./public/json/sampleevents.json")
-    val lines = source.getLines() mkString "\n"
-    source.close()
+    val lines = source.getLines mkString "\n"
+    source.close
     val json: JsValue = Json.parse(lines)
     val events = json.as[Seq[Map[String, String]]]
 

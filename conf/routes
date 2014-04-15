@@ -4,8 +4,8 @@
 
 # Home page
 GET           /                                 controllers.Login.index
-POST          /login                            controllers.Login.login()
-GET           /logout                           controllers.Login.logout()
+POST          /login                            controllers.Login.login
+GET           /logout                           controllers.Login.logout
 
 # User
 POST          /user                             controllers.Users.add
@@ -30,10 +30,10 @@ PUT           /tag/:id                          controllers.Tags.update(id: Int)
 DELETE        /tag/:id                          controllers.Tags.delete(id: Int)
 
 # Database setup
-GET           /createschema                     controllers.Application.createSchema()
-GET           /dropschema                       controllers.Application.dropSchema()
-GET           /createuser                       controllers.Application.createUser()
-GET           /createsampledata                 controllers.Application.createSampleData()
+GET           /createschema                     controllers.Application.createSchema
+GET           /dropschema                       controllers.Application.dropSchema
+GET           /createuser                       controllers.Application.createUser
+GET           /createsampledata                 controllers.Application.createSampleData
 
 # Map static resources from the /public folder to the /assets URL path
 GET           /assets/*file                     controllers.Assets.at(path="/public", file)
