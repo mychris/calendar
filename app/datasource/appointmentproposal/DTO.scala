@@ -4,24 +4,6 @@ import scala.slick.driver.PostgresDriver.simple.{Tag => _, _}
 
 import hirondelle.date4j.DateTime
 
-trait AbstractAppointmentProposal {
-
-  def id        : Int
-  def title     : String
-  def creatorId : Int
-}
-
-trait AbstractAppointmentProposalTime {
-
-  def id         : Int
-  def start      : DateTime
-  def end        : DateTime
-  def proposalId : Int
-}
-
-case class AppointmentProposal(id: Int, title: String, creatorId: Int) extends AbstractAppointmentProposal
-case class AppointmentProposalTime(id: Int, start: DateTime, end: DateTime, proposalId: Int) extends AbstractAppointmentProposalTime
-
 object Vote extends Enumeration {
 
   type Vote = Value
@@ -31,3 +13,31 @@ object Vote extends Enumeration {
   val Refused   = Value(2)
   val Uncertain = Value(3)
 }
+
+import Vote.Vote
+
+trait AbstractProposal {
+
+  def id        : Int
+  def title     : String
+  def creatorId : Int
+}
+
+trait AbstractProposalTime {
+
+  def id         : Int
+  def start      : DateTime
+  def end        : DateTime
+  def proposalId : Int
+}
+
+trait AbstractProposalTimeVote {
+
+  def proposalTimeId : Int
+  def userId         : Int
+  def vote           : Vote
+}
+
+case class Proposal(id: Int, title: String, creatorId: Int) extends AbstractProposal
+case class ProposalTime(id: Int, start: DateTime, end: DateTime, proposalId: Int) extends AbstractProposalTime
+case class ProposalTimeVote(proposalTimeId: Int, userId: Int, vote: Vote) extends AbstractProposalTimeVote
