@@ -29,7 +29,7 @@ case class GetTagsFromAppointment(appointmentId: Int) extends Request
 case class AddTag(name: String, priority: Int, color: Color, userId: Int) extends Request
 case class UpdateTag(tag: Tag) extends Request
 case class RemoveTags(tagIds: Seq[Int]) extends Request
-case class RemoveTagsFromUser(tagId: Seq[Int], userId: Int) extends Request
+case class RemoveTagsFromUser(tagIds: Seq[Int], userId: Int) extends Request
 
 /*
  * Reponses

@@ -46,25 +46,25 @@ class CalendarService(db: Database)
    * Appointments
    */
 
-  def getAppointmentById(id: Int, userId: Int) = db.withSession { implicit session =>
-    appointmentsByIdWithUserId(id).firstOption match {
-      case Some((appointment, `userId`)) => sender !  AppointmentById(appointment)
-      case Some(_)                       => sender !  PermissionDeniedError("Appointment does not belong to specified user!")
-      case _                             => sender !  NoSuchTagError(s"Appointment with id $id does not exist!")
+  def getAppointmentById(msg: GetAppointmentById) = db.withSession { implicit session =>
+    appointmentsByIdWithUserId(msg.id).firstOption match {
+      case Some((appointment, userId)) if userId == msg.userId => sender !  AppointmentById(appointment)
+      case Some(_)                                             => sender !  PermissionDeniedError("Appointment does not belong to specified user!")
+      case _                                                   => sender !  NoSuchTagError(s"Appointment with id $msg.id does not exist!")
     }  
   }
 
-  def getAppointmentsFromTag(tagId: Int) = db.withSession { implicit session =>
-    sender ! AppointmentsFromTag(appointmentsWithTag(tagId).buildColl[Seq]) }
+  def getAppointmentsFromTag(msg: GetAppointmentsFromTag) = db.withSession { implicit session =>
+    sender ! AppointmentsFromTag(appointmentsWithTag(msg.tagId).buildColl[Seq]) }
 
-  def getAppointmentsFromUser(userId: Int) = db.withSession { implicit session =>
-    sender ! AppointmentsFromUser(appointmentsFromUser(userId).buildColl[Seq])
+  def getAppointmentsFromUser(msg: GetAppointmentsFromUser) = db.withSession { implicit session =>
+    sender ! AppointmentsFromUser(appointmentsFromUser(msg.userId).buildColl[Seq])
   }
 
   /** Retrieves a user appointments together with its tags */
-  def getAppointmentsFromUserWithTags(userId: Int, from: DateTime, to: DateTime) = db.withSession { implicit session =>
+  def getAppointmentsFromUserWithTags(msg: GetAppointmentsFromUserWithTags) = db.withSession { implicit session =>
     sender ! AppointmentsFromUserWithTag(
-      appointmentFromUserWithTag(userId, from, to)
+      appointmentFromUserWithTag(msg.userId, msg.from, msg.to)
         .buildColl[Seq]
         .groupBy(_._1)
         .mapValues(_.map(_._2))
@@ -73,19 +73,15 @@ class CalendarService(db: Database)
     )
   }
 
-  def getAppointmentsFromUser(userId: Int, from: DateTime, to: DateTime) = db.withSession { implicit session =>
-    sender ! AppointmentsFromUser(appointmentsFromUser(userId).buildColl[Seq])
-  }
-
-  def addAppointment(title: String, start: DateTime, end: DateTime, tagId: Int) =
+  def addAppointment(msg: AddAppointment) =
     sender ! AppointmentAdded(db.withTransaction { implicit session =>
-      val appointmentId = (appointments returning appointments.map(_.id)) += Appointment(-1, title, start, end)
-      appointmentBelongsToTag += ((appointmentId, tagId))
+      val appointmentId = (appointments returning appointments.map(_.id)) += Appointment(-1, msg.title, msg.start, msg.end)
+      appointmentBelongsToTag += ((appointmentId, msg.tagId))
       appointmentId
     })
 
-  def removeAppointments(appointmentIds: Seq[Int]) = db.withSession { implicit session =>
-    appointments.filter(_.id.inSet(appointmentIds)).delete
+  def removeAppointments(msg: RemoveAppointments) = db.withSession { implicit session =>
+    appointments.filter(_.id.inSet(msg.appointmentIds)).delete
     sender ! AppointmentsRemoved
   }
 
@@ -93,59 +89,59 @@ class CalendarService(db: Database)
    * Tags
    */
 
-  def getTagById(id: Int, userId: Int) = db.withSession { implicit session =>
-    tagsById(id).firstOption match {
-      case Some(tag @ Tag(_, _, _, _, `userId`)) => sender ! TagById(tag)
+  def getTagById(msg: GetTagById) = db.withSession { implicit session =>
+    tagsById(msg.id).firstOption match {
+      case Some(tag) if tag.userId == msg.userId => sender ! TagById(tag)
       case Some(_)                               => sender ! PermissionDeniedError("Tag does not belong to specified user!")
-      case _                                     => sender ! NoSuchTagError(s"Tag with id $id does not exist!")
+      case _                                     => sender ! NoSuchTagError(s"Tag with id $msg.id does not exist!")
     }
   }
 
-  def getTagsFromUser(userId: Int) = db.withSession { implicit session =>
-    sender ! TagsFromUser(tagsFromUser(userId).buildColl[Seq]) }
+  def getTagsFromUser(msg: GetTagsFromUser) = db.withSession { implicit session =>
+    sender ! TagsFromUser(tagsFromUser(msg.userId).buildColl[Seq]) }
 
-  def getTagsFromAppointment(appointmentId: Int) = db.withSession { implicit session =>
-    sender ! TagsFromAppointment(tagsFromAppointment(appointmentId).buildColl[Seq]) }
+  def getTagsFromAppointment(msg: GetTagsFromAppointment) = db.withSession { implicit session =>
+    sender ! TagsFromAppointment(tagsFromAppointment(msg.appointmentId).buildColl[Seq]) }
 
-  def addTag(name: String, priority: Int, color: Color, userId: Int) = db.withSession { implicit session =>
-    sender ! TagAdded((tags returning tags.map(_.id)) += Tag(-1, name, priority, color, userId)) }
+  def addTag(msg: AddTag) = db.withSession { implicit session =>
+    sender ! TagAdded((tags returning tags.map(_.id)) += Tag(-1, msg.name, msg.priority, msg.color, msg.userId)) }
 
-  def updateTag(newTag: Tag) = db.withSession { implicit session =>
+  def updateTag(msg: UpdateTag) = db.withSession { implicit session =>
     sender ! TagUpdated(
       tags
-        .filter(_.id === newTag.id)
-        .filter(_.userId === newTag.userId)
-        .map(t => (t.name, t.priority))
-        .update((newTag.name, newTag.priority))
+        .filter(_.id === msg.tag.id)
+        .filter(_.userId === msg.tag.userId)
+        .map(t => (t.name, t.priority, t.color))
+        .update((msg.tag.name, msg.tag.priority, msg.tag.color))
     )
   }
 
-  def removeTags(tagIds: Seq[Int]) = db.withSession { implicit session =>
-    tags.filter(_.id.inSet(tagIds)).delete
+  def removeTags(msg: RemoveTags) = db.withSession { implicit session =>
+    tags.filter(_.id.inSet(msg.tagIds)).delete
     sender ! TagsRemoved
   }
 
-  def removeTags(tagIds: Seq[Int], userId: Int) = db.withSession { implicit session =>
-    tags.filter(_.id.inSet(tagIds)).filter(_.userId === userId).delete
+  def removeTagsFromUser(msg: RemoveTagsFromUser) = db.withSession { implicit session =>
+    tags.filter(_.id.inSet(msg.tagIds)).filter(_.userId === msg.userId).delete
     sender ! TagsRemoved
   }
 
   def getDdl = sender ! Ddl(calendarDdl)
 
   def receive = handled {
-    case GetAppointmentById(id, userId)                    => getAppointmentById(id, userId)
-    case GetAppointmentsFromUser(id)                       => getAppointmentsFromUser(id)
-    case GetAppointmentsFromTag(tagId)                     => getAppointmentsFromTag(tagId)
-    case GetAppointmentsFromUserWithTags(userId, from, to) => getAppointmentsFromUserWithTags(userId, from, to)
-    case GetTagById(id, userId)                            => getTagById(id, userId)
-    case GetTagsFromUser(userId)                           => getTagsFromUser(userId)
-    case GetTagsFromAppointment(appointmentId)             => getTagsFromAppointment(appointmentId)
-    case AddTag(name, priority, color, userId)             => addTag(name, priority, color, userId)
-    case UpdateTag(newTag)                                 => updateTag(newTag)
-    case AddAppointment(title, start, end, tagId)          => addAppointment(title, start, end, tagId)
-    case RemoveTags(tagIds)                                => removeTags(tagIds)
-    case RemoveTagsFromUser(tagIds, userId)                => removeTags(tagIds, userId)
-    case RemoveAppointments(appointmentIds)                => removeAppointments(appointmentIds)
-    case GetDdl                                            => getDdl
+    case msg: GetAppointmentById              => getAppointmentById(msg)
+    case msg: GetAppointmentsFromUser         => getAppointmentsFromUser(msg)
+    case msg: GetAppointmentsFromTag          => getAppointmentsFromTag(msg)
+    case msg: GetAppointmentsFromUserWithTags => getAppointmentsFromUserWithTags(msg)
+    case msg: GetTagById                      => getTagById(msg)
+    case msg: GetTagsFromUser                 => getTagsFromUser(msg)
+    case msg: GetTagsFromAppointment          => getTagsFromAppointment(msg)
+    case msg: AddTag                          => addTag(msg)
+    case msg: UpdateTag                       => updateTag(msg)
+    case msg: AddAppointment                  => addAppointment(msg)
+    case msg: RemoveTags                      => removeTags(msg)
+    case msg: RemoveTagsFromUser              => removeTagsFromUser(msg)
+    case msg: RemoveAppointments              => removeAppointments(msg)
+    case GetDdl                               => getDdl
   }
 }
