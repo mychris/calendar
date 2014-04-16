@@ -45,13 +45,14 @@
   list-style : none;
   display    : block;
   padding    : 3px;
-  cursor     : pointer;
 }
 
 .tag-name {
+  cursor : default;
 }
 
 .open-tag-menu {
   float     : right;
   font-size : 14pt;
+  cursor    : pointer;
 } 
