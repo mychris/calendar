@@ -44,4 +44,14 @@
 #tags li {
   list-style : none;
   display    : block;
+  padding    : 3px;
+  cursor     : pointer;
 }
+
+.tag-name {
+}
+
+.open-tag-menu {
+  float     : right;
+  font-size : 14pt;
+} 

@@ -14,19 +14,6 @@
   <script>
     $(document).ready(function() {
 
-      d3.json("@routes.Tags.list", function(error, data) {
-        if (error) {
-          d3.select("#tags li").remove;
-          d3.select("#tags").append("p").text("No tags found!");
-        } else {
-          var tags = d3.select("#tags ul").selectAll("li").data(data.tags);
-          tags.enter()
-            .append("li")
-            .style("color", function(tag) { return tag.color; })
-            .text(function(tag) { return tag.name; });
-        }
-      })
-
       $('#calendar').fullCalendar({
         header: {
           left: 'prev,next today',
@@ -90,6 +77,7 @@
       });
 
       findConflicts();
+      listTags();
 
     });
 
@@ -184,6 +172,38 @@
             $("#calendar").fullCalendar('gotoDate', $.fullCalendar.moment(start1));
           })
           .text(function(conflict) { return conflict[0].title + " - " + conflict[1].title; });
+      })
+    }
+
+    function listTags() {
+
+      d3.json("@routes.Tags.list", function(error, data) {
+
+        if (!error && data.tags.length > 0) {
+
+          var tags = d3.select("#tags ul").selectAll("li").data(data.tags);
+
+          tags.enter()
+            .append("li")
+            .on("mouseenter", function() {
+              d3.select(this)
+                .append("div")
+                .attr("class", "open-tag-menu")
+                .text("···")
+            })
+            .on("mouseleave", function() {
+              if(d3.event.target.localName == "li")
+                d3.select(this).selectAll(".open-tag-menu").remove();
+            })
+            .append("span")
+            .attr("class", "tag-name")
+            .style("color", function(tag) { return tag.color; })
+            .text(function(tag) { return tag.name; });
+        } else {
+
+          d3.selectAll("#tags li").remove;
+          d3.select("#tags").append("p").text("No tags found!");
+        }
       })
     }
   </script>
