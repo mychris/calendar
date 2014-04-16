@@ -12,7 +12,19 @@
   <script src="@routes.Assets.at("fullcalendar/fullcalendar.min.js")"></script>
 
   <script>
+
+    var lastSelected;
+
     $(document).ready(function() {
+
+      // Causes all popovers to
+      $('body').on('click', function (e) {
+          $('.popover').each(function () {
+            if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0){
+                $(this).remove();
+              }
+          });
+      });
 
       $('#calendar').fullCalendar({
         header: {
@@ -21,23 +33,15 @@
           right: 'month,agendaWeek,agendaDay'
         },
         defaultDate: '2014-01-12',
-        timezone: "UTC",
+        timezone: 'UTC',
         selectable: true,
         selectHelper: true,
-        select: function(start, end) { // Reaction to the "select/click" event on the calendar (create new event)
-          var title = prompt('Event Title:');
-          var eventData;
-          if (title) {
-            eventData = {
-              title: title,
-              start: start,
-              end: end
-            };
-
-            createEvent(eventData);
-            findConflicts();
-          }
-          $('#calendar').fullCalendar('unselect');
+        select: function(start, end, jsEvent, view) { // Reaction to the "select/click" event on the calendar (create new event)
+          lastSelected = jsEvent.target;
+          createEventPopover(jsEvent.target, start.utc().valueOf(), end.utc().valueOf());
+        },
+        unselect: function( view, jsEvent ) {
+          console.log("unselect");
         },
         editable: true,
         events: function(start, end, timezone, callback) { // getting the events from the server
@@ -45,6 +49,10 @@
             url: '/appointments?from=' + start + '&to=' + end + '&timezone=' + timezone,
             type: 'GET',
             dataType: 'json',
+            headers: {
+              Accept: "application/json; charset=utf-8",
+              "Content-Type": "application/json; charset=utf-8"
+            },
             success: function(data) {
               var events = [];
               var appointmentsWithTags = data.appointments
@@ -76,17 +84,30 @@
         }
       });
 
+
+      d3.json("@routes.Tags.list", function(error, data) {  // Sending Ajax Json GET
+        if (error) {
+          d3.select("#tags li").remove;
+          d3.select("#tags").append("p").text("No tags found!");
+        } else {
+          var tags = d3.select("#tags ul").selectAll("li").data(data.tags);
+          tags.enter()
+            .append("li")
+            .style("color", function(tag) { return tag.color; })
+            .text(function(tag) { return tag.name; });
+        }
+      })
+
       findConflicts();
       listTags();
-
     });
 
     /*
      * Create and post an event to the server. If successful, show in calendar.
      * param eventData: Object with 'description', 'start' and 'end'
      */
-    function createEvent(eventData) {
-      $.ajax({
+    function createEvent(eventData, callback) {
+      return $.ajax({
         type: "POST",
         url: "@routes.Appointments.add()",
         dataType: "json",
@@ -97,20 +118,152 @@
         },
         data: JSON.stringify({
           'title': eventData.title,
-          'start': eventData.start.utc().valueOf(),
-          'end': eventData.end.utc().valueOf(),
-          'tagId': 1 // TODO: Specify Tag from List
+          'start': eventData.start, // Long
+          'end'  : eventData.end,   // Long
+          'tagId': eventData.tagIds // TODO: Specify Tag from List
         }),
-        error: function(xhr) {
+        error: function(err) {
           // var resp = JSON.parse(xhr.responseText)
           // console.log(resp.errorMsg);
           console.log("createEvent Error: ");
-          console.log(xhr.responseText);
+          console.log(err.responseText);
+          $('#calendar').fullCalendar('unselect');
         },
         success: function(data) {
           console.log("event successfully created!")
+          $('#calendar').fullCalendar('unselect');
           $('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
+          callback();
         }
+      });
+    }
+
+    function createEventPopover(selectedElement, startLong, endLong){
+      getTags()
+      .done(function(res) {
+        $(selectedElement).popover({
+            container   : 'body',
+            placement   : 'auto top',
+            html        : 'true',
+            // title       : 'Create a new event',
+            delay       :  {
+                show: 400,
+                hide: 400
+            },
+            content     : function(){
+              var tags = res.tags
+              var tagListElems = [];
+              for (var i = 0; i < tags.length; i++) {
+                tagListElems += ""
+                + "<label class='btn btn-xs' style='background-color: " + tags[i].color + ";'>"
+                  + "<input type='checkbox' value='" + tags[i].id + "'>" + tags[i].name
+                + "</label>"
+              };
+
+              return "" 
+              + "<div id='newEventPopoverContent'>"
+                + "<form class='form-horizontal' role='form'>"
+                  + "<div class='form-group'>"
+                    + "<label class='col-sm-3 control-label'>Title</label>"
+                    + "<div class='col-sm-9'>"
+                      + "<input type='text' class='form-control' id='newEventTitle' placeholder='Title'>"
+                    + "</div>"
+                  + "</div>"
+
+                  + "<div class='form-group'>"
+                    + "<label class='col-sm-3 control-label'>Tags</label>"
+                    + "<div class='col-sm-9' id='newEventTags'> "
+                      + tagListElems
+                    + "</div>"
+                  + "</div>"
+
+                  + "<div class='form-group'>"
+                    + "<label class='col-sm-3 control-label'>From</label>"
+                    + "<div class='col-sm-9'>"
+                      + "<p class='form-control-static' id='newEventStart' date='" + startLong + "'>" + moment(startLong).format("dd, MMM DD, HH:mm") + "</p>"
+                    + "</div>"
+                    + "<label class='col-sm-3 control-label'>To</label>"
+                    + "<div class='col-sm-9'>"
+                      + "<p class='form-control-static' id='newEventEnd' date='" + endLong + "'>" + moment(endLong).format("dd, MMM DD, HH:mm") + "</p>"
+                    + "</div>"
+                  + "</div>"
+
+                  + "<div class='form-group'>"
+                    + "<div class='col-sm-12'>"
+                      + "<button type='submit' class='btn btn-primary btn-sm col-sm-9'>Create Event</button>"
+                      + "<button type='button' id='cancelNewEventSubmit' class='btn btn-default btn-sm col-sm-3'>Cancel</button>"
+                    + "</div>"
+                  + "</div>"
+                + "</form>"
+              + "<div>";
+            }             
+        });
+
+      
+        $(selectedElement).popover('show');
+        $('#newEventTitle').focus();
+
+
+        $( "#cancelNewEventSubmit" ).on( "click", function( event ) {
+          $('#calendar').fullCalendar('unselect');
+          $(selectedElement).popover('destroy');
+
+        });
+
+        $('#newEventPopoverContent').keyup(function(e) {
+          if (e.keyCode == 27) { $('#cancelNewEventSubmit').click(); }   // esc
+        });
+        
+        $( "#newEventPopoverContent" ).on( "submit", function( event ) {
+          event.preventDefault();
+
+          var newEventTitle = $('#newEventTitle');
+
+          if ( !newEventTitle.val().trim() ) {
+            newEventTitle.parent().addClass("has-error");
+            return;
+          }
+          else {
+            newEventTitle.parent().removeClass("has-error");
+          }
+
+          var checkedTags = $('#newEventTags input:checkbox:checked').map(function() {
+            return parseInt(this.value);
+          }).get();
+
+          var eventData = {
+            title : newEventTitle.val(),
+            start : startLong, 
+            end   : endLong,   
+            tagIds: checkedTags[0] // TODO: Server expects only one Tag (for now!)
+          }
+          createEvent(eventData, function(){
+            $(selectedElement).popover('destroy');
+            $(lastSelected).popover('destroy');
+            findConflicts();
+          });
+        });
+
+      })
+      .fail(function(err) {
+        console.log("Error trying to receive list of tags:")
+        console.log(err.responseText)
+      });
+    }
+
+
+    /** 
+     * Returns a promise of tags 
+     */
+    function getTags(){
+      return $.ajax({
+          url: '@routes.Tags.list',
+          type: 'GET',
+          dataType: 'json',
+          headers: {
+            Accept: "application/json; charset=utf-8",
+            "Content-Type": "application/json; charset=utf-8"
+          }
       });
     }
 
@@ -220,18 +373,18 @@
     }
 
     function deleteTag(id) {
-
-      $.ajax({
-        type : "DELETE",
-        url  : "/tag/" + id
-      })
-      .done(function(data) {
-        listTags();
-      })
-      .fail(function() {
-        console.log("Unable to delete user with id " + id);
-      });
+       $.ajax({
+         type : "DELETE",
+         url  : "/tag/" + id
+       })
+       .done(function(data) {
+         listTags();
+       })
+       .fail(function() {
+         console.log("Unable to delete user with id " + id);
+       });
     }
+
   </script>
 
   <!-- Templates -->
@@ -271,14 +424,5 @@
       <ul class="list-group"></ul>
     </div>
   </div>
-  <div class="row">
-    <div class="col-md-12">
-      <input type="text" id="duration"     placeholder="Duration (Minutes)" />
-      <input type="text" id="betweenFrom"  placeholder="Between From..(yyyy-MM-dd)" />
-      <input type="text" id="betweenTo"    placeholder="Between To.. (yyyy-MM-dd)" />
-      <input type="button" id="getFreeSlotsButton" value="Find Free Timeslots!" onclick="findFreeTimeSlots();"> 
-    </div>
-  </div>
 </div>
-
 }

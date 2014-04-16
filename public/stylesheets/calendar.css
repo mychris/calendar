@@ -29,6 +29,16 @@
   margin-right  : 15px;
 }
 
+#newEventTags label {
+  margin-right: 4px;
+  margin-bottom: 4px;
+  font-size: 13px;
+}
+
+#newEventTags label input{
+  margin-right: 4px;
+}
+
 #tags {
   padding-top : 65px;
 }
@@ -56,3 +66,7 @@
   font-size : 14pt;
   cursor    : pointer;
 } 
+
+.spacer {
+  margin: 20px 0;
+}
