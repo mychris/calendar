@@ -62,7 +62,7 @@
               var events = [];
               var appointmentsWithTags = data.appointments
               for (var i = 0; i < appointmentsWithTags.length; i++) {
-                var highestPriorityTag = { priority:0, color:"#3A87AD" };
+                var highestPriorityTag = { priority:-1, color:"#3A87AD" };
                 $.each(appointmentsWithTags[i].tags, function(index, value) {
                   if (highestPriorityTag.priority < value.priority) {
                     highestPriorityTag = value;
