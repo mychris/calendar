@@ -177,6 +177,17 @@
 
     function listTags() {
 
+      function showMenu(container) {
+        $(container).append($("#tag-menu-template").html());
+        $(".tag-menu", container).on("hidden.bs.dropdown", function() {
+          hideMenu(container);
+        });
+      }
+
+      function hideMenu(container) {
+        d3.select(container).select(".tag-menu").remove();
+      }
+
       d3.json("@routes.Tags.list", function(error, data) {
 
         if (!error && data.tags.length > 0) {
@@ -186,14 +197,12 @@
           tags.enter()
             .append("li")
             .on("mouseenter", function() {
-              d3.select(this)
-                .append("div")
-                .attr("class", "open-tag-menu")
-                .text("···")
+              if(!$(".tag-menu ul", this).is(":visible"))
+                showMenu(this);
             })
             .on("mouseleave", function() {
-              if(d3.event.target.localName == "li")
-                d3.select(this).selectAll(".open-tag-menu").remove();
+              if(!$(".tag-menu ul", this).is(":visible"))
+                hideMenu(this);
             })
             .append("span")
             .attr("class", "tag-name")
@@ -206,6 +215,22 @@
         }
       })
     }
+  </script>
+
+  <!-- Templates -->
+
+  <script type="text/html" id="tag-menu-template">
+    <div class="tag-menu dropdown">
+      <a class="open-tag-menu dropdown-toggle" role="button" data-toggle="dropdown" href="#">...</a>
+      <ul class="dropdown-menu" role="menu">
+        <li role="presentation">
+          <a role="menuitem" tabindex="-1" href="">Edit tag</a>
+        </li>
+        <li role="presentation">
+          <a role="menuitem" tabindex="-1" href="">Delete tag</a>
+        </li>
+      </ul>
+    </div>
   </script>
 }
 

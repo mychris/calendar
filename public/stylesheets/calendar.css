@@ -42,9 +42,10 @@
 }
 
 #tags li {
-  list-style : none;
-  display    : block;
-  padding    : 3px;
+  list-style      : none;
+  display         : flex;
+  flex-direction  : row;
+  justify-content : space-between;
 }
 
 .tag-name {
@@ -52,7 +53,6 @@
 }
 
 .open-tag-menu {
-  float     : right;
   font-size : 14pt;
   cursor    : pointer;
 } 
