@@ -208,12 +208,29 @@
             .attr("class", "tag-name")
             .style("color", function(tag) { return tag.color; })
             .text(function(tag) { return tag.name; });
+
+          tags.exit().remove();
+
         } else {
 
           d3.selectAll("#tags li").remove;
           d3.select("#tags").append("p").text("No tags found!");
         }
       })
+    }
+
+    function deleteTag(id) {
+
+      $.ajax({
+        type : "DELETE",
+        url  : "/tag/" + id
+      })
+      .done(function(data) {
+        listTags();
+      })
+      .fail(function() {
+        console.log("Unable to delete user with id " + id);
+      });
     }
   </script>
 

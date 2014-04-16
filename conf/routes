@@ -24,7 +24,7 @@ DELETE        /appointment/:id                  controllers.Appointments.delete(
 
 # Tag
 GET           /tags                             controllers.Tags.list
-POST          /tag                              controllers.Tags.add()
+POST          /tag                              controllers.Tags.add
 GET           /tag/:id                          controllers.Tags.show(id: Int)
 PUT           /tag/:id                          controllers.Tags.update(id: Int)
 DELETE        /tag/:id                          controllers.Tags.delete(id: Int)
