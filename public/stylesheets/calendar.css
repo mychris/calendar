@@ -43,61 +43,21 @@
   padding-top : 65px;
 }
 
-<<<<<<< HEAD
 #conflicts {
   padding-top : 65px;
 }
 
-||||||| merged common ancestors
-=======
-#newEventTags label {
-  font-size: 14px;
-  margin-bottom: 4px;
-  margin-right: 4px;
-}
-
-#newEventTags label input {
-  margin-right: 4px;
-}
-
-#conflicts {
-  padding-top : 65px;
-}
-
->>>>>>> Add background color to tags in appointment creation
 #tags ul {
   padding-left : 0;
 }
 
 #tags li {
-<<<<<<< HEAD
   list-style      : none;
   display         : flex;
   flex-direction  : row;
   justify-content : space-between;
 }
 
-.tag-name {
-  cursor : default;
-||||||| merged common ancestors
-  list-style : none;
-  display    : block;
-=======
-  list-style      : none;
-  display         : flex;
-  flex-direction  : row;
-  justify-content : space-between;
->>>>>>> Add background color to tags in appointment creation
-}
-
-<<<<<<< HEAD
-.open-tag-menu {
-  font-size : 14pt;
-  cursor    : pointer;
-} 
-
-||||||| merged common ancestors
-=======
 .tag-name {
   cursor : default;
 }
@@ -107,7 +67,6 @@
   cursor    : pointer;
 } 
 
->>>>>>> Add background color to tags in appointment creation
 .spacer {
   margin: 20px 0;
 }
