@@ -49,7 +49,7 @@ case class TagsFromUser(tags: Seq[Tag]) extends Success
 case class TagsFromAppointment(tags: Seq[Tag]) extends Success
 case class TagAdded(id: Int) extends Success
 case class TagUpdated(id: Int) extends Success
-case class TagsRemoved() extends Success
+case object TagsRemoved extends Success
 
 /*
  * Errors

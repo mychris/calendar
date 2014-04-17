@@ -73,7 +73,7 @@ object Tags
 
   def delete(id: Int) = Authenticated.async { implicit request =>
     toJsonResult {
-      (Services.calendarService ? RemoveTagsFromUser(List(id), request.user.id)).expecting[TagsRemoved]
+      (Services.calendarService ? RemoveTagsFromUser(List(id), request.user.id)).expecting[TagsRemoved.type]
     }
   }
 }
