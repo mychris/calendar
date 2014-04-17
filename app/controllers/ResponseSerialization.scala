@@ -7,6 +7,7 @@ import formatters._
 import play.api.libs.json.{util => _, _}
 import play.api.mvc._
 import play.api.mvc.Results._
+import play.api.Logger
 
 import scala.concurrent.{util => _, _}
 
@@ -34,8 +35,11 @@ trait ResponseSerialization {
         case NoSuchTagError(message)         => NotFound(message.toJson)
         case NoSuchAppointmentError(message) => NotFound(message.toJson)
         case PermissionDeniedError(message)  => Forbidden(message.toJson)
-        case DatabaseError(message)          => InternalServerError(message.toJson)
-        case e: AskTimeoutException          => InternalServerError(e.getMessage)
-        case e: Exception                    => InternalServerError(e.getMessage)
+        case DatabaseError(message)          => Logger.error(message)
+                                                InternalServerError(message.toJson)
+        case e: AskTimeoutException          => Logger.error(e.getStackTraceString)
+                                                InternalServerError(e.getMessage)
+        case e: Exception                    => Logger.error(e.getStackTraceString)
+                                                InternalServerError(e.getMessage)
       }
 }
