@@ -118,11 +118,13 @@ class CalendarService(db: Database)
 
   def removeTags(msg: RemoveTags) = db.withSession { implicit session =>
     tags.filter(_.id.inSet(msg.tagIds)).delete
+    log.debug(s"""Deleting tags with ids ${msg.tagIds.mkString(", ")}""")
     sender ! TagsRemoved
   }
 
   def removeTagsFromUser(msg: RemoveTagsFromUser) = db.withSession { implicit session =>
     tags.filter(_.id.inSet(msg.tagIds)).filter(_.userId === msg.userId).delete
+    log.debug(s"""Deleting tags with ids ${msg.tagIds.mkString(", ")}""")
     sender ! TagsRemoved
   }
 

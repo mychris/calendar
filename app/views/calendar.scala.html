@@ -328,8 +328,22 @@
 
     function listTags() {
 
+      function generateMenu(id) {
+        return "<div class=\"tag-menu dropdown\">" +
+          "<a class=\"open-tag-menu dropdown-toggle\" role=\"button\" data-toggle=\"dropdown\" href=\"#\">...</a>" +
+          "<ul class=\"dropdown-menu\" role=\"menu\">" +
+            "<li role=\"presentation\">" +
+              "<a role=\"menuitem\" tabindex=\"-1\" onclick=\"\">Edit tag</a>" +
+            "</li>" +
+            "<li role=\"presentation\">" +
+              "<a role=\"menuitem\" tabindex=\"-1\" onclick=\"deleteTag(" + id + ")\">Delete tag</a>" +
+            "</li>" +
+          "</ul>" +
+        "</div>";
+      }
+
       function showMenu(container) {
-        $(container).append($("#tag-menu-template").html());
+        $(container).append($(generateMenu(container.__data__.id)));
         $(".tag-menu", container).on("hidden.bs.dropdown", function() {
           hideMenu(container);
         });
@@ -383,22 +397,6 @@
        });
     }
 
-  </script>
-
-  <!-- Templates -->
-
-  <script type="text/html" id="tag-menu-template">
-    <div class="tag-menu dropdown">
-      <a class="open-tag-menu dropdown-toggle" role="button" data-toggle="dropdown" href="#">...</a>
-      <ul class="dropdown-menu" role="menu">
-        <li role="presentation">
-          <a role="menuitem" tabindex="-1" href="">Edit tag</a>
-        </li>
-        <li role="presentation">
-          <a role="menuitem" tabindex="-1" href="">Delete tag</a>
-        </li>
-      </ul>
-    </div>
   </script>
 }
 
