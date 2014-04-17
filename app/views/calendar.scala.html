@@ -19,11 +19,11 @@
 
       // Causes all popovers to
       $('body').on('click', function (e) {
-          $('.popover').each(function () {
-            if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0){
-                $(this).remove();
-              }
-          });
+        $('.popover').each(function () {
+          if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0){
+              $(this).remove();
+            }
+        });
       });
 
       $('#calendar').fullCalendar({
@@ -98,25 +98,24 @@
           "Content-Type": "application/json; charset=utf-8"
         },
         data: JSON.stringify({
-          'title': eventData.title,
-          'start': eventData.start, // Long
-          'end'  : eventData.end,   // Long
-          'tagId': eventData.tagIds // TODO: Specify Tag from List
+          'title'  : eventData.title,
+          'start'  : eventData.start, // Long
+          'end'    : eventData.end,   // Long
+          'tagIds' : eventData.tagIds // TODO: Specify Tag from List
         }),
         error: function(err) {
           console.log("createEvent Error: ");
           console.log(err.responseText);
           $('#calendar').fullCalendar('unselect');
         },
-        success: function(data) {
-          var highestPriorityTag = getHighestPriorityTag(data.tags);
-          console.log(data);
+        success: function(appointmentWithTags) {
+          var highestPriorityTag = getHighestPriorityTag(appointmentWithTags.tags);
 
           var newEventData = {
-            'title': data.appointment.title,
-            'start': data.appointment.start, 
-            'end'  : data.appointment.end,   
-            'color': highestPriorityTag.color
+            'title' : appointmentWithTags.appointment.title,
+            'start' : appointmentWithTags.appointment.start, 
+            'end'   : appointmentWithTags.appointment.end,   
+            'color' : highestPriorityTag.color
           }
 
           $('#calendar').fullCalendar('unselect');
@@ -144,7 +143,7 @@
               for (var i = 0; i < tags.length; i++) {
                 tagListElems += ""
                 + "<label class='btn btn-xs' style='background-color: " + tags[i].color + ";'>"
-                  + "<input type='checkbox' value='" + tags[i].id + "'>" + tags[i].name
+                  + "<input type='checkbox' tagId='" + tags[i].id + "'>" + tags[i].name
                 + "</label>"
               };
 
@@ -216,14 +215,14 @@
           }
 
           var checkedTags = $('#newEventTags input:checkbox:checked').map(function() {
-            return parseInt(this.value);
+            return parseInt($(this).attr('tagId'));
           }).get();
 
           var eventData = {
             title : newEventTitle.val(),
             start : startLong, 
             end   : endLong,   
-            tagIds: checkedTags[0] // TODO: Server expects only one Tag (for now!)
+            tagIds: checkedTags
           }
           createEvent(eventData, function(){
             $(selectedElement).popover('destroy');

@@ -76,7 +76,7 @@ class CalendarService(db: Database)
   def addAppointment(msg: AddAppointment) =
     sender ! AppointmentAdded(db.withTransaction { implicit session =>
       val appointmentId = (appointments returning appointments.map(_.id)) += Appointment(-1, msg.title, msg.start, msg.end)
-      appointmentBelongsToTag += ((appointmentId, msg.tagId))
+      appointmentBelongsToTag ++= msg.tagIds.map((appointmentId, _))
       appointmentId
     })
 

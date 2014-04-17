@@ -14,7 +14,7 @@ import service.protocol._
 import java.util.TimeZone
 import datasource.calendar.{Appointment, Tag}
 
-case class AddAppointmentRequestBody(title: String, start: DateTime, end: DateTime, tagId: Int)
+case class AddAppointmentRequestBody(title: String, start: DateTime, end: DateTime, tagIds: Seq[Int])
 case class AppointmentWithTagsResponseBody(appointment: Appointment, tags: Seq[Tag])
 
 object Appointments
@@ -53,7 +53,7 @@ object Appointments
                                         addAppointment.title,
                                         addAppointment.start,
                                         addAppointment.end,
-                                        addAppointment.tagId
+                                        addAppointment.tagIds
                                       )).expecting[AppointmentAdded]
           AppointmentById(app)      <- (Services.calendarService ? GetAppointmentById(id, request.user.id)).expecting[AppointmentById]
           TagsFromAppointment(tags) <- (Services.calendarService ? GetTagsFromAppointment(id)).expecting[TagsFromAppointment]

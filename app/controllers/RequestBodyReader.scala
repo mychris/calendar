@@ -17,6 +17,6 @@ trait RequestBodyReader {
   def readBody[A](block: A => Future[SimpleResult])(implicit rs: Reads[A], request: Request[JsValue]): Future[SimpleResult] =
     request.body.validate[A] match {
       case s: JsSuccess[A] => block(s.get)
-      case e: JsError      => Future.successful(BadRequest(e.errors.map(errorTuple => errorTuple._1 + ": " +  errorTuple._2.mkString(", ")).mkString("\n")))
+      case e: JsError      => Future.successful(BadRequest(e.errors.map(errorTuple => errorTuple._1 + ": " +  errorTuple._2.map(_.message).mkString(", ")).mkString("\n")))
     }
 }
