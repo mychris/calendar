@@ -56,7 +56,7 @@
               var events = [];
               var appointmentsWithTags = data.appointments
               for (var i = 0; i < appointmentsWithTags.length; i++) {
-                var highestPriorityTag = getHighestPriorityTag(appointmentsWithTags[i]);
+                var highestPriorityTag = getHighestPriorityTag(appointmentsWithTags[i].tags);
 
                 // console.log(JSON.stringify(highestPriorityTag));
                 events.push({
@@ -109,9 +109,18 @@
           $('#calendar').fullCalendar('unselect');
         },
         success: function(data) {
+          var highestPriorityTag = getHighestPriorityTag(data.tags);
+          console.log(data);
+
+          var newEventData = {
+            'title': data.appointment.title,
+            'start': data.appointment.start, 
+            'end'  : data.appointment.end,   
+            'color': highestPriorityTag.color
+          }
 
           $('#calendar').fullCalendar('unselect');
-          $('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
+          $('#calendar').fullCalendar('renderEvent', newEventData, true); // stick? = true
           callback();
         }
       });
@@ -231,9 +240,9 @@
     }
 
 
-    function getHighestPriorityTag(appointmentWithTags){
+    function getHighestPriorityTag(tags){
       var highestPriorityTag = { priority:-1, color:"#3A87AD" };
-      $.each(appointmentWithTags.tags, function(index, value) {  // todo: better: use max function here
+      $.each(tags, function(index, value) {  // todo: better: use max function here
         if (highestPriorityTag.priority < value.priority) 
           highestPriorityTag = value;
       });

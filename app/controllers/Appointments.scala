@@ -12,14 +12,16 @@ import formatters._
 import service._
 import service.protocol._
 import java.util.TimeZone
+import datasource.calendar.{Appointment, Tag}
 
 case class AddAppointmentRequestBody(title: String, start: DateTime, end: DateTime, tagId: Int)
+case class AppointmentWithTagsResponseBody(appointment: Appointment, tags: Seq[Tag])
 
 object Appointments
   extends Controller with
           Restricted with
-          ExecutionEnvironment with
           ResponseSerialization with
+          ExecutionEnvironment with
           ResponseHandling with
           RequestBodyReader {
 
@@ -39,19 +41,24 @@ object Appointments
         request.user.id,
         from.getOrElse(DateTime.forInstant(0, TimeZone.getTimeZone("UTC"))),
         to.getOrElse(DateTime.now(TimeZone.getTimeZone("UTC"))
-      ))).expecting[AppointmentsFromUserWithTag]
+      ))).expecting[AppointmentsFromUserWithTags]
     }
   }
 
   def add = Authenticated.async(parse.json) { implicit request =>
     readBody[AddAppointmentRequestBody] { addAppointment =>
       toJsonResult {
-        (Services.calendarService ? AddAppointment(
-          addAppointment.title,
-          addAppointment.start,
-          addAppointment.end,
-          addAppointment.tagId
-        )).expecting[AppointmentAdded]
+        for {
+          AppointmentAdded(id)     <- (Services.calendarService ? AddAppointment(
+                                        addAppointment.title,
+                                        addAppointment.start,
+                                        addAppointment.end,
+                                        addAppointment.tagId
+                                      )).expecting[AppointmentAdded]
+          AppointmentById(app)      <- (Services.calendarService ? GetAppointmentById(id, request.user.id)).expecting[AppointmentById]
+          TagsFromAppointment(tags) <- (Services.calendarService ? GetTagsFromAppointment(id)).expecting[TagsFromAppointment]
+        }
+        yield (AppointmentWithTagsResponseBody(app, tags))
       }
     }
   }

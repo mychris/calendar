@@ -26,8 +26,7 @@ trait ResponseSerialization {
 
   self: ExecutionEnvironment =>
 
-  /* TODO: Carefully observe exceptions sent to the client, and catch them here to handle them better! */
-  def toJsonResult[W](block: => Future[W])(implicit ws: Writes[W]) =
+  def toJsonResult[W](block: => Future[W])(implicit ws: Writes[W]): Future[SimpleResult] =
     block
       .map(result => Ok(result.toJson))
       .recover {

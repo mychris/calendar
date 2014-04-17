@@ -39,7 +39,7 @@ case class RemoveTagsFromUser(tagIds: Seq[Int], userId: Int) extends Request
 case class  AppointmentById(appointment: Appointment) extends Success
 case class  AppointmentsFromTag(appointments: Seq[Appointment]) extends Success
 case class  AppointmentsFromUser(appointments: Seq[Appointment]) extends Success
-case class  AppointmentsFromUserWithTag(appointments: Seq[AppointmentWithTags]) extends Success
+case class  AppointmentsFromUserWithTags(appointments: Seq[AppointmentWithTags]) extends Success
 case class  AppointmentAdded(id: Int) extends Success
 case object AppointmentsRemoved extends Success
 
