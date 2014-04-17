@@ -7,6 +7,7 @@ import akka.routing._
 import datasource.calendar._
 
 import play.api.db._
+import play.api.Logger
 import play.api.Play.current
 
 import scala.concurrent.{util => _, _}
@@ -53,8 +54,16 @@ object Services extends ExecutionEnvironment with ResponseHandling {
   }
 
   /** Creates the data access component tables in the database */
-  def createSchema: Future[Unit] = collectDdl.map(ddl => db.withTransaction { implicit session => ddl.create })
+  def createSchema: Future[Unit] =
+    collectDdl.map { ddl =>
+      db.withTransaction { implicit session => ddl.create };
+      Logger.debug(ddl.createStatements.mkString("\n"))
+    }
 
   /** Drops the data access component tables in the database */
-  def dropSchema: Future[Unit] = collectDdl.map(ddl => db.withTransaction { implicit session => ddl.drop })
+  def dropSchema: Future[Unit] =
+    collectDdl.map { ddl =>
+      db.withTransaction { implicit session => ddl.drop };
+      Logger.debug(ddl.dropStatements.mkString("\n"))
+    }
 }
