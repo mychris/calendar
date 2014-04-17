@@ -41,7 +41,6 @@
           createEventPopover(jsEvent.target, start.utc().valueOf(), end.utc().valueOf());
         },
         unselect: function( view, jsEvent ) {
-          console.log("unselect");
         },
         editable: true,
         events: function(start, end, timezone, callback) { // getting the events from the server
@@ -57,17 +56,13 @@
               var events = [];
               var appointmentsWithTags = data.appointments
               for (var i = 0; i < appointmentsWithTags.length; i++) {
-                var highestPriorityTag = { priority:-1, color:"#3A87AD" };
-                $.each(appointmentsWithTags[i].tags, function(index, value) {
-                  if (highestPriorityTag.priority < value.priority) {
-                    highestPriorityTag = value;
-                  }
-                });
-                console.log(JSON.stringify(highestPriorityTag));
+                var highestPriorityTag = getHighestPriorityTag(appointmentsWithTags[i]);
+
+                // console.log(JSON.stringify(highestPriorityTag));
                 events.push({
                   title: appointmentsWithTags[i].appointment.title,
                   start: appointmentsWithTags[i].appointment.start,
-                  end: appointmentsWithTags[i].appointment.end,
+                  end:   appointmentsWithTags[i].appointment.end,
                   color: highestPriorityTag.color
                 })
 
@@ -83,20 +78,6 @@
           $('#loading').toggle(bool);
         }
       });
-
-
-      d3.json("@routes.Tags.list", function(error, data) {  // Sending Ajax Json GET
-        if (error) {
-          d3.select("#tags li").remove;
-          d3.select("#tags").append("p").text("No tags found!");
-        } else {
-          var tags = d3.select("#tags ul").selectAll("li").data(data.tags);
-          tags.enter()
-            .append("li")
-            .style("color", function(tag) { return tag.color; })
-            .text(function(tag) { return tag.name; });
-        }
-      })
 
       findConflicts();
       listTags();
@@ -123,14 +104,12 @@
           'tagId': eventData.tagIds // TODO: Specify Tag from List
         }),
         error: function(err) {
-          // var resp = JSON.parse(xhr.responseText)
-          // console.log(resp.errorMsg);
           console.log("createEvent Error: ");
           console.log(err.responseText);
           $('#calendar').fullCalendar('unselect');
         },
         success: function(data) {
-          console.log("event successfully created!")
+
           $('#calendar').fullCalendar('unselect');
           $('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
           callback();
@@ -249,6 +228,16 @@
         console.log("Error trying to receive list of tags:")
         console.log(err.responseText)
       });
+    }
+
+
+    function getHighestPriorityTag(appointmentWithTags){
+      var highestPriorityTag = { priority:-1, color:"#3A87AD" };
+      $.each(appointmentWithTags.tags, function(index, value) {  // todo: better: use max function here
+        if (highestPriorityTag.priority < value.priority) 
+          highestPriorityTag = value;
+      });
+      return highestPriorityTag;
     }
 
 
