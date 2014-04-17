@@ -56,7 +56,7 @@ class AdministrationService(db: Database)
       ddl.create
     }
 
-    log.debug("Schema created \n\n" + ddl.createStatements.mkString("\n"))
+    log.debug("Schema created\n" + ddl.createStatements.mkString("\n"))
     sender ! SchemaCreated
   }
 
@@ -65,7 +65,9 @@ class AdministrationService(db: Database)
     db.withTransaction { implicit session =>
       ddl.drop
     }
-    log.debug("Schema dropped \n\n" + ddl.dropStatements.mkString("\n"))
+
+    // println("Schema dropped: " + ddl.dropStatements.mkString("; "))
+    log.debug("Schema dropped\n" + ddl.dropStatements.mkString("\n"))
     sender ! SchemaDropped
   }
 
