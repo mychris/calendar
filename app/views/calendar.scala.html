@@ -327,22 +327,22 @@
 
     function listTags() {
 
-      function generateMenu(id) {
+      function generateMenu(tag) {
         return "<div class=\"tag-menu dropdown\">" +
-          "<a class=\"open-tag-menu dropdown-toggle\" role=\"button\" data-toggle=\"dropdown\" href=\"#\">...</a>" +
+          "<a class=\"open-tag-menu dropdown-toggle caret\" style=\"color:" + tag.color +";\" role=\"button\" data-toggle=\"dropdown\" href=\"#\"/>" +
           "<ul class=\"dropdown-menu\" role=\"menu\">" +
             "<li role=\"presentation\">" +
               "<a role=\"menuitem\" tabindex=\"-1\" onclick=\"\">Edit tag</a>" +
             "</li>" +
             "<li role=\"presentation\">" +
-              "<a role=\"menuitem\" tabindex=\"-1\" onclick=\"deleteTag(" + id + ")\">Delete tag</a>" +
+              "<a role=\"menuitem\" tabindex=\"-1\" onclick=\"deleteTag(" + tag.id + ")\">Delete tag</a>" +
             "</li>" +
           "</ul>" +
         "</div>";
       }
 
       function showMenu(container) {
-        $(container).append($(generateMenu(container.__data__.id)));
+        $(container).append($(generateMenu(container.__data__)));
         $(".tag-menu", container).on("hidden.bs.dropdown", function() {
           hideMenu(container);
         });
@@ -400,25 +400,27 @@
 }
 
 @main(title, scripts, "") {
-<h3 id="welcome-headline">Welcome, @userName!</h3><a href="/logout">Logout</a>
-<div id="script-warning">
-  <code>Server cannot return any events.</code>
-</div>
+  <h3 id="welcome-headline">Welcome, @userName!</h3>
+  <nav>
+    <a href="/admin">Administration</a>
+    <a href="/logout">Logout</a>
+  </nav>
+  <div id="script-warning">
+    <code>Server cannot return any events.</code>
+  </div>
 
-<div id="loading">loading...</div>
+  <div id="loading">loading...</div>
 
-<div class="container">
-  <div class="row">
-    <div id="tags" class="col-md-2">
+  <div id="main">
+    <div id="tags">
       <p>Tags</p>
       <ul></ul>
     </div>
-    <div id="calendar" class="col-md-10"></div>
-    <div id="conflicts" class="col-md-2">
+    <div id="calendar"></div>
+    <div id="conflicts">
       <p>Conflicts</p>
       <ul class="list-group"></ul>
     </div>
     <div class="log formgroup"></div>
   </div>
-</div>
 }
