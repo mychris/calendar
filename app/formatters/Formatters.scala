@@ -86,7 +86,7 @@ package object formatters {
   implicit val tagAddedFormat = Json.format[TagAdded]
   implicit val tagUpdatedFormat = Json.format[TagUpdated]
   implicit object tagsRemoved extends Writes[TagsRemoved.type] {
-    def writes(o: TagsRemoved.type): JsValue = "".toJson
+    def writes(o: TagsRemoved.type): JsValue = "TagsRemoved".toJson
   }
 
   /*
@@ -111,6 +111,21 @@ package object formatters {
 
   implicit object exceptionWrites extends Writes[Exception] {
     def writes(o: Exception): JsValue = o.getMessage.toJson
+  }
+
+  /*
+   * AdministrationService
+   */
+  implicit object schemaCreatedWrites extends Writes[SchemaCreated.type] {
+    def writes(o: SchemaCreated.type): JsValue = "SchemaCreated".toJson
+  }
+
+  implicit object schemaDroppedFormatWrites extends Writes[SchemaDropped.type] {
+    def writes(o: SchemaDropped.type): JsValue = "SchemaDropped".toJson
+  }
+
+  implicit object sampleDataCreatedFormatWrites extends Writes[SampleDataCreated.type] {
+    def writes(o: SampleDataCreated.type): JsValue = "SampleDataCreated".toJson
   }
 
   /*

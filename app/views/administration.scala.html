@@ -1,0 +1,67 @@
+@scripts = {
+  <link rel="stylesheet" media="screen" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/css/bootstrap.min.css">
+  <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/administration.css")">
+
+  <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap.min.js"></script>
+
+  <script>
+
+    function trimQuotes(str) {
+      var res = str;
+      while(res.slice(0, 1) == '"')
+        res = res.slice(1, res.length);
+      while(res.slice(-1) == '"')
+        res = res.slice(0, res.length - 1);
+
+      return res;
+    }
+
+    function log(message) {
+      $("#log").prepend("<p>[<span style=\"color:green;\">success</span>] " + trimQuotes(message) + "</p>");
+    }
+
+    function logError(message) {
+      $("#log").prepend("<p>[<span style=\"color:red;\">error</span>] " + trimQuotes(message) + "</p>");
+    }
+
+    function dropSchema() {
+       $.ajax({
+         type    : "DELETE",
+         url     : "/schema",
+         success : function(data) { log("Schema dropped"); },
+         error   : function(error) { logError(error.responseText); }
+       });
+    } 
+
+    function createSchema() {
+       $.ajax({
+         type    : "POST",
+         url     : "/schema",
+         success : function(data) { log("Schema created"); },
+         error   : function(error) { logError(error.responseText); }
+       });
+    } 
+
+    function createSampleData() {
+       $.ajax({
+         type    : "POST",
+         url     : "/sampledata",
+         success : function(data) { log("Sample data created"); },
+         error   : function(error) { logError(error.responseText); }
+       });
+    } 
+  </script>
+}
+
+@main("Administration", scripts, "") {
+  <div class="container">
+    <h1>Admininstration</h1>
+    <p><a href="/">Login</a></p>
+    <div id="actions">
+      <button class="btn btn-s btn-default" onclick="dropSchema()">Drop schema</button>
+      <button class="btn btn-s btn-default" onclick="createSchema()">Create schema</button>
+      <button class="btn btn-s btn-default" onclick="createSampleData()">Create sample data</button>
+    </div>
+    <div id="log"/>
+  </div>
+}

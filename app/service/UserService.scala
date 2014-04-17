@@ -43,12 +43,9 @@ class UserService(db: Database)
     sender ! UserAdded((users returning users.map(_.id)) += User(-1, msg.name, msg.password)) 
   }
 
-  def getDdl = sender ! Ddl(userDdl)
-
   def receive = handled {
     case msg: GetUserById   => getUserById(msg)
     case msg: GetUserByName => getUserByName(msg)
     case msg: AddUser       => addUser(msg)
-    case GetDdl             => getDdl
   }
 }

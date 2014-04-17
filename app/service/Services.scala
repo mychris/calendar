@@ -38,32 +38,5 @@ object Services extends ExecutionEnvironment with ResponseHandling {
   val freeTimeSlotsFindingService = system.actorOf(FreeTimeSlotFindingService.props.withRouter(FromConfig()), "freetimeslots-finding-service")
 
   /** Service for inserting sample data into the database */
-  val sampleDataService = system.actorOf(SampleDataService.props(db), "sample-data-service")
-
-  /** Returns a merged ddl statement consisting of all data access component's ddl statements */
-  private def collectDdl: Future[SchemaDescription] = {
-
-    val userDdlRequest     = (userService ? GetDdl).expecting[Ddl]
-    val calendarDdlRequest = (calendarService ? GetDdl).expecting[Ddl]
-
-    for {
-      userDdl     <- userDdlRequest
-      calendarDdl <- calendarDdlRequest
-    }
-    yield userDdl.ddl ++ calendarDdl.ddl
-  }
-
-  /** Creates the data access component tables in the database */
-  def createSchema: Future[Unit] =
-    collectDdl.map { ddl =>
-      db.withTransaction { implicit session => ddl.create };
-      Logger.debug(ddl.createStatements.mkString("\n"))
-    }
-
-  /** Drops the data access component tables in the database */
-  def dropSchema: Future[Unit] =
-    collectDdl.map { ddl =>
-      db.withTransaction { implicit session => ddl.drop };
-      Logger.debug(ddl.dropStatements.mkString("\n"))
-    }
+  val administrationService = system.actorOf(AdministrationService.props(db), "administration-service")
 }
