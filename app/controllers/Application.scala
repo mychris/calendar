@@ -8,6 +8,7 @@ import hirondelle.date4j.DateTime
 
 import play.api.mvc._
 import play.api.libs.json.{JsValue, Json}
+import play.api.Logger
 import play.api.templates.Html
 
 import service._
@@ -24,7 +25,8 @@ object Application
           ResponseHandling {
 
   def recoverException: PartialFunction[Throwable, SimpleResult] = {
-    case e: Exception => InternalServerError(e.getMessage)
+    case e: Exception => Logger.error(e.getStackTraceString)
+                         InternalServerError(e.getMessage)
   }
 
   def index = Action { Ok(views.html.index("Your new application is ready.")) }
