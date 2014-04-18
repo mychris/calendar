@@ -58,7 +58,7 @@ class CalendarService(db: Database)
     sender ! AppointmentsFromTag(appointmentsWithTag(msg.tagId).buildColl[Seq]) }
 
   def getAppointmentsFromUser(msg: GetAppointmentsFromUser) = db.withSession { implicit session =>
-    sender ! AppointmentsFromUser(appointmentsFromUser(msg.userId).buildColl[Seq])
+    sender ! AppointmentsFromUser(appointmentsFromUser(msg.userId).buildColl[Seq].distinct)
   }
 
   /** Retrieves a user appointments together with its tags */
