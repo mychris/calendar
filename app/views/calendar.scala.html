@@ -303,6 +303,7 @@
     }
 
     function findConflicts() {
+      d3.select("#conflicts ul").selectAll("li").data([]).exit().remove();
       d3.json("@routes.Appointments.conflicts", function(error, data) {
         if (error) {
             d3.select("#conflicts li").remove;
@@ -322,6 +323,7 @@
             $("#calendar").fullCalendar('gotoDate', $.fullCalendar.moment(start1));
           })
           .text(function(conflict) { return conflict[0].title + " - " + conflict[1].title; });
+        conflicts.exit().remove();
       })
     }
 
