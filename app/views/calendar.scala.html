@@ -60,6 +60,7 @@
 
                 // console.log(JSON.stringify(highestPriorityTag));
                 events.push({
+                  id:    appointmentsWithTags[i].appointment.id,
                   title: appointmentsWithTags[i].appointment.title,
                   start: appointmentsWithTags[i].appointment.start,
                   end:   appointmentsWithTags[i].appointment.end,
@@ -76,7 +77,24 @@
         },
         loading: function(bool) {
           $('#loading').toggle(bool);
-        }
+        },
+        eventClick: function(calEvent, jsEvent, view) {
+          if (confirm("Delete appointment '" + calEvent.title + "'?")) {
+            $.ajax({
+              url: '/appointment/' + calEvent.id,
+              type: 'DELETE',
+              success: function(data) {
+                $('#calendar').fullCalendar('removeEvents', function(ev) {
+                  return ev.id == calEvent.id;
+                });
+                findConflicts();
+              },
+              error: function(xhr) {
+                console.log("Can not delete appointment " + JSON.stringify(calEvent));
+              },
+            })
+          }
+        },
       });
 
       findConflicts();
@@ -112,6 +130,7 @@
           var highestPriorityTag = getHighestPriorityTag(appointmentWithTags.tags);
 
           var newEventData = {
+            'id'    : appointmentWithTags.appointment.id,
             'title' : appointmentWithTags.appointment.title,
             'start' : appointmentWithTags.appointment.start, 
             'end'   : appointmentWithTags.appointment.end,   

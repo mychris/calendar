@@ -67,8 +67,10 @@ object Appointments
     Status(501)("Updating appointments not implemented")
   }
 
-  def delete(id: Int) = Action {
-    Status(501)("Deleting appointments not implemented")
+  def delete(id: Int) = Authenticated.async { implicit request =>
+    toJsonResult {
+      (Services.calendarService ? RemoveAppointmentsFromUser(id :: Nil, request.user.id)).expecting[AppointmentsRemoved.type]
+    }
   }
 
   def conflicts = Authenticated.async { implicit request => 

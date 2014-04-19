@@ -79,6 +79,9 @@ package object formatters {
   implicit val appointmentsFromUserFormat = Json.format[AppointmentsFromUser]
   implicit val appointmentsFromUserWithTagFormat = Json.format[AppointmentsFromUserWithTags]
   implicit val appointmentAddedFormat = Json.format[AppointmentAdded]
+  implicit object appointmentsRemoved extends Writes[AppointmentsRemoved.type] {
+    def writes(o: AppointmentsRemoved.type): JsValue = "AppointmentsRemoved".toJson
+  }
 
   implicit val tagByIdFormat = Json.format[TagById]
   implicit val tagsFromUserFormat = Json.format[TagsFromUser]
