@@ -15,6 +15,7 @@ import java.util.TimeZone
 import datasource.calendar.{Appointment, Tag}
 
 case class AddAppointmentRequestBody(title: String, start: DateTime, end: DateTime, tagIds: Seq[Int])
+case class UpdateAppointmentRequestBody(title: String, start: DateTime, end: DateTime, tagIds: Seq[Int])
 case class AppointmentWithTagsResponseBody(appointment: Appointment, tags: Seq[Tag])
 
 object Appointments
@@ -63,8 +64,19 @@ object Appointments
     }
   }
 
-  def update(id: Int) = Action {
-    Status(501)("Updating appointments not implemented")
+  def update(id: Int) = Authenticated.async(parse.json) { implicit request =>
+    readBody[UpdateAppointmentRequestBody] { updateApp =>
+      toJsonResult {
+        (Services.calendarService ? UpdateAppointmentFromUser(
+          id,
+          updateApp.title, 
+          updateApp.start,
+          updateApp.end,
+          updateApp.tagIds,
+          request.user.id
+        )).expecting[AppointmentUpdated]
+      }
+    }
   }
 
   def delete(id: Int) = Authenticated.async { implicit request =>

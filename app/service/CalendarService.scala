@@ -80,6 +80,18 @@ class CalendarService(db: Database)
       appointmentId
     })
 
+  // right now we only need to update the start and end date
+  // TODO: full implementation
+  def updateAppointmentFromUser(msg: UpdateAppointmentFromUser) = db.withSession { implicit session =>
+    log.debug(msg.toString)
+    sender ! AppointmentUpdated(
+      appointments
+        .filter(_.id === msg.id)
+        .map(a => (a.start, a.end))
+        .update((msg.start, msg.end))
+    )
+  }
+
   def removeAppointments(msg: RemoveAppointments) = db.withSession { implicit session =>
     appointments.filter(_.id.inSet(msg.appointmentIds)).delete
     sender ! AppointmentsRemoved
@@ -148,6 +160,7 @@ class CalendarService(db: Database)
     case msg: AddTag                          => addTag(msg)
     case msg: UpdateTag                       => updateTag(msg)
     case msg: AddAppointment                  => addAppointment(msg)
+    case msg: UpdateAppointmentFromUser       => updateAppointmentFromUser(msg)
     case msg: RemoveTags                      => removeTags(msg)
     case msg: RemoveTagsFromUser              => removeTagsFromUser(msg)
     case msg: RemoveAppointments              => removeAppointments(msg)

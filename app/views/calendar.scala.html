@@ -60,11 +60,12 @@
 
                 // console.log(JSON.stringify(highestPriorityTag));
                 events.push({
-                  id:    appointmentsWithTags[i].appointment.id,
-                  title: appointmentsWithTags[i].appointment.title,
-                  start: appointmentsWithTags[i].appointment.start,
-                  end:   appointmentsWithTags[i].appointment.end,
-                  color: highestPriorityTag.color
+                  id:     appointmentsWithTags[i].appointment.id,
+                  title:  appointmentsWithTags[i].appointment.title,
+                  start:  appointmentsWithTags[i].appointment.start,
+                  end:    appointmentsWithTags[i].appointment.end,
+                  tagIds: $.map(appointmentsWithTags[i].tags, function(v, i) { return v.id }),
+                  color:  highestPriorityTag.color
                 })
 
               }
@@ -95,11 +96,42 @@
             })
           }
         },
+        eventDrop: function(eventData, revertFunc, jsEvent, ui, view) {
+          updateEvent(eventData, revertFunc);
+        },
+        eventResize: function(eventData, revertFunc, jsEvent, ui, view) {
+          updateEvent(eventData, revertFunc);
+        }
       });
 
       findConflicts();
       listTags();
     });
+
+    function updateEvent(eventData, revertFunc) {
+      $.ajax({
+        type: "PUT",
+        url: '/appointment/' + eventData.id,
+        dataType: 'json',
+        accepts: "application/json; charset=utf-8",
+        headers: {
+          Accept: "application/json; charset=utf-8",
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        data: JSON.stringify({
+          'title'  : eventData.title,
+          'start'  : eventData.start.utc().valueOf(),
+          'end'    : eventData.end.utc().valueOf(),
+          'tagIds' : eventData.tagIds
+        }),
+        success: function(data) {
+          findConflicts();
+        },
+        error: function(xhr) {
+          revertFunc();
+        },
+      })
+    }
 
     /*
      * Create and post an event to the server. If successful, show in calendar.
@@ -134,7 +166,8 @@
             'title' : appointmentWithTags.appointment.title,
             'start' : appointmentWithTags.appointment.start, 
             'end'   : appointmentWithTags.appointment.end,   
-            'color' : highestPriorityTag.color
+            'color' : highestPriorityTag.color,
+            'tagIds': $.map(appointmentWithTags.tags, function(v, i) { return v.id; })
           }
 
           $('#calendar').fullCalendar('unselect');
