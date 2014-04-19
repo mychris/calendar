@@ -60,12 +60,12 @@
 
                 // console.log(JSON.stringify(highestPriorityTag));
                 events.push({
-                  id:     appointmentsWithTags[i].appointment.id,
-                  title:  appointmentsWithTags[i].appointment.title,
-                  start:  appointmentsWithTags[i].appointment.start,
-                  end:    appointmentsWithTags[i].appointment.end,
-                  tagIds: $.map(appointmentsWithTags[i].tags, function(v, i) { return v.id }),
-                  color:  highestPriorityTag.color
+                  'id'     : appointmentsWithTags[i].appointment.id,
+                  'title'  : appointmentsWithTags[i].appointment.title + " [tags: " + $.map(appointmentsWithTags[i].tags, function(val) { return val.name; })+"]",
+                  'start'  : appointmentsWithTags[i].appointment.start,
+                  'end'    : appointmentsWithTags[i].appointment.end,
+                  'color'  : highestPriorityTag.color,
+                  'tagIds' : $.map(appointmentsWithTags[i].tags, function(v) { return v.id; })
                 })
 
               }
@@ -75,6 +75,9 @@
               $('#script-warning').show();
             }
           });
+        },
+        eventRender: function(event, element) {
+          element.attr("tagIds", event.tagIds)
         },
         loading: function(bool) {
           $('#loading').toggle(bool);
@@ -167,7 +170,7 @@
             'start' : appointmentWithTags.appointment.start, 
             'end'   : appointmentWithTags.appointment.end,   
             'color' : highestPriorityTag.color,
-            'tagIds': $.map(appointmentWithTags.tags, function(v, i) { return v.id; })
+            'tagIds': $.map(appointmentWithTags.tags, function(v) { return v.id; })
           }
 
           $('#calendar').fullCalendar('unselect');
@@ -267,7 +270,7 @@
           }
 
           var checkedTags = $('#newEventTags input:checkbox:checked').map(function() {
-            return parseInt($(this).attr('tagId'));
+            return parseInt($(this).attr('tagid'));
           }).get();
 
           var eventData = {
@@ -298,6 +301,27 @@
           highestPriorityTag = value;
       });
       return highestPriorityTag;
+    }
+
+    function filterEventsByTagIds(tagIds){
+      function listContainsAny(list, filters) {
+        return $.inArray(true, $.map(filters, function(val) {
+          return $.inArray(val, list) > -1;
+        })) > -1;
+      }
+
+      $('[tagIds]').each(function(index){
+        $(this).removeClass("hidden");
+      });      
+
+      var d = $('[tagIds]').filter(function(index, el) {  
+        console.log($(el).attr('tagIds').split(",") + ": " + !listContainsAny($(el).attr('tagIds').split(","), tagIds));
+        return !listContainsAny($(el).attr('tagIds').split(","), tagIds);
+      });
+
+      d.each(function(index){
+        $(this).addClass("hidden");
+      });      
     }
 
 
