@@ -186,11 +186,11 @@
                   + "<div class='form-group'>"
                     + "<label class='col-sm-3 control-label'>From</label>"
                     + "<div class='col-sm-9'>"
-                      + "<p class='form-control-static' id='newEventStart' date='" + startLong + "'>" + moment(startLong).format("dd, MMM DD, HH:mm") + "</p>"
+                      + "<p class='form-control-static' id='newEventStart' date='" + startLong + "'>" + moment.utc(moment(startLong)).format("dd, MMM DD, HH:mm") + "</p>"
                     + "</div>"
                     + "<label class='col-sm-3 control-label'>To</label>"
                     + "<div class='col-sm-9'>"
-                      + "<p class='form-control-static' id='newEventEnd' date='" + endLong + "'>" + moment(endLong).format("dd, MMM DD, HH:mm") + "</p>"
+                      + "<p class='form-control-static' id='newEventEnd' date='" + endLong + "'>" + moment.utc(moment(endLong)).format("dd, MMM DD, HH:mm") + "</p>"
                     + "</div>"
                   + "</div>"
 
