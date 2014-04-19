@@ -9,6 +9,7 @@ import hirondelle.date4j.DateTime
 import play.api.mvc._
 import play.api.libs.json.{JsValue, Json}
 import play.api.Logger
+import play.api.Routes
 import play.api.templates.Html
 
 import service._
@@ -51,5 +52,35 @@ object Application
     toJsonResult {
       (Services.administrationService ? CreateSampleData).expecting[SampleDataCreated.type]
     }
+  }
+
+  /** Javascript router */
+  def javascriptRouter = Action { implicit request =>
+    Ok(
+      Routes.javascriptRouter("jsRoutes")(
+
+        // Application
+        routes.javascript.Application.admin,
+        routes.javascript.Application.createSchema,
+        routes.javascript.Application.dropSchema,
+        routes.javascript.Application.createSampleData,
+
+        // Appointments
+        routes.javascript.Appointments.show,
+        routes.javascript.Appointments.list,
+        routes.javascript.Appointments.add,
+        routes.javascript.Appointments.update,
+        routes.javascript.Appointments.delete,
+        routes.javascript.Appointments.conflicts,
+        routes.javascript.Appointments.freeTimeSlots,
+
+        // Tags
+        routes.javascript.Tags.show,
+        routes.javascript.Tags.list,
+        routes.javascript.Tags.add,
+        routes.javascript.Tags.update,
+        routes.javascript.Tags.delete
+      )
+    ).as("text/javascript")
   }
 }

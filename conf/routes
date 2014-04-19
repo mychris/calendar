@@ -15,9 +15,9 @@ GET           /calendar                         controllers.Calendar.calendar
 
 # Appointment
 GET           /appointments                     controllers.Appointments.list(from: Option[Long], to: Option[Long])
-POST          /appointment                      controllers.Appointments.add()
+POST          /appointment                      controllers.Appointments.add
 GET           /appointment/conflicts            controllers.Appointments.conflicts
-POST          /appointment/freetimeslots        controllers.Appointments.freeTimeSlots()
+POST          /appointment/freetimeslots        controllers.Appointments.freeTimeSlots
 GET           /appointment/:id                  controllers.Appointments.show(id: Int)
 PUT           /appointment/:id                  controllers.Appointments.update(id: Int)
 DELETE        /appointment/:id                  controllers.Appointments.delete(id: Int)
@@ -34,6 +34,9 @@ GET						/admin                            controllers.Application.admin
 POST          /schema                     			controllers.Application.createSchema
 DELETE        /schema                       		controllers.Application.dropSchema
 POST          /sampledata                       controllers.Application.createSampleData
+
+# Javascript router
+GET 					/jsrouter         								controllers.Application.javascriptRouter
 
 # Map static resources from the /public folder to the /assets URL path
 GET           /assets/*file                     controllers.Assets.at(path="/public", file)

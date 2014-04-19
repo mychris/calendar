@@ -11,12 +11,12 @@ import service.protocol._
   */
 trait ResponseHandling {
 
-	self: ExecutionEnvironment =>
+  self: ExecutionEnvironment =>
 
-	implicit def reponseToResponseHandler(response: Future[Any]) = new ResponseHandler(response)
+  implicit def reponseToResponseHandler(response: Future[Any]) = new ResponseHandler(response)
 
-	class ResponseHandler(response: Future[Any]) {
+  class ResponseHandler(response: Future[Any]) {
 
-		def expecting[S <: Success](implicit ct: ClassTag[S]): Future[S] = response.mapTo[Response].map(_.get[S])
-	}
+    def expecting[S <: Success](implicit ct: ClassTag[S]): Future[S] = response.mapTo[Response].map(_.get[S])
+  }
 }
