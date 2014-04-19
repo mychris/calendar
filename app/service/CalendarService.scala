@@ -85,7 +85,7 @@ class CalendarService(db: Database)
     sender ! AppointmentsRemoved
   }
 
-  def removeAppointmentsFromUser(msg: RemoveAppointmentsFromUser) = db.withSession { implicit session =>
+  def removeAppointmentsFromUser(msg: RemoveAppointmentsFromUser) = db.withTransaction { implicit session =>
     val tags = tagsFromUser(msg.userId).map(_.id).buildColl[Seq]
     val appointmentsToTags = appointmentBelongsToTag.filter(_.tagId.inSet(tags)).filter(_.appointmentId.inSet(msg.appointmentIds))
     val appointmentsToDelete = appointmentsToTags.map(_.appointmentId).buildColl[Seq].distinct
