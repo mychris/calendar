@@ -92,6 +92,7 @@ package object formatters {
   implicit object tagsRemoved extends Writes[TagsRemoved.type] {
     def writes(o: TagsRemoved.type): JsValue = "TagsRemoved".toJson
   }
+  implicit val colorsFormat = Json.format[Colors]
 
   /*
    * ConflictFindingService

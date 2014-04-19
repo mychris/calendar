@@ -84,9 +84,9 @@ class AdministrationService(db: Database)
       val userId = (users returning users.map(_.id)) += User(-1, "test", "test")
 
       val tagIds = (tags returning tags.map(_.id)) ++= Seq(
-        Tag(-1, "default", 0, Color.matrix(1)(1), userId),
-        Tag(-1, "family" , 1, Color.matrix(2)(2), userId),
-        Tag(-1, "work"   , 2, Color.matrix(3)(3), userId)
+        Tag(-1, "default", 0, Color.colors(6), userId),
+        Tag(-1, "family" , 1, Color.colors(14), userId),
+        Tag(-1, "work"   , 2, Color.colors(21), userId)
       )
 
       val defaultTagId = tagIds(0)

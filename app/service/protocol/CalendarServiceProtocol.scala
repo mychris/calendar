@@ -32,6 +32,7 @@ case class AddTag(name: String, priority: Int, color: Color, userId: Int) extend
 case class UpdateTag(tag: Tag) extends Request
 case class RemoveTags(tagIds: Seq[Int]) extends Request
 case class RemoveTagsFromUser(tagIds: Seq[Int], userId: Int) extends Request
+case object GetColors extends Request
 
 /*
  * Reponses
@@ -53,6 +54,7 @@ case class TagsFromAppointment(tags: Seq[Tag]) extends Success
 case class TagAdded(id: Int) extends Success
 case class TagUpdated(id: Int) extends Success
 case object TagsRemoved extends Success
+case class Colors(colors: IndexedSeq[Color]) extends Success
 
 /*
  * Errors

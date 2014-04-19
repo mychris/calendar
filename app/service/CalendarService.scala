@@ -149,21 +149,24 @@ class CalendarService(db: Database)
     sender ! TagsRemoved
   }
 
+  def getColors = sender ! Colors(Color.colors)
+
   def receive = handled {
     case msg: GetAppointmentById              => getAppointmentById(msg)
     case msg: GetAppointmentsFromUser         => getAppointmentsFromUser(msg)
     case msg: GetAppointmentsFromTag          => getAppointmentsFromTag(msg)
     case msg: GetAppointmentsFromUserWithTags => getAppointmentsFromUserWithTags(msg)
+    case msg: AddAppointment                  => addAppointment(msg)
+    case msg: UpdateAppointmentFromUser       => updateAppointmentFromUser(msg)
+    case msg: RemoveAppointments              => removeAppointments(msg)
+    case msg: RemoveAppointmentsFromUser      => removeAppointmentsFromUser(msg)
     case msg: GetTagById                      => getTagById(msg)
     case msg: GetTagsFromUser                 => getTagsFromUser(msg)
     case msg: GetTagsFromAppointment          => getTagsFromAppointment(msg)
     case msg: AddTag                          => addTag(msg)
     case msg: UpdateTag                       => updateTag(msg)
-    case msg: AddAppointment                  => addAppointment(msg)
-    case msg: UpdateAppointmentFromUser       => updateAppointmentFromUser(msg)
     case msg: RemoveTags                      => removeTags(msg)
     case msg: RemoveTagsFromUser              => removeTagsFromUser(msg)
-    case msg: RemoveAppointments              => removeAppointments(msg)
-    case msg: RemoveAppointmentsFromUser      => removeAppointmentsFromUser(msg)
+    case GetColors                            => getColors
   }
 }

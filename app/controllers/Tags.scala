@@ -76,4 +76,10 @@ object Tags
       (Services.calendarService ? RemoveTagsFromUser(List(id), request.user.id)).expecting[TagsRemoved.type]
     }
   }
+
+  def colors = Authenticated.async { implicit request =>
+    toJsonResult {
+      (Services.calendarService ? GetColors).expecting[Colors]
+    }
+  }
 }

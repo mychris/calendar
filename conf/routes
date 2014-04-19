@@ -28,6 +28,7 @@ POST          /tag                              controllers.Tags.add
 GET           /tag/:id                          controllers.Tags.show(id: Int)
 PUT           /tag/:id                          controllers.Tags.update(id: Int)
 DELETE        /tag/:id                          controllers.Tags.delete(id: Int)
+GET						/tag/colors  											controllers.Tags.colors
 
 # Database setup
 GET						/admin                            controllers.Application.admin
