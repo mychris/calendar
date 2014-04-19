@@ -27,7 +27,7 @@
     function dropSchema() {
        $.ajax({
          type    : "DELETE",
-         url     : "/schema",
+         url     : jsRoutes.controllers.Application.dropSchema().url,
          success : function(data) { log("Schema dropped"); },
          error   : function(error) { logError(error.responseText); }
        });
@@ -36,7 +36,7 @@
     function createSchema() {
        $.ajax({
          type    : "POST",
-         url     : "/schema",
+         url     : jsRoutes.controllers.Application.createSchema().url,
          success : function(data) { log("Schema created"); },
          error   : function(error) { logError(error.responseText); }
        });
@@ -45,7 +45,7 @@
     function createSampleData() {
        $.ajax({
          type    : "POST",
-         url     : "/sampledata",
+         url     : jsRoutes.controllers.Application.createSampleData().url,
          success : function(data) { log("Sample data created"); },
          error   : function(error) { logError(error.responseText); }
        });

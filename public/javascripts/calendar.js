@@ -1,3 +1,30 @@
+/* jsRoutes.controllers.Tags.list().url */
+
+function updateEvent(eventData, revertFunc) {
+  $.ajax({
+    type: "PUT",
+    url: '/appointment/' + eventData.id,
+    dataType: 'json',
+    accepts: "application/json; charset=utf-8",
+    headers: {
+      Accept: "application/json; charset=utf-8",
+      "Content-Type": "application/json; charset=utf-8"
+    },
+    data: JSON.stringify({
+      'title'  : eventData.title,
+      'start'  : eventData.start.utc().valueOf(),
+      'end'    : eventData.end.utc().valueOf(),
+      'tagIds' : eventData.tagIds
+    }),
+    success: function(data) {
+      findConflicts();
+    },
+    error: function(xhr) {
+      revertFunc();
+    },
+  })
+}
+
 /*
  * Create and post an event to the server. If successful, show in calendar.
  * param eventData: Object with 'description', 'start' and 'end'
@@ -27,10 +54,12 @@ function createEvent(eventData, callback) {
       var highestPriorityTag = getHighestPriorityTag(appointmentWithTags.tags);
 
       var newEventData = {
+        'id'    : appointmentWithTags.appointment.id,
         'title' : appointmentWithTags.appointment.title,
         'start' : appointmentWithTags.appointment.start, 
         'end'   : appointmentWithTags.appointment.end,   
-        'color' : highestPriorityTag.color
+        'color' : highestPriorityTag.color,
+        'tagIds': $.map(appointmentWithTags.tags, function(v) { return v.id; })
       }
 
       $('#calendar').fullCalendar('unselect');
@@ -82,11 +111,11 @@ function createEventPopover(selectedElement, startLong, endLong){
               + "<div class='form-group'>"
                 + "<label class='col-sm-3 control-label'>From</label>"
                 + "<div class='col-sm-9'>"
-                  + "<p class='form-control-static' id='newEventStart' date='" + startLong + "'>" + moment(startLong).format("dd, MMM DD, HH:mm") + "</p>"
+                  + "<p class='form-control-static' id='newEventStart' date='" + startLong + "'>" + moment.utc(moment(startLong)).format("dd, MMM DD, HH:mm") + "</p>"
                 + "</div>"
                 + "<label class='col-sm-3 control-label'>To</label>"
                 + "<div class='col-sm-9'>"
-                  + "<p class='form-control-static' id='newEventEnd' date='" + endLong + "'>" + moment(endLong).format("dd, MMM DD, HH:mm") + "</p>"
+                  + "<p class='form-control-static' id='newEventEnd' date='" + endLong + "'>" + moment.utc(moment(endLong)).format("dd, MMM DD, HH:mm") + "</p>"
                 + "</div>"
               + "</div>"
 
@@ -130,7 +159,7 @@ function createEventPopover(selectedElement, startLong, endLong){
       }
 
       var checkedTags = $('#newEventTags input:checkbox:checked').map(function() {
-        return parseInt($(this).attr('tagId'));
+        return parseInt($(this).attr('tagid'));
       }).get();
 
       var eventData = {
@@ -163,13 +192,34 @@ function getHighestPriorityTag(tags){
   return highestPriorityTag;
 }
 
+function filterEventsByTagIds(tagIds){
+  function listContainsAny(list, filters) {
+    return $.inArray(true, $.map(filters, function(val) {
+      return $.inArray(val, list) > -1;
+    })) > -1;
+  }
+
+  $('[tagIds]').each(function(index){
+    $(this).removeClass("hidden");
+  });      
+
+  var d = $('[tagIds]').filter(function(index, el) {  
+    console.log($(el).attr('tagIds').split(",") + ": " + !listContainsAny($(el).attr('tagIds').split(","), tagIds));
+    return !listContainsAny($(el).attr('tagIds').split(","), tagIds);
+  });
+
+  d.each(function(index){
+    $(this).addClass("hidden");
+  });      
+}
+
 
 /** 
  * Returns a promise of tags 
  */
 function getTags(){
   return $.ajax({
-      url: jsRoutes.controllers.Tags.list().url,
+      url: '@routes.Tags.list',
       type: 'GET',
       dataType: 'json',
       headers: {
@@ -218,6 +268,7 @@ function findFreeTimeSlots() {
 }
 
 function findConflicts() {
+  d3.select("#conflicts ul").selectAll("li").data([]).exit().remove();
   d3.json(jsRoutes.controllers.Appointments.conflicts().url, function(error, data) {
     if (error) {
         d3.select("#conflicts li").remove;
@@ -237,6 +288,7 @@ function findConflicts() {
         $("#calendar").fullCalendar('gotoDate', $.fullCalendar.moment(start1));
       })
       .text(function(conflict) { return conflict[0].title + " - " + conflict[1].title; });
+    conflicts.exit().remove();
   })
 }
 
@@ -247,7 +299,7 @@ function listTags() {
       "<a class=\"open-tag-menu dropdown-toggle caret\" style=\"color:" + tag.color +";\" role=\"button\" data-toggle=\"dropdown\" href=\"#\"/>" +
       "<ul class=\"dropdown-menu\" role=\"menu\">" +
         "<li role=\"presentation\">" +
-          "<a role=\"menuitem\" tabindex=\"-1\" onclick=\"startEdit()\">Edit tag</a>" +
+          "<a role=\"menuitem\" tabindex=\"-1\" onclick=\"\">Edit tag</a>" +
         "</li>" +
         "<li role=\"presentation\">" +
           "<a role=\"menuitem\" tabindex=\"-1\" onclick=\"deleteTag(" + tag.id + ")\">Delete tag</a>" +
@@ -298,14 +350,10 @@ function listTags() {
   })
 }
 
-function startEdit() {
-  console.log(this);
-}
-
 function deleteTag(id) {
    $.ajax({
      type : "DELETE",
-     url  : jsRoutes.controllers.Tags.deleteTag(id).url
+     url  : "/tag/" + id
    })
    .done(function(data) {
      listTags();
