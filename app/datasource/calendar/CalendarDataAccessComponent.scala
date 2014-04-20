@@ -144,6 +144,8 @@ trait CalendarDataAccessComponent {
         if abtt.appointmentId === appointmentId
       }
       yield t
+
+    def tagsFromUserSortedByName(userId: Int) = tagsFromUser(userId).sortBy(_.name)
   }
 }
 

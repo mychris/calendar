@@ -219,7 +219,7 @@ function filterEventsByTagIds(tagIds){
  */
 function getTags(){
   return $.ajax({
-      url: '@routes.Tags.list',
+      url: jsRoutes.controllers.Tags.list().url,
       type: 'GET',
       dataType: 'json',
       headers: {
@@ -295,28 +295,30 @@ function findConflicts() {
 function listTags() {
 
   function generateMenu(tag) {
-    return "<div class=\"tag-menu dropdown\">" +
-      "<a class=\"open-tag-menu dropdown-toggle caret\" style=\"color:" + tag.color +";\" role=\"button\" data-toggle=\"dropdown\" href=\"#\"/>" +
-      "<ul class=\"dropdown-menu\" role=\"menu\">" +
-        "<li role=\"presentation\">" +
-          "<a role=\"menuitem\" tabindex=\"-1\" onclick=\"\">Edit tag</a>" +
-        "</li>" +
-        "<li role=\"presentation\">" +
-          "<a role=\"menuitem\" tabindex=\"-1\" onclick=\"deleteTag(" + tag.id + ")\">Delete tag</a>" +
-        "</li>" +
-      "</ul>" +
-    "</div>";
+    return $(
+      "<div class=\"menu dropdown\">" +
+      "  <a class=\"open-menu dropdown-toggle caret\" style=\"color:" + tag.color +";\" role=\"button\" data-toggle=\"dropdown\" href=\"#\"/>" +
+      "  <ul class=\"dropdown-menu\" role=\"menu\">" +
+      "    <li role=\"presentation\">" +
+      "      <a role=\"menuitem\" tabindex=\"-1\" onclick=\"startEditTag($(this).closest('.tag'))\">Edit tag</a>" +
+      "    </li>" +
+      "    <li role=\"presentation\">" +
+      "      <a role=\"menuitem\" tabindex=\"-1\" onclick=\"deleteTag(" + tag.id + ")\">Delete tag</a>" +
+      "    </li>" +
+      "  </ul>" +
+      "</div>"
+    );
   }
 
   function showMenu(container) {
-    $(container).append($(generateMenu(container.__data__)));
-    $(".tag-menu", container).on("hidden.bs.dropdown", function() {
+    $(container).append(generateMenu(container.__data__));
+    $(".menu", container).on("hidden.bs.dropdown", function() {
       hideMenu(container);
     });
   }
 
   function hideMenu(container) {
-    d3.select(container).select(".tag-menu").remove();
+    d3.select(container).select(".menu").remove();
   }
 
   d3.json(jsRoutes.controllers.Tags.list().url, function(error, data) {
@@ -325,21 +327,32 @@ function listTags() {
 
       var tags = d3.select("#tags ul").selectAll("li").data(data.tags);
 
+      // Enter
       tags.enter()
         .append("li")
+        .attr("class", "tag")
         .on("mouseenter", function() {
-          if(!$(".tag-menu ul", this).is(":visible"))
+          if(!$("#tags").data("editing") && !$(".menu ul", this).is(":visible"))
             showMenu(this);
         })
         .on("mouseleave", function() {
-          if(!$(".tag-menu ul", this).is(":visible"))
+          if(!$(".menu ul", this).is(":visible"))
             hideMenu(this);
         })
         .append("span")
-        .attr("class", "tag-name")
+        .attr("class", "name")
         .style("color", function(tag) { return tag.color; })
         .text(function(tag) { return tag.name; });
 
+      // Update
+      tags
+        .each(function() {
+          d3.select(this).select(".name")
+            .style("color", function(tag) { return tag.color; })
+            .text(function(tag) { return tag.name; });
+        });
+
+      // Exit
       tags.exit().remove();
 
     } else {
@@ -350,15 +363,70 @@ function listTags() {
   })
 }
 
+function startEditTag(tag) {
+
+  function generateForm(tagName) {
+    return $(
+      "<form id=\"edit-tag\">" +
+      "  <input class=\"form-control\" type=\"text\" value=\"" + tagName + "\"/>" +
+      "  <div class=\"form-group\">" +
+      "    <button type=\"submit\" class=\"btn btn-xs btn-primary\">Save</button>" +
+      "    <button class=\"btn btn-xs btn-default\" onclick=\"cancelEdit($(this).closest('.tag'))\">Cancel</button>" +
+      "  </div>" +
+      "</form>"
+    );
+  }
+
+  var tagName = tag[0].__data__.name;
+
+  $(".name", tag).remove();
+  $("#tags").data("editing", true);
+
+  var form = generateForm(tagName);
+
+  $("input", form.appendTo(tag)).focus();
+  form.submit(function() {
+    saveEdit($(this).closest('.tag'));
+    return false;
+  });
+}
+
+function saveEdit(tag) {
+
+  var newTagName = $("input", tag).val();
+
+  $("#edit-tag").remove();
+  $("<span class=\"name\" style=\"color:" + tag[0].__data__.color + "\">" + newTagName + "</span>").appendTo(tag);
+  $("#tags").data("editing", false);
+
+  var data = {
+    "name"     : newTagName,
+    "priority" : tag[0].__data__.priority,
+    "color"    : tag[0].__data__.color
+  }
+
+  $.putJson(jsRoutes.controllers.Tags.update(tag[0].__data__.id).url, data)
+    .done(function(data) {
+      listTags();
+    })
+    .fail(function() {
+      console.log("Unable to update tag with id " + tag[0].__data__.id);
+    });
+}
+
+function cancelEdit(tag) {
+
+  $("#edit-tag").remove();
+  $("<span class=\"name\" style=\"color:" + tag[0].__data__.color + "\">" + tag[0].__data__.name + "</span>").appendTo(tag);
+  $("#tags").data("editing", false);
+}
+
 function deleteTag(id) {
-   $.ajax({
-     type : "DELETE",
-     url  : "/tag/" + id
-   })
-   .done(function(data) {
-     listTags();
-   })
-   .fail(function() {
-     console.log("Unable to delete user with id " + id);
-   });
+  $.deleteJson(jsRoutes.controllers.Tags.delete(id).url)
+    .done(function(data) {
+      listTags();
+    })
+    .fail(function() {
+      console.log("Unable to delete tag with id " + id);
+    });
 }

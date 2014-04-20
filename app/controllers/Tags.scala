@@ -57,6 +57,7 @@ object Tags
 
   def update(id: Int) = Authenticated.async(parse.json) { implicit request =>
     readBody[UpdateTagRequestBody] { updateTag =>
+      println("UpdateTag")
       toJsonResult {
         (Services.calendarService ? UpdateTag(
           Tag(

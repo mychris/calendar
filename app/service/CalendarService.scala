@@ -119,7 +119,7 @@ class CalendarService(db: Database)
   }
 
   def getTagsFromUser(msg: GetTagsFromUser) = db.withSession { implicit session =>
-    sender ! TagsFromUser(tagsFromUser(msg.userId).buildColl[Seq]) }
+    sender ! TagsFromUser(tagsFromUserSortedByName(msg.userId).buildColl[Seq]) }
 
   def getTagsFromAppointment(msg: GetTagsFromAppointment) = db.withSession { implicit session =>
     sender ! TagsFromAppointment(tagsFromAppointment(msg.appointmentId).buildColl[Seq]) }
@@ -128,6 +128,7 @@ class CalendarService(db: Database)
     sender ! TagAdded((tags returning tags.map(_.id)) += Tag(-1, msg.name, msg.priority, msg.color, msg.userId)) }
 
   def updateTag(msg: UpdateTag) = db.withSession { implicit session =>
+    println("UpdateTag")
     sender ! TagUpdated(
       tags
         .filter(_.id === msg.tag.id)
@@ -135,6 +136,7 @@ class CalendarService(db: Database)
         .map(t => (t.name, t.priority, t.color))
         .update((msg.tag.name, msg.tag.priority, msg.tag.color))
     )
+    log.debug("Tag updated with id = $msg.tag.id, priority = $msg.tag.priority and color = $msg.tag.color")
   }
 
   def removeTags(msg: RemoveTags) = db.withSession { implicit session =>

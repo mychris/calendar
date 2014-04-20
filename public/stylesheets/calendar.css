@@ -73,18 +73,24 @@
   list-style    : none;
 }
 
-.tag-name {
-  cursor : default;
+.tag .name {
+  cursor      : default;
+  white-space : nowrap;
+  overflow    : hidden;
 }
 
-.tag-menu {
+.tag .menu {
   margin-left : 6px;
   display     : inline-block;
 }
 
-.open-tag-menu {
+.tag .open-menu {
   cursor : pointer;
 } 
+
+#edit-tag div {
+  margin-top : 10px;
+}
 
 .spacer {
   margin: 20px 0;
