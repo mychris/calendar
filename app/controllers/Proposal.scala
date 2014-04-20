@@ -11,11 +11,13 @@ import formatters._
 
 import service._
 import service.protocol._
+import datasource.appointmentproposal._
 import java.util.TimeZone
 import datasource.calendar.{Appointment, Tag}
 
 case class AddProposalRequestBody(title: String)
 case class AddProposalTimeRequestBody(start: DateTime, end: DateTime, participants: Seq[Int])
+case class AddProposalTimeVoteRequestBody(vote: Vote.Vote)
 
 object Proposal
   extends Controller with
@@ -53,4 +55,18 @@ object Proposal
       }
     }
   }
+
+  def addVote(proposalId: Int, timeId: Int) = Authenticated.async(parse.json) { implicit request =>
+    readBody[AddProposalTimeVoteRequestBody] { addProposalTimeVote =>
+      toJsonResult {
+        (Services.calendarService ? AddProposalTimeVote(
+          proposalId,
+          timeId,
+          addProposalTimeVote.vote,
+          request.user.id
+        )).expecting[ProposalTimeVoteAdded.type]
+      }
+    }
+  }
+
 }

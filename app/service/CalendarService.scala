@@ -170,6 +170,15 @@ class CalendarService(db: Database)
       proposalTimeId
   })
 
+  def addProposalTimeVote(msg: AddProposalTimeVote) = db.withSession { implicit session =>
+    proposalTimeVotes
+      .filter(_.proposalTimeId === msg.proposalTimeId)
+      .filter(_.userId === msg.userId)
+      .map(v => (v.vote))
+      .update((msg.vote))
+    sender ! ProposalTimeVoteAdded
+  }
+
   def receive = handled {
     case msg: GetAppointmentById              => getAppointmentById(msg)
     case msg: GetAppointmentsFromUser         => getAppointmentsFromUser(msg)
@@ -190,6 +199,6 @@ class CalendarService(db: Database)
 
     case msg: AddProposal                     => addProposal(msg)
     case msg: AddProposalTime                 => addProposalTime(msg)
-    
+    case msg: AddProposalTimeVote             => addProposalTimeVote(msg)
   }
 }
