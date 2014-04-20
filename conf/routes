@@ -31,6 +31,7 @@ DELETE        /tag/:id                          controllers.Tags.delete(id: Int)
 
 # Proposal
 POST          /proposal                         controllers.Proposal.add
+POST          /proposal/:proposalId/time        controllers.Proposal.addTime(proposalId: Int)
 
 # Database setup
 GET	          /admin                            controllers.Application.admin

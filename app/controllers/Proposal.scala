@@ -15,6 +15,7 @@ import java.util.TimeZone
 import datasource.calendar.{Appointment, Tag}
 
 case class AddProposalRequestBody(title: String)
+case class AddProposalTimeRequestBody(start: DateTime, end: DateTime, participants: Seq[Int])
 
 object Proposal
   extends Controller with
@@ -25,11 +26,11 @@ object Proposal
           RequestBodyReader {
 
   def list = Action.async {
-  	Future.successful(Status(501)(""))
+    Future.successful(Status(501)(""))
   }
 
   def add = Authenticated.async(parse.json) { implicit request =>
-  	readBody[AddProposalRequestBody] { addProposal =>
+    readBody[AddProposalRequestBody] { addProposal =>
       toJsonResult {
         (Services.calendarService ? AddProposal(
           addProposal.title,
@@ -39,7 +40,17 @@ object Proposal
     }
   }
 
-  def addTime = Action.async {
-  	Future.successful(Status(501)(""))
+  def addTime(proposalId: Int) = Authenticated.async(parse.json) { implicit request =>
+    readBody[AddProposalTimeRequestBody] { addProposalTime =>
+      toJsonResult {
+        (Services.calendarService ? AddProposalTime(
+          addProposalTime.start,
+          addProposalTime.end,
+          proposalId,
+          addProposalTime.participants,
+          request.user.id
+        )).expecting[ProposalTimeAdded]
+      }
+    }
   }
 }

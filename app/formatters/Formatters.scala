@@ -94,6 +94,7 @@ package object formatters {
   }
 
   implicit val proposalAddedFormat = Json.format[ProposalAdded]
+  implicit val proposalTimeAddedFormat = Json.format[ProposalTimeAdded]
 
   /*
    * ConflictFindingService
@@ -152,4 +153,5 @@ package object formatters {
 
   /* Proposal */
   implicit val addProposalRequestBody = Json.format[AddProposalRequestBody]
+  implicit val addProposalTimeRequestBody = Json.format[AddProposalTimeRequestBody]
 }

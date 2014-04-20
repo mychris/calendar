@@ -163,6 +163,13 @@ class CalendarService(db: Database)
     sender ! ProposalAdded((proposals returning proposals.map(_.id)) += Proposal(-1, msg.title, msg.userId))
   }
 
+  def addProposalTime(msg: AddProposalTime) = 
+    sender ! ProposalTimeAdded(db.withTransaction { implicit session =>
+      val proposalTimeId = (proposalTimes returning proposalTimes.map(_.id)) += ProposalTime(-1, msg.start, msg.end, msg.proposalId)
+      proposalTimeVotes ++= msg.participants.map(ProposalTimeVote(proposalTimeId, _, Vote.NotVoted))
+      proposalTimeId
+  })
+
   def receive = handled {
     case msg: GetAppointmentById              => getAppointmentById(msg)
     case msg: GetAppointmentsFromUser         => getAppointmentsFromUser(msg)
@@ -182,6 +189,7 @@ class CalendarService(db: Database)
     case msg: RemoveTagsFromUser              => removeTagsFromUser(msg)
 
     case msg: AddProposal                     => addProposal(msg)
+    case msg: AddProposalTime                 => addProposalTime(msg)
     
   }
 }
