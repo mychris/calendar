@@ -3,15 +3,15 @@
 # ~~~~
 
 # Home page
-GET           /                                 controllers.Login.index
-POST          /login                            controllers.Login.login
-GET           /logout                           controllers.Login.logout
+GET           /                                   controllers.Login.index
+POST          /login                              controllers.Login.login
+GET           /logout                             controllers.Login.logout
 
 # User
-POST          /user                             controllers.Users.add
+POST          /user                               controllers.Users.add
 
 # Calendar
-GET           /calendar                         controllers.Calendar.calendar
+GET           /calendar                           controllers.Calendar.calendar
 
 # Appointment
 GET           /appointments                     controllers.Appointments.list(from: Option[Long], to: Option[Long])
@@ -30,14 +30,19 @@ PUT           /tag/:id                          controllers.Tags.update(id: Int)
 DELETE        /tag/:id                          controllers.Tags.delete(id: Int)
 GET						/tag/colors  											controllers.Tags.colors
 
+# Proposal
+POST          /proposal                           controllers.Proposal.add
+POST          /proposal/:proposalId/time          controllers.Proposal.addTime(proposalId: Int)
+POST          /proposal/:proposalId/vote/:timeId  controllers.Proposal.addVote(proposalId: Int, timeId: Int)
+
 # Database setup
-GET						/admin                            controllers.Application.admin
-POST          /schema                     			controllers.Application.createSchema
-DELETE        /schema                       		controllers.Application.dropSchema
-POST          /sampledata                       controllers.Application.createSampleData
+GET	          /admin                              controllers.Application.admin
+POST          /schema                             controllers.Application.createSchema
+DELETE        /schema                             controllers.Application.dropSchema
+POST          /sampledata                         controllers.Application.createSampleData
 
 # Javascript router
 GET 					/jsrouter         								controllers.Application.javascriptRouter
 
 # Map static resources from the /public folder to the /assets URL path
-GET           /assets/*file                     controllers.Assets.at(path="/public", file)
+GET           /assets/*file                       controllers.Assets.at(path="/public", file)

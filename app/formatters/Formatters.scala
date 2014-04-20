@@ -2,6 +2,7 @@ import controllers._
 
 import datasource.calendar._
 import datasource.user._
+import datasource.appointmentproposal._
 
 import hirondelle.date4j.DateTime
 
@@ -43,6 +44,18 @@ package object formatters {
     def reads(json: JsValue): JsResult[Color] = json match {
       case JsString(Color(color)) => JsSuccess(color)
       case _                      => JsError(Seq(JsPath() -> Seq(ValidationError("error.expected.jsstring"))))
+    }
+  }
+
+  implicit object voteFormat extends Format[Vote.Vote] {
+    def writes(o: Vote.Vote): JsValue = o.id.toJson
+
+    def reads(json: JsValue): JsResult[Vote.Vote] = json match {
+      case JsString("NotVoted")  => JsSuccess(Vote.NotVoted)
+      case JsString("Accepted")  => JsSuccess(Vote.Accepted)
+      case JsString("Refused")   => JsSuccess(Vote.Refused)
+      case JsString("Uncertain") => JsSuccess(Vote.Uncertain)
+      case _                     => JsError(Seq(JsPath() -> Seq(ValidationError("error.expected.jsstring"))))
     }
   }
 
@@ -93,6 +106,12 @@ package object formatters {
     def writes(o: TagsRemoved.type): JsValue = "TagsRemoved".toJson
   }
   implicit val colorsFormat = Json.format[Colors]
+
+  implicit val proposalAddedFormat = Json.format[ProposalAdded]
+  implicit val proposalTimeAddedFormat = Json.format[ProposalTimeAdded]
+  implicit object proposalTimeVoteAddedFormat extends Writes[ProposalTimeVoteAdded.type] {
+    def writes(o: ProposalTimeVoteAdded.type): JsValue = "TimeVoteAdded".toJson
+  }
 
   /*
    * ConflictFindingService
@@ -148,4 +167,9 @@ package object formatters {
 
   /* Users */
   implicit val addUserRequestBody = Json.format[AddUserRequestBody]
+
+  /* Proposal */
+  implicit val addProposalRequestBody = Json.format[AddProposalRequestBody]
+  implicit val addProposalTimeRequestBody = Json.format[AddProposalTimeRequestBody]
+  implicit val addProposalTimeVoteRequestBody = Json.format[AddProposalTimeVoteRequestBody]
 }
