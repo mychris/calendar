@@ -33,6 +33,9 @@ case class UpdateTag(tag: Tag) extends Request
 case class RemoveTags(tagIds: Seq[Int]) extends Request
 case class RemoveTagsFromUser(tagIds: Seq[Int], userId: Int) extends Request
 
+/* Proposal */
+case class AddProposal(title: String, userId: Int) extends Request
+
 /*
  * Reponses
  */
@@ -53,6 +56,9 @@ case class TagsFromAppointment(tags: Seq[Tag]) extends Success
 case class TagAdded(id: Int) extends Success
 case class TagUpdated(id: Int) extends Success
 case object TagsRemoved extends Success
+
+/* Proposal */
+case class ProposalAdded(id: Int) extends Success
 
 /*
  * Errors

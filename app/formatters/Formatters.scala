@@ -93,6 +93,8 @@ package object formatters {
     def writes(o: TagsRemoved.type): JsValue = "TagsRemoved".toJson
   }
 
+  implicit val proposalAddedFormat = Json.format[ProposalAdded]
+
   /*
    * ConflictFindingService
    */
@@ -147,4 +149,7 @@ package object formatters {
 
   /* Users */
   implicit val addUserRequestBody = Json.format[AddUserRequestBody]
+
+  /* Proposal */
+  implicit val addProposalRequestBody = Json.format[AddProposalRequestBody]
 }

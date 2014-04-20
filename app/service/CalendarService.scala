@@ -4,6 +4,7 @@ import akka.actor._
 
 import datasource.user._
 import datasource.calendar._
+import datasource.appointmentproposal._
 
 import hirondelle.date4j.DateTime
 
@@ -32,6 +33,7 @@ class CalendarService(db: Database)
           ActorLogging with
           UserDataAccessComponentImpl with
           CalendarDataAccessComponentImpl with
+          AppointmentProposalDataAccessComponentImpl with
           ExceptionHandling {
 
   /** */
@@ -40,7 +42,11 @@ class CalendarService(db: Database)
   /** */
   protected object calendarDataAccess extends CalendarDataAccessModuleImpl
 
+  protected object appointmentProposalDataAccess extends AppointmentProposalDataAccessModuleImpl
+
   import calendarDataAccess._
+
+  import appointmentProposalDataAccess._
 
   /*
    * Appointments
@@ -149,21 +155,33 @@ class CalendarService(db: Database)
     sender ! TagsRemoved
   }
 
+  /*
+   * Proposal
+   */
+
+  def addProposal(msg: AddProposal) = db.withSession { implicit session =>
+    sender ! ProposalAdded((proposals returning proposals.map(_.id)) += Proposal(-1, msg.title, msg.userId))
+  }
+
   def receive = handled {
     case msg: GetAppointmentById              => getAppointmentById(msg)
     case msg: GetAppointmentsFromUser         => getAppointmentsFromUser(msg)
     case msg: GetAppointmentsFromTag          => getAppointmentsFromTag(msg)
     case msg: GetAppointmentsFromUserWithTags => getAppointmentsFromUserWithTags(msg)
+    case msg: AddAppointment                  => addAppointment(msg)
+    case msg: UpdateAppointmentFromUser       => updateAppointmentFromUser(msg)
+    case msg: RemoveAppointments              => removeAppointments(msg)
+    case msg: RemoveAppointmentsFromUser      => removeAppointmentsFromUser(msg)
+
     case msg: GetTagById                      => getTagById(msg)
     case msg: GetTagsFromUser                 => getTagsFromUser(msg)
     case msg: GetTagsFromAppointment          => getTagsFromAppointment(msg)
     case msg: AddTag                          => addTag(msg)
     case msg: UpdateTag                       => updateTag(msg)
-    case msg: AddAppointment                  => addAppointment(msg)
-    case msg: UpdateAppointmentFromUser       => updateAppointmentFromUser(msg)
     case msg: RemoveTags                      => removeTags(msg)
     case msg: RemoveTagsFromUser              => removeTagsFromUser(msg)
-    case msg: RemoveAppointments              => removeAppointments(msg)
-    case msg: RemoveAppointmentsFromUser      => removeAppointmentsFromUser(msg)
+
+    case msg: AddProposal                     => addProposal(msg)
+    
   }
 }

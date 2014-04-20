@@ -29,10 +29,13 @@ GET           /tag/:id                          controllers.Tags.show(id: Int)
 PUT           /tag/:id                          controllers.Tags.update(id: Int)
 DELETE        /tag/:id                          controllers.Tags.delete(id: Int)
 
+# Proposal
+POST          /proposal                         controllers.Proposal.add
+
 # Database setup
-GET						/admin                            controllers.Application.admin
-POST          /schema                     			controllers.Application.createSchema
-DELETE        /schema                       		controllers.Application.dropSchema
+GET	          /admin                            controllers.Application.admin
+POST          /schema                           controllers.Application.createSchema
+DELETE        /schema                           controllers.Application.dropSchema
 POST          /sampledata                       controllers.Application.createSampleData
 
 # Map static resources from the /public folder to the /assets URL path
