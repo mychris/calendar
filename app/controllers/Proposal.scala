@@ -49,7 +49,12 @@ object Proposal
           addProposalTime.start,
           addProposalTime.end,
           proposalId,
-          addProposalTime.participants,
+          (
+            if (addProposalTime.participants.exists(_ == request.user.id))
+              addProposalTime.participants
+            else
+              (request.user.id +: addProposalTime.participants)
+          ),
           request.user.id
         )).expecting[ProposalTimeAdded]
       }
