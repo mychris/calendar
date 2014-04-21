@@ -395,10 +395,6 @@ function saveEdit(tag) {
 
   var newTagName = $("input", tag).val();
 
-  $("#edit-tag").remove();
-  $("<span class=\"name\" style=\"color:" + tag[0].__data__.color + "\">" + newTagName + "</span>").appendTo(tag);
-  $("#tags").data("editing", false);
-
   var data = {
     "name"     : newTagName,
     "priority" : tag[0].__data__.priority,
@@ -407,6 +403,8 @@ function saveEdit(tag) {
 
   $.putJson(jsRoutes.controllers.Tags.update(tag[0].__data__.id).url, data)
     .done(function(data) {
+      $(tag).remove();
+      $("#tags").data("editing", false);
       listTags();
     })
     .fail(function() {
