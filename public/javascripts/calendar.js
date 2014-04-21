@@ -297,7 +297,11 @@ function listTags() {
   function generateMenu(tag) {
     return $(
       "<div class=\"menu dropdown\">" +
-      "  <a class=\"open-menu dropdown-toggle caret\" style=\"color:" + tag.color +";\" role=\"button\" data-toggle=\"dropdown\" href=\"#\"/>" +
+      "  <a class=\"open-menu dropdown-toggle caret\"" +
+      "     style=\"color:" + tag.color +";\"" +
+      "     role=\"button\"" + 
+      "     data-toggle=\"dropdown\"" +
+      "     href=\"#\"/>" +
       "  <ul class=\"dropdown-menu\" role=\"menu\">" +
       "    <li role=\"presentation\">" +
       "      <a role=\"menuitem\" tabindex=\"-1\" onclick=\"startEditTag($(this).closest('.tag'))\">Edit tag</a>" +
@@ -363,28 +367,42 @@ function listTags() {
   })
 }
 
+function generateForm(name, priority) {
+  return $(
+    "<form id=\"edit-tag\">" +
+    "  <input name=\"name\"" +
+    "         type=\"text\"" +
+    "         class=\"form-control\"" +
+    "         value=\"" + name + "\">" +
+    "  <input name=\"priority\"" + 
+    "         type=\"number\"" + 
+    "         class=\"form-control\"" +
+    "         value=\"" + priority + "\"" +
+    "         min=\"1\"" +
+    "         max=\"5\"" +
+    "         step=\"1\">" +
+    "  <div class=\"form-group\">" +
+    "    <button name=\"submit\" type=\"submit\" class=\"btn btn-xs btn-primary\">Save</button>" +
+    "    <button name=\"cancel\" type=\"button\" class=\"btn btn-xs btn-default\">Cancel</button>" +
+    "  </div>" +
+    "</form>"
+  );
+}
+
 function startEditTag(tag) {
 
-  function generateForm(tagName) {
-    return $(
-      "<form id=\"edit-tag\">" +
-      "  <input class=\"form-control\" type=\"text\" value=\"" + tagName + "\"/>" +
-      "  <div class=\"form-group\">" +
-      "    <button type=\"submit\" class=\"btn btn-xs btn-primary\">Save</button>" +
-      "    <button class=\"btn btn-xs btn-default\" onclick=\"cancelEdit($(this).closest('.tag'))\">Cancel</button>" +
-      "  </div>" +
-      "</form>"
-    );
-  }
-
-  var tagName = tag[0].__data__.name;
+  var name     = tag[0].__data__.name;
+  var priority = tag[0].__data__.priority;
 
   $(".name", tag).remove();
   $("#tags").data("editing", true);
 
-  var form = generateForm(tagName);
+  var form = generateForm(name, priority);
 
-  $("input", form.appendTo(tag)).focus();
+  $("input[name=name]", form.appendTo(tag)).focus();
+  $("button[name=cancel]").on("onclick", function() {
+    cancelEdit($(this).closest('.tag'));
+  });
   form.submit(function() {
     saveEdit($(this).closest('.tag'));
     return false;
@@ -393,11 +411,12 @@ function startEditTag(tag) {
 
 function saveEdit(tag) {
 
-  var newTagName = $("input", tag).val();
+  var newTagName  = $("input[name=name]", tag).val();
+  var newPriority = parseInt($("input[name=priority]", tag).val());
 
   var data = {
     "name"     : newTagName,
-    "priority" : tag[0].__data__.priority,
+    "priority" : newPriority,
     "color"    : tag[0].__data__.color
   }
 

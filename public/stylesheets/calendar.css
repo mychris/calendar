@@ -47,7 +47,7 @@
 }
 
 #tags {
-  width      : 120px;
+  width      : 130px;
   margin-top : 45px;
 }
 
@@ -92,6 +92,20 @@
   margin-top : 10px;
 }
 
+#edit-tag input {
+  display : inline-block;
+  padding : 4px 8px;
+  height  : auto;
+}
+
+#edit-tag input[name=name] {
+  width : 75px;
+}
+
+#edit-tag input[name=priority] {
+  width : 40px;
+  padding : 4px 4px 4px 8px;
+}
 .spacer {
   margin: 20px 0;
 }
