@@ -20,6 +20,13 @@ jQuery.extend({
     });
   },
 
+  delete: function(reqestUrl) {
+    return this.ajax({
+      type        : "DELETE",
+      url         : reqestUrl
+    });
+  },
+
   putJson: function(reqestUrl, requestBody) {
     return this.ajax({
       type        : "PUT",

@@ -420,7 +420,7 @@ function cancelEdit(tag) {
 }
 
 function deleteTag(id) {
-  $.deleteJson(jsRoutes.controllers.Tags.delete(id).url)
+  $.delete(jsRoutes.controllers.Tags.delete(id).url)
     .done(function(data) {
       listTags();
     })
