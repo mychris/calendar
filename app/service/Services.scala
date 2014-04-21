@@ -32,6 +32,9 @@ object Services extends ExecutionEnvironment with ResponseHandling {
   val calendarService = system.actorOf(CalendarService.props(db).withRouter(FromConfig()), "calendar-service")
 
   /** Service for basic calendar and tag related operations */
+  val proposalService = system.actorOf(ProposalService.props(db).withRouter(FromConfig()), "proposal-service")
+
+  /** Service for basic calendar and tag related operations */
   val conflictFindingService = system.actorOf(ConflictFindingService.props.withRouter(FromConfig()), "conflict-finding-service")
 
   /** Service for basic calendar and tag related operations */

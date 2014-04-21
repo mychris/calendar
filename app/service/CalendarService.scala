@@ -142,7 +142,7 @@ class CalendarService(db: Database)
         .map(t => (t.name, t.priority, t.color))
         .update((msg.tag.name, msg.tag.priority, msg.tag.color))
     )
-    log.debug("Tag updated with id = $msg.tag.id, priority = $msg.tag.priority and color = $msg.tag.color")
+    log.debug(s"Tag updated with id = ${msg.tag.id}, priority = ${msg.tag.priority} and color = ${msg.tag.color}")
   }
 
   def removeTags(msg: RemoveTags) = db.withSession { implicit session =>

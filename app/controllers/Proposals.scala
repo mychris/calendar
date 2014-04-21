@@ -34,7 +34,7 @@ object Proposals
   def add = Authenticated.async(parse.json) { implicit request =>
     readBody[AddProposalRequestBody] { addProposal =>
       toJsonResult {
-        (Services.calendarService ? AddProposal(
+        (Services.proposalService ? AddProposal(
           addProposal.title,
           request.user.id
         )).expecting[ProposalAdded]
@@ -45,7 +45,7 @@ object Proposals
   def addTime(proposalId: Int) = Authenticated.async(parse.json) { implicit request =>
     readBody[AddProposalTimeRequestBody] { addProposalTime =>
       toJsonResult {
-        (Services.calendarService ? AddProposalTime(
+        (Services.proposalService ? AddProposalTime(
           addProposalTime.start,
           addProposalTime.end,
           proposalId,
@@ -64,7 +64,7 @@ object Proposals
   def addVote(proposalId: Int, timeId: Int) = Authenticated.async(parse.json) { implicit request =>
     readBody[AddProposalTimeVoteRequestBody] { addProposalTimeVote =>
       toJsonResult {
-        (Services.calendarService ? AddProposalTimeVote(
+        (Services.proposalService ? AddProposalTimeVote(
           proposalId,
           timeId,
           addProposalTimeVote.vote,
@@ -73,5 +73,4 @@ object Proposals
       }
     }
   }
-
 }

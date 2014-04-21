@@ -35,11 +35,6 @@ case class RemoveTags(tagIds: Seq[Int]) extends Request
 case class RemoveTagsFromUser(tagIds: Seq[Int], userId: Int) extends Request
 case object GetColors extends Request
 
-/* Proposal */
-case class AddProposal(title: String, userId: Int) extends Request
-case class AddProposalTime(start: DateTime, end: DateTime, proposalId: Int, participants: Seq[Int], userId: Int) extends Request
-case class AddProposalTimeVote(proposalId: Int, proposalTimeId: Int, vote: Vote.Vote, userId: Int) extends Request
-
 /*
  * Reponses
  */
@@ -61,11 +56,6 @@ case class TagAdded(id: Int) extends Success
 case class TagUpdated(id: Int) extends Success
 case object TagsRemoved extends Success
 case class Colors(colors: IndexedSeq[Color]) extends Success
-
-/* Proposal */
-case class ProposalAdded(id: Int) extends Success
-case class ProposalTimeAdded(id: Int) extends Success
-case object ProposalTimeVoteAdded extends Success
 
 /*
  * Errors

@@ -54,4 +54,7 @@ object Color {
   *
   * @author Simon Kaltenbacher
   */
-class Color private(val code: String)
+class Color private(val code: String) {
+
+  override def toString() = code
+}
