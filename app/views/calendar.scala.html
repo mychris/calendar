@@ -127,16 +127,17 @@
 
   <div id="loading">loading...</div>
 
-  <div id="main">
-    <div id="tags">
-      <p>Tags</p>
+  <section id="main">
+    <section id="tags" class="sidebar">
+      <h3>Tags</h3>
       <ul></ul>
-    </div>
-    <div id="calendar"></div>
-    <div id="conflicts">
+      <button name="add-tag" class="btn btn-xs btn-primary" onclick="startAddTag()">Add Tag</button>
+    </section>
+    <section id="calendar"></section>
+    <section id="conflicts" class="sidebar">
       <p>Conflicts</p>
       <ul class="list-group"></ul>
-    </div>
-    <div class="log formgroup"></div>
-  </div>
+    </section>
+    <section class="log formgroup"></section>
+  </section>
 }

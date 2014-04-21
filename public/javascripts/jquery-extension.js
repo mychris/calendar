@@ -2,7 +2,7 @@ jQuery.extend({
   
   postJson: function(reqestUrl, requestBody) {
     return this.ajax({
-      type        : "DELETE",
+      type        : "POST",
       url         : reqestUrl,
       contentType : "application/json; charset=utf-8",
       dataType    : "json",

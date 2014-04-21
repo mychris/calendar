@@ -373,7 +373,8 @@ function generateForm(name, priority) {
     "  <input name=\"name\"" +
     "         type=\"text\"" +
     "         class=\"form-control\"" +
-    "         value=\"" + name + "\">" +
+    "         value=\"" + name + "\"" +
+    "         placeholder=\"Name\">" +
     "  <input name=\"priority\"" + 
     "         type=\"number\"" + 
     "         class=\"form-control\"" +
@@ -391,16 +392,18 @@ function generateForm(name, priority) {
 
 function startEditTag(tag) {
 
+  $("#tags").data("editing", true);
+
   var name     = tag[0].__data__.name;
   var priority = tag[0].__data__.priority;
 
   $(".name", tag).remove();
-  $("#tags").data("editing", true);
 
   var form = generateForm(name, priority);
 
-  $("input[name=name]", form.appendTo(tag)).focus();
-  $("button[name=cancel]").on("onclick", function() {
+  tag.append(form);
+  $("input[name=name]", form).focus();
+  $("button[name=cancel]", form).on("click", function() {
     cancelEdit($(this).closest('.tag'));
   });
   form.submit(function() {
@@ -418,7 +421,7 @@ function saveEdit(tag) {
     "name"     : newTagName,
     "priority" : newPriority,
     "color"    : tag[0].__data__.color
-  }
+  };
 
   $.putJson(jsRoutes.controllers.Tags.update(tag[0].__data__.id).url, data)
     .done(function(data) {
@@ -445,5 +448,48 @@ function deleteTag(id) {
     })
     .fail(function() {
       console.log("Unable to delete tag with id " + id);
+    });
+}
+
+function startAddTag() {
+
+  $("#tags").data("editing", true);
+
+  var tag  = $("<li class=\"tag\"></li>").appendTo($("#tags ul"));
+  var form = generateForm("", 1);
+
+  tag.append(form);
+  $("input[name=name]", form).focus();
+  $("button[name=cancel]", form).on("click", function() {
+    cancelAdd($(this).closest('.tag'));
+  });
+  form.submit(function() {
+    saveAdd($(this).closest('.tag'));
+    return false;
+  });
+}
+
+function cancelAdd(tag) {
+
+  tag.remove();
+  $("#tags").data("editing", false);
+}
+
+function saveAdd(tag) {
+
+  var data = {
+    "name"     : $("#edit-tag input[name=name]").val(),
+    "priority" : parseInt($("#edit-tag input[name=priority]").val()),
+    "color"    : "#000000"
+  };
+
+  $.postJson(jsRoutes.controllers.Tags.add().url, data)
+    .done(function(data) {      
+      tag.remove();
+      $("#tags").data("editing", false);
+      listTags();
+    })
+    .fail(function() {
+      console.log("Unable to add tag!");
     });
 }
