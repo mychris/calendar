@@ -1,3 +1,7 @@
+body {
+  background-color : #fdfdfd;
+}
+
 #actions {
   display         : flex;
   flex-direction  : row;
