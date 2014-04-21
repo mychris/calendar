@@ -19,7 +19,7 @@ case class AddProposalRequestBody(title: String)
 case class AddProposalTimeRequestBody(start: DateTime, end: DateTime, participants: Seq[Int])
 case class AddProposalTimeVoteRequestBody(vote: Vote.Vote)
 
-object Proposal
+object Proposals
   extends Controller with
           Restricted with
           ResponseSerialization with
@@ -27,7 +27,7 @@ object Proposal
           ResponseHandling with
           RequestBodyReader {
 
-  def list = Action.async {
+  def list = Authenticated.async { implicit request =>
     Future.successful(Status(501)(""))
   }
 

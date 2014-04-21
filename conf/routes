@@ -31,9 +31,9 @@ DELETE        /tag/:id                          controllers.Tags.delete(id: Int)
 GET						/tag/colors  											controllers.Tags.colors
 
 # Proposal
-POST          /proposal                           controllers.Proposal.add
-POST          /proposal/:proposalId/time          controllers.Proposal.addTime(proposalId: Int)
-POST          /proposal/:proposalId/vote/:timeId  controllers.Proposal.addVote(proposalId: Int, timeId: Int)
+POST          /proposal                           controllers.Proposals.add
+POST          /proposal/:proposalId/time          controllers.Proposals.addTime(proposalId: Int)
+POST          /proposal/:proposalId/vote/:timeId  controllers.Proposals.addVote(proposalId: Int, timeId: Int)
 
 # Database setup
 GET	          /admin                              controllers.Application.admin
