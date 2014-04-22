@@ -8,6 +8,7 @@ POST            /login                                  controllers.Login.login
 GET             /logout                                 controllers.Login.logout
 
 # User
+GET             /users                                  controllers.Users.list
 POST            /user                                   controllers.Users.add
 
 # Calendar

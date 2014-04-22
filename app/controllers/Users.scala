@@ -26,6 +26,12 @@ object Users
           ResponseHandling with 
           RequestBodyReader {
 
+  def list = Authenticated.async { implicit request =>
+    toJsonResult {
+      (Services.userService ? GetAllUsers()).expecting[AllUsers]
+    }
+  }
+
   def add = Action.async(parse.json) { implicit request =>
     readBody[AddUserRequestBody] { addUser =>
       (Services.userService ? GetUserByName(addUser.name)).mapTo[Response]

@@ -77,6 +77,7 @@ package object formatters {
   /* Responses */
   implicit val userByIdFormat = Json.format[UserById]
   implicit val userByNameFormat = Json.format[UserByName]
+  implicit val allUsersFormat = Json.format[AllUsers]
   implicit val userAddedFormat = Json.format[UserAdded]
 
 
