@@ -19,18 +19,19 @@ import util.JsonConversion._
 package object formatters {
 
   /*
+   * Generic
+   */
+
+  implicit def tupleWrites[A : Writes] = new Writes[(A, A)] {
+    def writes(o: (A, A)): JsValue = Seq(o._1, o._2).toJson
+  }
+
+  /*
    * Base types
    */
 
   implicit object dateTimeFormat extends Format[DateTime] {
     def writes(o: DateTime): JsValue = o.toString.toJson  // sending time as String
-
-//    def reads(json: JsValue): JsResult[DateTime] = json match { // receiving time as String
-//      case JsString(s)  => JsSuccess(new DateTime(s))
-//      case _            => JsError(Seq(JsPath() -> Seq(ValidationError("error.expected.jsstring"))))
-//    }
-
-//    def writes(o: DateTime): JsValue = o.getMilliseconds(TimeZone.getTimeZone("UTC")).asInstanceOf[Long].toJson  // sending time as Long
 
     def reads(json: JsValue): JsResult[DateTime] = json match { // receiving time as Long
       case JsNumber(ms) => JsSuccess(DateTime.forInstant(ms.toLong, TimeZone.getTimeZone("UTC"))) // Frontend sends millis, not nanos!
@@ -60,18 +61,10 @@ package object formatters {
   }
 
   /*
-   * Generic
-   */
-
-  implicit def tupleWrites[A : Writes] = new Writes[(A, A)] {
-    def writes(o: (A, A)): JsValue = Seq(o._1, o._2).toJson
-  }
-
-  /*
    * UserService
    */
-
   implicit val userFormat = Json.format[User]
+
   implicit val userWithoutPasswordFormat = Json.format[UserWithoutPassword]
 
   /* Responses */
@@ -84,28 +77,30 @@ package object formatters {
   /*
    * CalendarService
    */
-
   implicit val tagFormat = Json.format[Tag]
   implicit val appointmentFormat = Json.format[Appointment]
 
-  /* Responses */
   implicit val appointmentWithTagsFormat = Json.format[AppointmentWithTags]
+
+  /* Responses */
+  // Appointment
   implicit val appointmentByIdFormat = Json.format[AppointmentById]
   implicit val appointmentsFromTagFormat = Json.format[AppointmentsFromTag]
   implicit val appointmentsFromUserFormat = Json.format[AppointmentsFromUser]
   implicit val appointmentsFromUserWithTagFormat = Json.format[AppointmentsFromUserWithTags]
   implicit val appointmentAddedFormat = Json.format[AppointmentAdded]
   implicit val appointmentUpdatedFormat = Json.format[AppointmentUpdated]
-  implicit object appointmentsRemoved extends Writes[AppointmentsRemoved.type] {
+  implicit object appointmentsRemovedFormat extends Writes[AppointmentsRemoved.type] {
     def writes(o: AppointmentsRemoved.type): JsValue = "AppointmentsRemoved".toJson
   }
 
+  // Tag
   implicit val tagByIdFormat = Json.format[TagById]
   implicit val tagsFromUserFormat = Json.format[TagsFromUser]
   implicit val tagsFromAppointmentFormat = Json.format[TagsFromAppointment]
   implicit val tagAddedFormat = Json.format[TagAdded]
   implicit val tagUpdatedFormat = Json.format[TagUpdated]
-  implicit object tagsRemoved extends Writes[TagsRemoved.type] {
+  implicit object tagsRemovedFormat extends Writes[TagsRemoved.type] {
     def writes(o: TagsRemoved.type): JsValue = "TagsRemoved".toJson
   }
   implicit val colorsFormat = Json.format[Colors]
@@ -113,20 +108,22 @@ package object formatters {
   /*
    * ProposalService
    */
-
   implicit val proposalFormat = Json.format[Proposal]
   implicit val proposalTimeFromat = Json.format[ProposalTime]
   implicit val proposalTimeVoteFormat = Json.format[ProposalTimeVote]
+
+  implicit val proposalTimeVoteVoteWithUserFormat = Json.format[ProposalTimeVoteVoteWithUser]
+  implicit val proposalTimeWithVotesFormat = Json.format[ProposalTimeWithVotes]
+  implicit val proposalFullFormat = Json.format[ProposalFull]
+
+   /* Responses */
+  
 
   implicit val proposalAddedFormat = Json.format[ProposalAdded]
   implicit val proposalTimeAddedFormat = Json.format[ProposalTimeAdded]
   implicit object proposalTimeVoteAddedFormat extends Writes[ProposalTimeVoteAdded.type] {
     def writes(o: ProposalTimeVoteAdded.type): JsValue = "TimeVoteAdded".toJson
   }
-
-  implicit val proposalTimeVoteVoteWithUser = Json.format[ProposalTimeVoteVoteWithUser]
-  implicit val proposalTimeWithVotes = Json.format[ProposalTimeWithVotes]
-  implicit val proposalFull = Json.format[ProposalFull]
   implicit val proposalsFromUserFormat = Json.format[ProposalsFromUser]
 
   /*
@@ -134,7 +131,7 @@ package object formatters {
    */
 
   /* Responses */
-  implicit val conflictsWrites = Json.writes[Conflicts]
+  implicit val conflictsFormat = Json.writes[Conflicts]
 
   /*
    * FreeTimeSlotFindingService
@@ -160,11 +157,11 @@ package object formatters {
     def writes(o: SchemaCreated.type): JsValue = "SchemaCreated".toJson
   }
 
-  implicit object schemaDroppedFormatWrites extends Writes[SchemaDropped.type] {
+  implicit object schemaDroppedWrites extends Writes[SchemaDropped.type] {
     def writes(o: SchemaDropped.type): JsValue = "SchemaDropped".toJson
   }
 
-  implicit object sampleDataCreatedFormatWrites extends Writes[SampleDataCreated.type] {
+  implicit object sampleDataCreatedWrites extends Writes[SampleDataCreated.type] {
     def writes(o: SampleDataCreated.type): JsValue = "SampleDataCreated".toJson
   }
 
@@ -173,19 +170,19 @@ package object formatters {
    */
 
   /* Appointments */
-  implicit val addAppointmentRequestBody = Json.format[AddAppointmentRequestBody]
-  implicit val updateAppointmentRequestBody = Json.format[UpdateAppointmentRequestBody]
-  implicit val appointmentWithTagsResponseBody = Json.format[AppointmentWithTagsResponseBody]
+  implicit val addAppointmentRequestBodyFormat = Json.format[AddAppointmentRequestBody]
+  implicit val updateAppointmentRequestBodyFormat = Json.format[UpdateAppointmentRequestBody]
+  implicit val appointmentWithTagsResponseBodyFormat = Json.format[AppointmentWithTagsResponseBody]
 
   /* Tags */
-  implicit val addTagRequestBody = Json.format[AddTagRequestBody]
-  implicit val updateTagRequestBody = Json.format[UpdateTagRequestBody]
+  implicit val addTagRequestBodyFormat = Json.format[AddTagRequestBody]
+  implicit val updateTagRequestBodyFormat = Json.format[UpdateTagRequestBody]
 
   /* Users */
-  implicit val addUserRequestBody = Json.format[AddUserRequestBody]
+  implicit val addUserRequestBodyFormat = Json.format[AddUserRequestBody]
 
   /* Proposal */
-  implicit val addProposalRequestBody = Json.format[AddProposalRequestBody]
-  implicit val addProposalTimeRequestBody = Json.format[AddProposalTimeRequestBody]
-  implicit val addProposalTimeVoteRequestBody = Json.format[AddProposalTimeVoteRequestBody]
+  implicit val addProposalRequestBodyFormat = Json.format[AddProposalRequestBody]
+  implicit val addProposalTimeRequestBodyFormat = Json.format[AddProposalTimeRequestBody]
+  implicit val addProposalTimeVoteRequestBodyFormat = Json.format[AddProposalTimeVoteRequestBody]
 }
