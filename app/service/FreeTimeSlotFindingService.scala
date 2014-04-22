@@ -7,11 +7,11 @@ import datasource.user._
 
 import hirondelle.date4j.DateTime
 
-import java.util.TimeZone
-
 import scala.slick.driver.PostgresDriver.simple._
 
 import service.protocol._
+
+import util.DateTimeExtensions._
 
 /**
   *
@@ -43,50 +43,29 @@ class FreeTimeSlotFindingService(db: Database)
   /** */
   private type Acc = (Seq[TimeSlot], DateTime)
 
-  /** */
-  val timeZone = TimeZone.getTimeZone("UTC")
-
-  /** */
-  def millis(dateTime: DateTime) = dateTime.getMilliseconds(timeZone)
-
-  /** */
-  def days(start: DateTime, end: DateTime) =
-    for(i <- 0 to start.numDaysFrom(end)) yield start.plusDays(i).getStartOfDay
-
-  /** */
-  def timeOfDay(dateTime: DateTime) =
-    ((dateTime.getHour * 3600 + dateTime.getMinute * 60 + dateTime.getSecond) * 1000).toLong
-
-  /** */
-  val startOfDay = 0
-
-  /** */
-  val endOfDay = 24 * 3600 * 1000
-
-  def fromDayWithTimeOfDay(day: DateTime, timeOfDay: Long) =
-    DateTime.forInstant(millis(day.getStartOfDay) + timeOfDay, timeZone)
-
   def receive = {
     case FindFreeTimeSlots(duration, from, to, startTime, endTime, userIds) =>
 
       val appointments = db.withSession { implicit session =>
         appointmentsFromUsers(userIds, from, to)
           .buildColl[Seq]
-          .filter(a => timeOfDay(startTime) <= timeOfDay(a.end) || timeOfDay(a.start) <= timeOfDay(endTime))
+          .filter(a => startTime.timeOfDay <= a.end.timeOfDay || a.start.timeOfDay <= endTime.timeOfDay)
       }
 
-      val constraints = days(from, to).flatMap { day =>
+      val constraints = from.days(to).flatMap { day =>
         Seq(
-          Appointment(-1, "", fromDayWithTimeOfDay(day, startOfDay        ), fromDayWithTimeOfDay(day, timeOfDay(startTime))),
-          Appointment(-1, "", fromDayWithTimeOfDay(day, timeOfDay(endTime)), fromDayWithTimeOfDay(day, endOfDay            ))
+          Appointment(-1, "", day.withTimeOfDay(startOfDay)       , day.withTimeOfDay(startTime.timeOfDay)),
+          Appointment(-1, "", day.withTimeOfDay(endTime.timeOfDay), day.withTimeOfDay(endOfDay           ))
         )
       }
 
+      val sorted = (appointments ++ constraints :+ Appointment(-1, "", to, to)).sortBy(_.start.millisUTC)
+
       sender ! FreeTimeSlots(
-        (appointments :+ Appointment(-1, "", to, to))
+        sorted
           .foldLeft[Acc]((Seq(), from)) {
             case ((slots, lastEnd), appointment) =>
-              if(millis(appointment.start) - millis(lastEnd) >= duration)
+              if(appointment.start.millisUTC - lastEnd.millisUTC >= duration)
                 (slots :+ TimeSlot(lastEnd, appointment.start), appointment.end)
               else
                 (slots, appointment.end)
