@@ -1,4 +1,4 @@
 @(field: play.api.data.Field, args: (Symbol,Any)*)(implicit handler: views.html.helper.FieldConstructor, lang: play.api.i18n.Lang)
 @views.html.helper.input(field, args:_*) { (id, name, value, htmlArgs) =>
-  <input class="span4" id="@id" value="@value" name="@name" @toHtmlArgs(htmlArgs)>
+  <input class="col col-lg4 form-control" id="@id" value="@value" name="@name" @toHtmlArgs(htmlArgs)>
 }
