@@ -72,11 +72,13 @@ package object formatters {
    */
 
   implicit val userFormat = Json.format[User]
+  implicit val userWithoutPasswordFormat = Json.format[UserWithoutPassword]
 
   /* Responses */
   implicit val userByIdFormat = Json.format[UserById]
   implicit val userByNameFormat = Json.format[UserByName]
   implicit val userAddedFormat = Json.format[UserAdded]
+
 
   /*
    * CalendarService
@@ -107,11 +109,24 @@ package object formatters {
   }
   implicit val colorsFormat = Json.format[Colors]
 
+  /*
+   * ProposalService
+   */
+
+  implicit val proposalFormat = Json.format[Proposal]
+  implicit val proposalTimeFromat = Json.format[ProposalTime]
+  implicit val proposalTimeVoteFormat = Json.format[ProposalTimeVote]
+
   implicit val proposalAddedFormat = Json.format[ProposalAdded]
   implicit val proposalTimeAddedFormat = Json.format[ProposalTimeAdded]
   implicit object proposalTimeVoteAddedFormat extends Writes[ProposalTimeVoteAdded.type] {
     def writes(o: ProposalTimeVoteAdded.type): JsValue = "TimeVoteAdded".toJson
   }
+
+  implicit val proposalTimeVoteVoteWithUser = Json.format[ProposalTimeVoteVoteWithUser]
+  implicit val proposalTimeWithVotes = Json.format[ProposalTimeWithVotes]
+  implicit val proposalFull = Json.format[ProposalFull]
+  implicit val proposalsFromUserFormat = Json.format[ProposalsFromUser]
 
   /*
    * ConflictFindingService

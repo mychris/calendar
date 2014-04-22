@@ -2,6 +2,8 @@ package service.protocol
 
 import datasource.user._
 
+case class UserWithoutPassword(id: Int, name: String)
+
 /*
  * Requests
  */

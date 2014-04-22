@@ -96,6 +96,15 @@ trait AppointmentProposalDataAccessComponent {
     val proposals: TableQuery[ProposalTable]
     val proposalTimes: TableQuery[ProposalTimeTable]
     val proposalTimeVotes: TableQuery[ProposalTimeVoteTable]
+
+    def proposalsFromUser(userId: Int): Query[(ProposalTable), (Proposal)] = 
+      for {
+        ptv <- proposalTimeVotes
+        pt  <- ptv.proposalTime
+        u   <- ptv.user
+        p   <- pt.proposal
+        if (u.id === userId && ptv.userId === userId)
+      } yield (p)
   }
 }
 

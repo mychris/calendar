@@ -27,8 +27,10 @@ object Proposals
           ResponseHandling with
           RequestBodyReader {
 
-  def list = Authenticated.async { implicit request =>
-    Future.successful(Status(501)(""))
+  def list = Authenticated.async(parse.json) { implicit request =>
+    toJsonResult {
+      (Services.proposalService ? GetProposalsFromUser(request.user.id)).expecting[ProposalsFromUser]
+    }
   }
 
   def add = Authenticated.async(parse.json) { implicit request =>
