@@ -21,6 +21,7 @@ case class AddProposal(title: String, userId: Int) extends Request
 case class AddProposalTime(start: DateTime, end: DateTime, proposalId: Int, participants: Seq[Int], userId: Int) extends Request
 case class AddProposalTimeVote(proposalId: Int, proposalTimeId: Int, vote: Vote.Vote, userId: Int) extends Request
 case class GetProposalsFromUser(userId: Int) extends Request
+case class RemoveProposal(id: Int) extends Request
 
 /*
  * Reponses
@@ -31,3 +32,4 @@ case class ProposalAdded(id: Int) extends Success
 case class ProposalTimeAdded(id: Int) extends Success
 case object ProposalTimeVoteAdded extends Success
 case class ProposalsFromUser(proposals: Seq[ProposalFull]) extends Success
+case object ProposalRemoved extends Success

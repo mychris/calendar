@@ -113,10 +113,16 @@ class ProposalService(db: Database)
     }))
   }
 
+  def removeProposal(msg: RemoveProposal) = db.withTransaction { implicit session =>
+    proposals.filter(_.id === msg.id).delete
+    sender ! ProposalRemoved
+  }
+
   def receive = handled {
     case msg: AddProposal          => addProposal(msg)
     case msg: AddProposalTime      => addProposalTime(msg)
     case msg: AddProposalTimeVote  => addProposalTimeVote(msg)
     case msg: GetProposalsFromUser => getProposalsFromUser(msg)
+    case msg: RemoveProposal       => removeProposal(msg)
   }
 }

@@ -125,6 +125,9 @@ package object formatters {
     def writes(o: ProposalTimeVoteAdded.type): JsValue = "TimeVoteAdded".toJson
   }
   implicit val proposalsFromUserFormat = Json.format[ProposalsFromUser]
+  implicit object proposalRemovedFormat extends Writes[ProposalRemoved.type] {
+    def writes(o: ProposalRemoved.type): JsValue = "ProposalRemoved".toJson
+  }
 
   /*
    * ConflictFindingService

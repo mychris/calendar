@@ -45,6 +45,7 @@ object Proposals
   }
 
   def addTime(proposalId: Int) = Authenticated.async(parse.json) { implicit request =>
+    val requester = request.user.id
     readBody[AddProposalTimeRequestBody] { addProposalTime =>
       toJsonResult {
         (Services.proposalService ? AddProposalTime(
@@ -52,12 +53,12 @@ object Proposals
           addProposalTime.end,
           proposalId,
           (
-            if (addProposalTime.participants.exists(_ == request.user.id))
+            if (addProposalTime.participants.exists(_ == requester))
               addProposalTime.participants
             else
-              (request.user.id +: addProposalTime.participants)
+              (requester +: addProposalTime.participants)
           ),
-          request.user.id
+          requester
         )).expecting[ProposalTimeAdded]
       }
     }
@@ -73,6 +74,12 @@ object Proposals
           request.user.id
         )).expecting[ProposalTimeVoteAdded.type]
       }
+    }
+  }
+
+  def delete(id: Int) = ActionAuthenticated.async { implicit request =>
+    toJsonResult {
+      (Services.proposalService ? RemoveProposal(id)).expecting[ProposalRemoved.type]
     }
   }
 }

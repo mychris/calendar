@@ -36,6 +36,7 @@ GET             /proposals                              controllers.Proposals.li
 POST            /proposal                               controllers.Proposals.add
 POST            /proposal/:proposalId/time              controllers.Proposals.addTime(proposalId: Int)
 POST            /proposal/:proposalId/vote/:timeId      controllers.Proposals.addVote(proposalId: Int, timeId: Int)
+DELETE          /proposal/:id                           controllers.Proposals.delete(id: Int)
 
 # Database setup
 GET	            /admin                                  controllers.Application.admin
