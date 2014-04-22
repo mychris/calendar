@@ -44,17 +44,43 @@ class FreeTimeSlotFindingService(db: Database)
   private type Acc = (Seq[TimeSlot], DateTime)
 
   /** */
-  def millis(dateTime: DateTime) = dateTime.getMilliseconds(TimeZone.getTimeZone("UTC"))
+  val timeZone = TimeZone.getTimeZone("UTC")
+
+  /** */
+  def millis(dateTime: DateTime) = dateTime.getMilliseconds(timeZone)
 
   /** */
   def days(start: DateTime, end: DateTime) =
-    for(i <- 1 to start.numDaysFrom(end))
-      start.plusDays(i)
+    for(i <- 1 to start.numDaysFrom(end)) yield start.plusDays(i).getStartOfDay
+
+  /** */
+  def timeOfDay(dateTime: DateTime) =
+    ((dateTime.getHour * 3600 + dateTime.getMinute * 60 + dateTime.getSecond) * 1000).toLong
+
+  /** */
+  val startOfDay = 0
+
+  /** */
+  val endOfDay = 24 * 3600 * 1000
+
+  def fromDayWithTimeOfDay(day: DateTime, timeOfDay: Long) =
+    DateTime.forInstant(millis(day.getStartOfDay) + timeOfDay, timeZone)
 
   def receive = {
     case FindFreeTimeSlots(duration, from, to, startTime, endTime, userIds) =>
 
-      val appointments = db.withSession { implicit session => appointmentsFromUsers(userIds, from, to).buildColl[Seq] }
+      val appointments = db.withSession { implicit session =>
+        appointmentsFromUsers(userIds, from, to)
+          .buildColl[Seq]
+          .filter(a => timeOfDay(startTime) <= timeOfDay(a.end) || timeOfDay(a.start) <= timeOfDay(endTime))
+      }
+
+      val constraints = days(from, to).flatMap { day =>
+        Seq(
+          Appointment(-1, "", fromDayWithTimeOfDay(day, startOfDay        ), fromDayWithTimeOfDay(day, timeOfDay(startTime))),
+          Appointment(-1, "", fromDayWithTimeOfDay(day, timeOfDay(endTime)), fromDayWithTimeOfDay(day, endOfDay            ))
+        )
+      }
 
       sender ! FreeTimeSlots(
         (appointments :+ Appointment(-1, "", to, to))
