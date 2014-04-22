@@ -77,7 +77,7 @@ object Proposals
     }
   }
 
-  def delete(id: Int) = ActionAuthenticated.async { implicit request =>
+  def delete(id: Int) = Authenticated.async { implicit request =>
     toJsonResult {
       (Services.proposalService ? RemoveProposal(id)).expecting[ProposalRemoved.type]
     }
