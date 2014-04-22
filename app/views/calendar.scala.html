@@ -128,15 +128,28 @@
   <div id="loading">loading...</div>
 
   <section id="main">
-    <section id="tags" class="sidebar">
-      <h3>Tags</h3>
-      <ul></ul>
-      <button name="add-tag" class="btn btn-xs btn-primary" onclick="startAddTag()">Add Tag</button>
+    <section class="sidebar">
+      <div id="tags" class="form-group span4">
+        <h3>Tags</h3>
+        <ul></ul>
+        <button name="add-tag" class="btn btn-xs btn-default" onclick="startAddTag()"><span class="glyphicon glyphicon-plus"></span> Add Tag</button>
+        <div class="spacer"></div>
+      </div>
+      <div class="form-group span4">
+        <h3>Proposals</h3>
+        <button name="create-proposal" class="btn btn-xs btn-default" onclick="createProposal()">Create Proposal</button>
+        <div class="spacer"></div>
+      </div>
     </section>
+
     <section id="calendar"></section>
-    <section id="conflicts" class="sidebar">
-      <p>Conflicts</p>
-      <ul class="list-group"></ul>
+
+    <section class="sidebar">
+      <div id="conflicts" class="form-group span4">
+        <h3>Conflicts</h3>
+        <ul class="list-group"></ul>
+        <div class="spacer"></div>
+      </div>
     </section>
     <section class="log formgroup"></section>
   </section>
