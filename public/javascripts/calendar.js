@@ -198,6 +198,7 @@ function getHighestPriorityTag(tags) {
     return highestPriorityTag;
 }
 
+/* Shows only events belonging to any tag given in tagIds */
 function filterEventsByTagIds(tagIds) {
     function listContainsAny(list, filters) {
         return $.inArray(true, $.map(filters, function(val) {
@@ -209,12 +210,14 @@ function filterEventsByTagIds(tagIds) {
         $(this).removeClass("hidden");
     });
 
-    var d = $('[tagIds]').filter(function(index, el) {
-        console.log($(el).attr('tagIds').split(",") + ": " + !listContainsAny($(el).attr('tagIds').split(","), tagIds));
-        return !listContainsAny($(el).attr('tagIds').split(","), tagIds);
+    var eventsBelongingToNoTag = $('[tagIds]').filter(function(index, el) {
+        var isFiltered = !listContainsAny($(el).attr('tagIds').split(","), tagIds);
+        // un-comment for test purposes: 
+        // console.log($(el).attr('tagIds').split(",") + ": " + isFiltered);
+        return isFiltered;
     });
 
-    d.each(function(index) {
+    eventsBelongingToNoTag.each(function(index) {
         $(this).addClass("hidden");
     });
 }
@@ -345,6 +348,9 @@ function listTags() {
             tags.enter()
                 .append("li")
                 .attr("class", "tag")
+                .attr("tagid", function(tag) {
+                    return tag.id
+                })
                 .on("mouseenter", function() {
                     if (!$("#tags").data("editing") && !$(".menu ul", this).is(":visible"))
                         showMenu(this);
@@ -354,19 +360,27 @@ function listTags() {
                         hideMenu(this);
                 })
                 .append("span")
-                .attr("class", "name")
-                .style("color", function(tag) {
+                .attr("class", "name btn btn-xs tag-filter-on")
+                .style("background-color", function(tag) {
                     return tag.color;
                 })
                 .text(function(tag) {
                     return tag.name;
-                });
+                })
+                .on("click", function() {
+                    $(this).toggleClass("tag-filter-on");
+                    $(this).toggleClass("tag-filter-off");
+                    filterEventsByTagIds($(".tag-filter-on").parent().map(function() {
+                        return $(this).attr("tagid");
+                    }).get());
+                })
+
 
             // Update
             tags
                 .each(function() {
                     d3.select(this).select(".name")
-                        .style("color", function(tag) {
+                        .style("background-color", function(tag) {
                             return tag.color;
                         })
                         .text(function(tag) {

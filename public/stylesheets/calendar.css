@@ -74,12 +74,12 @@
 }
 
 #tags ul {
-  padding-left : 0;
+  padding       : 0 0 5px 0;
   border-bottom : 1px solid #ddd;
 }
 
 #tags > ul > li {
-  margin        : 12px 0 12px 0;
+  margin        : 5px 0 5px 0;
   list-style    : none;
 }
 
@@ -115,6 +115,9 @@
 #edit-tag input[name=priority] {
   width   : 40px;
   padding : 4px 4px 4px 8px;
+}
+.tag-filter-off {
+  opacity: 0.35;
 }
 .spacer {
   margin: 20px 0;
