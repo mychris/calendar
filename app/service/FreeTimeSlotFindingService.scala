@@ -51,7 +51,7 @@ class FreeTimeSlotFindingService(db: Database)
 
   /** */
   def days(start: DateTime, end: DateTime) =
-    for(i <- 1 to start.numDaysFrom(end)) yield start.plusDays(i).getStartOfDay
+    for(i <- 0 to start.numDaysFrom(end)) yield start.plusDays(i).getStartOfDay
 
   /** */
   def timeOfDay(dateTime: DateTime) =
