@@ -119,13 +119,27 @@ trait CalendarDataAccessComponent {
       }
       yield a
 
+    /** */
+    def appointmentsFromUsers(userIds: Seq[Int]): Query[AppointmentTable, Appointment] =
+      for {
+        abtt <- appointmentBelongsToTag
+        t    <- abtt.tag
+        a    <- abtt.appointment
+        if t.userId.inSet(userIds)
+      }
+      yield a
+
+    /** */
+    def appointmentsFromUsers(userIds: Seq[Int], from: DateTime, to: DateTime): Query[AppointmentTable, Appointment] = 
+      appointmentsFromUsers(userIds).filter(a => a.end >= from || a.start <= to)
+
     /** From a user, receives all appointments including its tags, between a given time, where both, from and to are inclusive */
     def appointmentFromUserWithTag(userId: Int, from: DateTime, to: DateTime): Query[(AppointmentTable, TagTable), (Appointment, Tag)] =
       for {
         abtt <- appointmentBelongsToTag
         t    <- abtt.tag
         a    <- abtt.appointment
-        if t.userId === userId && a.start >= from && a.end <= to
+        if t.userId === userId && (a.end >= from || a.start <= to)
       }
       yield (a, t)
 
