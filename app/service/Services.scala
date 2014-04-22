@@ -38,7 +38,7 @@ object Services extends ExecutionEnvironment with ResponseHandling {
   val conflictFindingService = system.actorOf(ConflictFindingService.props.withRouter(FromConfig()), "conflict-finding-service")
 
   /** Service for basic calendar and tag related operations */
-  val freeTimeSlotsFindingService = system.actorOf(FreeTimeSlotFindingService.props.withRouter(FromConfig()), "freetimeslots-finding-service")
+  val freeTimeSlotsFindingService = system.actorOf(FreeTimeSlotFindingService.props(db).withRouter(FromConfig()), "freetimeslots-finding-service")
 
   /** Service for inserting sample data into the database */
   val administrationService = system.actorOf(AdministrationService.props(db), "administration-service")

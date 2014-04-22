@@ -1,6 +1,7 @@
 package service.protocol
 
 import datasource.calendar._
+import datasource.user._
 
 import hirondelle.date4j.DateTime
 
@@ -12,7 +13,7 @@ case class TimeSlot(start: DateTime, end: DateTime)
  */
 
 /** */
-case class FindFreeTimeSlots(duration: Int, start: DateTime, end: DateTime, appointments: Seq[Appointment]) extends Request
+case class FindFreeTimeSlots(duration: Int, from: DateTime, to: DateTime, startTime: DateTime, endTime: DateTime, userIds: Seq[Int]) extends Request
 
 /*
  * Responses
