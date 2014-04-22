@@ -33,7 +33,6 @@ class CalendarService(db: Database)
           ActorLogging with
           UserDataAccessComponentImpl with
           CalendarDataAccessComponentImpl with
-          AppointmentProposalDataAccessComponentImpl with
           ExceptionHandling {
 
   /** */
@@ -42,11 +41,7 @@ class CalendarService(db: Database)
   /** */
   protected object calendarDataAccess extends CalendarDataAccessModuleImpl
 
-  protected object appointmentProposalDataAccess extends AppointmentProposalDataAccessModuleImpl
-
   import calendarDataAccess._
-
-  import appointmentProposalDataAccess._
 
   /*
    * Appointments
@@ -158,29 +153,6 @@ class CalendarService(db: Database)
   }
 
   def getColors = sender ! Colors(Color.colors)
-  /*
-   * Proposal
-   */
-
-  def addProposal(msg: AddProposal) = db.withSession { implicit session =>
-    sender ! ProposalAdded((proposals returning proposals.map(_.id)) += Proposal(-1, msg.title, msg.userId))
-  }
-
-  def addProposalTime(msg: AddProposalTime) = 
-    sender ! ProposalTimeAdded(db.withTransaction { implicit session =>
-      val proposalTimeId = (proposalTimes returning proposalTimes.map(_.id)) += ProposalTime(-1, msg.start, msg.end, msg.proposalId)
-      proposalTimeVotes ++= msg.participants.map(ProposalTimeVote(proposalTimeId, _, Vote.NotVoted))
-      proposalTimeId
-  })
-
-  def addProposalTimeVote(msg: AddProposalTimeVote) = db.withSession { implicit session =>
-    proposalTimeVotes
-      .filter(_.proposalTimeId === msg.proposalTimeId)
-      .filter(_.userId === msg.userId)
-      .map(v => (v.vote))
-      .update((msg.vote))
-    sender ! ProposalTimeVoteAdded
-  }
 
   def receive = handled {
     case msg: GetAppointmentById              => getAppointmentById(msg)
@@ -191,7 +163,6 @@ class CalendarService(db: Database)
     case msg: UpdateAppointmentFromUser       => updateAppointmentFromUser(msg)
     case msg: RemoveAppointments              => removeAppointments(msg)
     case msg: RemoveAppointmentsFromUser      => removeAppointmentsFromUser(msg)
-
     case msg: GetTagById                      => getTagById(msg)
     case msg: GetTagsFromUser                 => getTagsFromUser(msg)
     case msg: GetTagsFromAppointment          => getTagsFromAppointment(msg)
@@ -200,9 +171,5 @@ class CalendarService(db: Database)
     case msg: RemoveTags                      => removeTags(msg)
     case msg: RemoveTagsFromUser              => removeTagsFromUser(msg)
     case GetColors                            => getColors
-
-    case msg: AddProposal                     => addProposal(msg)
-    case msg: AddProposalTime                 => addProposalTime(msg)
-    case msg: AddProposalTimeVote             => addProposalTimeVote(msg)
   }
 }
