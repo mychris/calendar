@@ -1,4 +1,4 @@
-@(title: String, scripts: Html = Html(""), bodyClass: String = "")(content: Html)
+@(title: String, scripts: Html = Html(""), navigationBarElements: Html = Html(""), bodyClass: String = "")(content: Html)
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -21,6 +21,20 @@
     @scripts
   </head>
   <body class="@bodyClass">
+    <!-- Navigation Bar -->
+    <div class="navbar-nav navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="container">
+                <a href="#" class="navbar-brand">Calendar</a>
+                <div class="navbar-collapse collapse pull-right">
+                    <ul class="navbar-nav navbar nav">
+                        @navigationBarElements
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Navigation Ends -->
     @content
   </body>
 </html>

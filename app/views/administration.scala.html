@@ -53,12 +53,17 @@
   </script>
 }
 
-@main("Administration", scripts, "") {
+@navigationBarElements = {
+      <li>
+        <a href="/">
+          <i class="glyphicon glyphicon-log-in"></i> Login
+        </a>
+    </li>
+}
+
+@main("Administration", scripts, navigationBarElements, "") {
   <div class="container">
     <h1>Administration</h1>
-    <nav>
-      <a href="/">Login</a>
-    </nav>
     <div id="actions">
       <button class="btn btn-s btn-default" onclick="dropSchema()">Drop schema</button>
       <button class="btn btn-s btn-default" onclick="createSchema()">Create schema</button>

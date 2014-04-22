@@ -113,17 +113,34 @@
   </script>
 }
 
-@main(title, scripts, "") {
-  <h3 id="welcome-headline">Welcome, @userName!</h3>
-  <nav>
-    <a href="/admin">Administration</a>
-    <a href="/logout">Logout</a>
-  </nav>
+@navigationBarElements = {
+
+    <li>
+        <a href="#">Welcome, @userName!</a>
+    </li>
+    <li class="divider-vertical"></li>
+    <li>
+        <a href="/logout">
+          <i class="glyphicon glyphicon-log-out"></i> Logout
+        </a>
+    </li>
+    <li class="divider-vertical"></li>
+    <li>
+        <a href="/admin"> 
+          <i class="glyphicon glyphicon-cog"></i> Administration
+        </a>
+    </li>
+    <li class="divider-vertical"></li>
+}
+
+@main(title, scripts, navigationBarElements, "") {
+
   <div id="script-warning">
     <code>Server cannot return any events.</code>
   </div>
 
   <div id="loading">loading...</div>
+
 
   <section id="main">
     <section class="sidebar">
