@@ -465,7 +465,7 @@ function saveEdit(tag) {
 
 function cancelEdit(tag) {
   $("#edit-tag").remove();
-  $("<span class='name' style='color:" + tag[0].__data__.color + "'>" + tag[0].__data__.name + "</span>").appendTo(tag);
+  $("<span class='name btn btn-xs tag-filter-on' style='background-color:" + tag[0].__data__.color + "'>" + tag[0].__data__.name + "</span>").appendTo(tag);
   $("#tags").data("editing", false);
 }
 
