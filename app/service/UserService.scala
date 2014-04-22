@@ -39,6 +39,14 @@ class UserService(db: Database)
     sender ! usersByName(msg.name).firstOption.fold[Any](NoSuchUserError(s"User with name $msg.name does not exist!"))(UserByName(_))
   }
 
+  def getAllUsers(msg: GetAllUsers) = db.withSession { implicit session =>
+    sender ! AllUsers(
+      users
+        .buildColl[Seq]
+        .map(u => UserWithoutPassword(u.id, u.name))
+    )
+  }
+
   def addUser(msg: AddUser) = db.withSession { implicit session =>
     sender ! UserAdded((users returning users.map(_.id)) += User(-1, msg.name, msg.password)) 
   }
@@ -46,6 +54,7 @@ class UserService(db: Database)
   def receive = handled {
     case msg: GetUserById   => getUserById(msg)
     case msg: GetUserByName => getUserByName(msg)
+    case msg: GetAllUsers   => getAllUsers(msg)
     case msg: AddUser       => addUser(msg)
   }
 }
