@@ -1,21 +1,18 @@
 package util
 
 import hirondelle.date4j.DateTime
+
 import java.util.TimeZone
+
+import play.api.mvc.QueryStringBindable._
 
 object Binders {
 
-  implicit def string2DateTime(date: String): DateTime = new DateTime(date)
-  implicit def string2OptionDateTime(date: String): Option[DateTime] = Some(new DateTime(date))
+  val timeZone = TimeZone.getTimeZone("UTC")
 
-
-  implicit def optionString2OptionDateTime(dateOption: Option[String]): Option[DateTime] = dateOption match {
-    case None       => None
-    case Some(date) => Some(new DateTime(date))
-  }
-
-  implicit def optionLong2OptionDateTime(millisLongOption: Option[Long]): Option[DateTime] = millisLongOption match {
-    case None       => None
-    case Some(date) => Some(DateTime.forInstant(date, TimeZone.getTimeZone("UTC")))
-  }
+  implicit object bindableDateTime extends Parsing[DateTime](
+    str => DateTime.forInstant(str.toLong, timeZone),
+    _.getMilliseconds(timeZone).toString,
+    (key: String, e: Exception) => "Cannot parse parameter %s as DateTime: %s".format(key, e.getMessage)
+  )
 }
