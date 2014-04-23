@@ -18,6 +18,7 @@ import datasource.calendar.{Appointment, Tag}
 case class AddProposalRequestBody(title: String)
 case class AddProposalTimeRequestBody(start: DateTime, end: DateTime, participants: Seq[Int])
 case class AddProposalTimeVoteRequestBody(vote: Vote.Vote)
+case class FindFreeTimeSlotsRequestBody(userIds: Seq[Int])
 
 object Proposals
   extends Controller with
@@ -82,4 +83,22 @@ object Proposals
       (Services.proposalService ? RemoveProposal(id)).expecting[ProposalRemoved.type]
     }
   }
+
+  def findFreeTimeSlots(duration: Int, from: DateTime, to: DateTime, startTime: Option[DateTime], endTime: Option[DateTime]) = 
+    Authenticated.async(parse.json) { implicit request =>
+      readBody[FindFreeTimeSlotsRequestBody] { findFreeTimeSlots =>
+        toJsonResult {
+          (Services.freeTimeSlotService ?
+            FindFreeTimeSlots(
+              duration,
+              from,
+              to,
+              startTime,
+              endTime,
+              findFreeTimeSlots.userIds
+            )
+          ).expecting[FreeTimeSlots]
+        }
+      }
+    }
 }

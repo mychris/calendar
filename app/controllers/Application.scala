@@ -72,7 +72,6 @@ object Application
         routes.javascript.Appointments.update,
         routes.javascript.Appointments.delete,
         routes.javascript.Appointments.conflicts,
-        routes.javascript.Appointments.freeTimeSlots,
 
         // Tags
         routes.javascript.Tags.show,

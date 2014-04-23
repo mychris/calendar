@@ -94,8 +94,4 @@ object Appointments
       yield conflicts
     }
   }
-
-  def freeTimeSlots = Authenticated.async { implicit request =>
-    Future.successful(Status(501)(""))
-  }
 }

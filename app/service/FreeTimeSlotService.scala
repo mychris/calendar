@@ -17,16 +17,16 @@ import util.DateTimeExtensions._
   *
   * @author Simon Kaltenbacher
   */
-object FreeTimeSlotFindingService {
+object FreeTimeSlotService {
 
-  def props(db: Database): Props = Props(classOf[FreeTimeSlotFindingService], db)
+  def props(db: Database): Props = Props(classOf[FreeTimeSlotService], db)
 }
 
 /**
   *
   * @author Simon Kaltenbacher
   */
-class FreeTimeSlotFindingService(db: Database)
+class FreeTimeSlotService(db: Database)
   extends Actor with
           ActorLogging with
           UserDataAccessComponentImpl with
@@ -49,14 +49,18 @@ class FreeTimeSlotFindingService(db: Database)
       val appointments = db.withSession { implicit session =>
         appointmentsFromUsers(userIds, from, to)
           .buildColl[Seq]
-          .filter(a => startTime.timeOfDay <= a.end.timeOfDay || a.start.timeOfDay <= endTime.timeOfDay)
+          .filter(a => !(startTime.forall(a.end.timeOfDay < _.timeOfDay) || endTime.forall(_.timeOfDay < a.start.timeOfDay)))
       }
 
-      val constraints = from.days(to).flatMap { day =>
+      val constraints: Seq[Appointment] = from.days(to).flatMap { day => 
         Seq(
-          Appointment(-1, "", day.withTimeOfDay(startOfDay)       , day.withTimeOfDay(startTime.timeOfDay)),
-          Appointment(-1, "", day.withTimeOfDay(endTime.timeOfDay), day.withTimeOfDay(endOfDay           ))
-        )
+          startTime.map { startTime =>
+            Appointment(-1, "", day.withTimeOfDay(startOfDay), day.withTimeOfDay(startTime.timeOfDay))
+          },
+          endTime.map { endTime =>
+            Appointment(-1, "", day.withTimeOfDay(endTime.timeOfDay), day.withTimeOfDay(endOfDay))
+          }
+        ).flatten
       }
 
       val sorted = (appointments ++ constraints :+ Appointment(-1, "", to, to)).sortBy(_.start.millisUTC)

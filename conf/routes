@@ -15,10 +15,9 @@ POST            /user                                   controllers.Users.add
 GET             /calendar                               controllers.Calendar.calendar
 
 # Appointment
-GET             /appointments                           controllers.Appointments.list(from: Option[Long], to: Option[Long])
+GET             /appointments                           controllers.Appointments.list(from: Option[DateTime], to: Option[DateTime])
 POST            /appointment                            controllers.Appointments.add
 GET             /appointment/conflicts                  controllers.Appointments.conflicts
-POST            /appointment/freetimeslots              controllers.Appointments.freeTimeSlots
 GET             /appointment/:id                        controllers.Appointments.show(id: Int)
 PUT             /appointment/:id                        controllers.Appointments.update(id: Int)
 DELETE          /appointment/:id                        controllers.Appointments.delete(id: Int)
@@ -37,7 +36,7 @@ POST            /proposal                               controllers.Proposals.ad
 POST            /proposal/:proposalId/time              controllers.Proposals.addTime(proposalId: Int)
 POST            /proposal/:proposalId/vote/:timeId      controllers.Proposals.addVote(proposalId: Int, timeId: Int)
 DELETE          /proposal/:id                           controllers.Proposals.delete(id: Int)
-
+GET             /proposal/freetimeslots                 controllers.Proposals.findFreeTimeSlots(duration: Int, from: DateTime, to: DateTime, startTime: Option[DateTime], endTime: Option[DateTime])
 # Database setup
 GET	            /admin                                  controllers.Application.admin
 POST            /schema                                 controllers.Application.createSchema
