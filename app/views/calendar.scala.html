@@ -4,10 +4,20 @@
   <link rel="stylesheet" media="screen" href="@routes.Assets.at("fullcalendar/fullcalendar.css")">
   <link rel="stylesheet" media="print"  href="@routes.Assets.at("fullcalendar/fullcalendar.print.css")">
   <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/calendar.css")">
+  <link rel="stylesheet" type="text/css" media="screen" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/3.0.0/css/bootstrap-datetimepicker.min.css">
+  
+  <link rel="stylesheet" type="text/css" media="screen" href="//cdnjs.cloudflare.com/ajax/libs/selectize.js/0.8.5/css/selectize.css">
+  <!-- Alternative Themes for selectize (legacy = green, default = blue, bootstrap = grey) -->
+  <!-- <link rel="stylesheet" type="text/css" media="screen" href="//cdnjs.cloudflare.com/ajax/libs/selectize.js/0.8.5/css/selectize.bootstrap3.css"> -->
+  <!-- <link rel="stylesheet" type="text/css" media="screen" href="//cdnjs.cloudflare.com/ajax/libs/selectize.js/0.8.5/css/selectize.legacy.css"> -->
+  <link rel="stylesheet" type="text/css" media="screen" href="//cdnjs.cloudflare.com/ajax/libs/selectize.js/0.8.5/css/selectize.default.css">
 
-  <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
-  <script src="@routes.Assets.at("fullcalendar/fullcalendar.min.js")"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/3.0.0/js/bootstrap-datetimepicker.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/selectize.js/0.8.5/js/standalone/selectize.min.js"></script>
+    
+  <script src="@routes.Assets.at("fullcalendar/fullcalendar.min.js")"></script> 
   <script src="@routes.Assets.at("javascripts/calendar.js")"></script>
 
   <script>
@@ -106,6 +116,89 @@
         }
       });
 
+      // Duration Picker (duration of event)
+      $('.durationpicker').datetimepicker({
+        pickDate       : false,
+        pickTime       : true,
+        use24hours     : true,
+        format         : 'hh:mm',
+        minuteStepping : 15,
+        language       : 'en',
+        defaultDate    : new Date(1979, 0, 1, 2, 0, 0, 0)
+      });
+
+      // Datetime picker (time frame of proposal )
+      $('.datetimepicker1').datetimepicker({
+          language    : 'en',
+          defaultDate : new Date(),
+          showToday   : true,
+          pickTime    : true
+      });
+      $('.datetimepicker2').datetimepicker({
+          language    : 'en',
+          defaultDate : moment().add('d', 14),
+          showToday   : true,
+          pickTime    : true
+      });
+
+      // Datetime picker (time frame within a day of proposal)
+      $('.timepicker1').datetimepicker({
+          language    : 'en',
+          defaultDate : new Date(1979, 0, 1, 08, 0, 0, 0),
+          pickTime    : true,
+          pickDate    : false
+      });
+      $('.timepicker2').datetimepicker({
+          language    : 'en',
+          defaultDate : new Date(1979, 0, 1, 22, 0, 0, 0),
+          pickTime    : true,
+          pickDate    : false
+      });
+
+      // Multi select box for participants of proposal
+      $('#input-users').selectize({
+          delimiter: ',',
+          create: false,
+          hideSelected: true,
+          preload: 'true',    // load data immediately on initialization (true/false/focus)
+          valueField: 'id',   // The name of the property to use as the "value" when an item is selected
+          labelField: 'name',   // The name of the property to render as an option / item label  (needed if it's not the standard "value" attribute)
+          searchField: 'name',  // An array of property names to analyze when filtering options
+          // render : {   // not needed for now. Maybe for fancier results (like profile images for each user)
+          //   option: function(user, escape) {
+          //     return ""
+          //     + "<div>"
+          //       + user.name
+          //     + "</div>";
+          //   }
+          // },
+          load: function(query, callback) {
+              $.ajax({
+                  url: '@routes.Users.list',
+                  type: 'GET',
+                  dataType: 'json',
+                  error: function() {
+                      callback();
+                  },
+                  success: function(res) {
+                    callback(res.users);
+                  }
+              });
+          }
+      });
+      // show current input values (Dont delete, may be useful)
+      // $('select.selectized,input.selectized').each(function() {
+      //   var $container = $('<div>').addClass('value').html('Current Value: ');
+      //   var $value = $('<span>').appendTo($container);
+      //   var $input = $(this);
+      //   var update = function(e) { $value.text(JSON.stringify($input.val())); }
+
+      //   $(this).on('change', update);
+      //   update();
+
+      //   $container.insertAfter($input.next());
+      // });
+
       findConflicts();
       listTags();
     });
@@ -154,7 +247,9 @@
       </div>
       <div class="form-group span4">
         <h3>Proposals</h3>
-        <button name="create-proposal" class="btn btn-xs btn-default" onclick="createProposal()">Create Proposal</button>
+        <button name="create-proposal" class="btn btn-xs btn-default" onclick="$('#proposalModal').modal('show')" >
+          <span class="glyphicon glyphicon-bullhorn" style="font-size: 9px;"></span> Create Proposal
+        </button>
         <div class="spacer"></div>
       </div>
     </section>
@@ -170,4 +265,96 @@
     </section>
     <section class="log formgroup"></section>
   </section>
+
+
+  <!-- Create Proposal Model Box -->
+  <div class="modal fade bs-example-modal-md" id="proposalModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-md proposal-modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title">New Proposal</h4>
+        </div>
+        <div class="modal-body">
+          <form role="form">
+              <div class="form-group">
+                  <label for="proposalName">Name</label>
+                  <input type="text" class="form-control" id="proposalName" placeholder="Event's name  (e.g. 'Bar tour through Munich')">
+              </div>
+              <div class="form-group">
+                  <label for="proposalDuration">Duration in hours</label>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="input-group date durationpicker">
+                       <input type="text" id="proposalDuration" class="form-control">
+                       <span class="input-group-addon">
+                         <span class="glyphicon glyphicon-time"></span>
+                       </span>
+                     </div>
+                    </div>
+                  </div>
+              </div>
+              <div class="form-group">
+                  <label>Time frame</label>
+                  <div class="well well-sm">
+                    <div class="row">
+                      <div class="col-md-6">
+                          <div class="input-group date datetimepicker1">
+                            <span class="input-group-addon">From</span>
+                            <input type="text" id="proposalFrom" class="form-control" />
+                            <span class="input-group-addon">
+                              <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                          </div>
+                      </div>
+                      <div class="col-md-6">
+                          <div class='input-group date datetimepicker2' >
+                            <span class="input-group-addon">To</span>
+                            <input type="text" id="proposalTo" class="form-control" />
+                            <span class="input-group-addon">
+                              <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                          </div>
+                      </div>
+                    </div>
+                  </div>
+              </div>  
+              <div class="form-group">
+                  <label>Time frame within each day</label>
+                  <div class="well well-sm">
+                    <div class="row">
+                      <div class="col-md-6">
+                          <div class="input-group date timepicker1">
+                            <span class="input-group-addon">From</span>
+                            <input type="text" id="proposalTimeFrom" class="form-control" />
+                            <span class="input-group-addon">
+                              <span class="glyphicon glyphicon-time"></span>
+                            </span>
+                          </div>
+                      </div>
+                      <div class="col-md-6">
+                          <div class='input-group date timepicker2' >
+                            <span class="input-group-addon">To</span>
+                            <input type="text" id="proposalTimeTo" class="form-control" />
+                            <span class="input-group-addon">
+                              <span class="glyphicon glyphicon-time"></span>
+                            </span>
+                          </div>
+                      </div>
+                    </div>
+                  </div>
+              </div>  
+               <div class="form-group">
+                  <label for="proposalName">Participants</label>
+                  <input type="text" id="input-users" class="selectized" tabindex="-1" style="display: none;" placeholder="Who will participate?">
+              </div>
+           </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="button" id="register-submit" class="btn btn-primary">Create</button>
+        </div>
+      </div>
+    </div>
+  </div>
 }

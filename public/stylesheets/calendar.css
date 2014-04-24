@@ -118,6 +118,10 @@
 .tag-filter-off {
   opacity: 0.35;
 }
-.spacer {
-  margin: 40px 0;
+.proposal-modal {
+    width: 650px;
+}
+
+.selectize-dropdown-content div[data-selectable].option.active {
+  background-color: #eee;
 }

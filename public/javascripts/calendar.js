@@ -185,7 +185,6 @@ function createEventPopover(selectedElement, startLong, endLong) {
     });
 }
 
-
 function getHighestPriorityTag(tags) {
   var highestPriorityTag = {
     priority: -1,
