@@ -1,18 +1,44 @@
-Calendar - A Collaborative calendar
+Calendar - A collaborative calendar
 ========
 
-# Technologiestack:
+## Developing
 
-## DBS
-- Postgres http://www.postgresql.org/
-- Slick für Datenbankzugriffe
+### Getting started
 
-## Backend
+1. Check out this git respository: 
+```git co git@github.com:simonkaltenbacher/calendar.git```
+2. Download and install [PostgreSQL](http://www.postgresql.org/download/) 
+3. Run the psql-command line: ```psql````
+4. Create a database in the psql interactive: ```CREATE DATABASE calendar;``` 
+5. Create a user with a password for the database: ```CREATE USER myusername WITH PASSWORD 'mypassword';```
+   NOTE: Have a look at the entries starting with `db.default.*` in `application.conf`. 
+   The user name and password declared there must match the one you created in the psql interactive.
+6. Run the application with ```sbt run```` (it will then be running on the standard port 9000).
+7. Open the application in the browser (perferably Google Chrome) with the URL `localhost:9000`
+8. Register with user name and password on the login page (must not match the one specified for the database).
+9. You can now log in to the calendar.
+
+
+### Running Tests
+
+Run ```sbt test``` from the command line to run the tests.
+
+
+
+## Technology stack:
+
+### DBS 
+- [Postgres](http://www.postgresql.org/) as an open source, object-relational database management system
+- [Slick] as an open source, modern database query and access library for Scala. 
+  ScalaDoc: http://slick.typesafe.com/doc/2.0.1/api/#package
+  GitHub: https://github.com/slick/slick
+
+### Backend
 - Play
 - Scala
 - Akka
 
-## Frontend
+### Frontend
 - JQuery v. 2.1.0
 - Bootstrap v. 3.1.1
 - FullCalendar v2beta
@@ -27,8 +53,7 @@ Calendar - A Collaborative calendar
 
 
 
-
-# Hauptfunktionen:
+## Hauptfunktionen:
 - Freie Zeitslots für Termine finden:
     Angabe von: - Beteiligte Personen
                 - Dauer
