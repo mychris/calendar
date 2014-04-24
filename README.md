@@ -1,9 +1,34 @@
-calendar
+Calendar - A Collaborative calendar
 ========
 
-Collaborative calendar 
+# Technologiestack:
 
-Hauptfunktionen:
+## DBS
+- Postgres http://www.postgresql.org/
+- Slick für Datenbankzugriffe
+
+## Backend
+- Play
+- Scala
+- Akka
+
+## Frontend
+- JQuery v. 2.1.0
+- Bootstrap v. 3.1.1
+- FullCalendar v2beta
+- D3 v. 3.4.6 (DOM manipulation, HTML generation) 
+- bootstrap-datetimepicker
+- selectize.js:
+  -> Website: http://brianreavis.github.io/selectize.js/
+  -> CDN: http://cdnjs.com/libraries/selectize.js
+  -> Docu: https://github.com/brianreavis/selectize.js/blob/master/docs/usage.md
+  -> API Docu: https://github.com/brianreavis/selectize.js/blob/master/docs/api.md
+
+
+
+
+
+# Hauptfunktionen:
 - Freie Zeitslots für Termine finden:
     Angabe von: - Beteiligte Personen
                 - Dauer
@@ -16,30 +41,11 @@ Hauptfunktionen:
   (Beispieltags: Uni:3, Arbeit:1, Privat:2,..), mit jeweils verschiedener Standard-Priorität
 
 - Möglichkeit des Eintragens kollidierender Termine
-- Auflösuen von Konflikten (kollidierende Termine) 
+- Auflösen von Konflikten (kollidierende Termine) 
     -> Automatisches Auflösen möglich
     -> Halbautomatisches Auflösen möglich
 
-- GUI: - Eine Ansicht: zB. Monatsansicht
-       - ...
-
-Fragen
- - Zugriffsrechte vs. Jeder sieht alles ?
- - 
-
-Optionale Zusatzfeatures:
-- Import von Terminen von Google/iCal (was passiert bei Konflikt? Nur nicht-kollidierende Übernehmen?)
-
-
-
-Technologiestack:
-
-- Scala
-- Play
-- Akka? http://akka.io/
-- DBMS: Postgres http://www.postgresql.org/
-- Slick für Datenbankzugriffe
-- JavaScript/jQuery + Kalender-Framework
+- GUI: Kalendaransicht
 
 
 
@@ -48,14 +54,6 @@ Aufgaben:
 - Gut dokumentierte Software, Beschreibung: paar Seiten, hauptsache Präsentation am Ende
 
 
-
-
-## Added database schema creation and deletion
-This functionality is provided via the following routes:
-
-  CREATE /createschema
-  DROP   /dropschema
-
-Notes:
+Notes
   1. The tables of the AppointmentProposalDataAccessService are not created at the moment. Support will be added as soon as the component's implementation is finished.
   2. There seems to be a bug in slick regarding compound primary keys. Therefore the compound keys are commented out in CalendarDataAccessService.
