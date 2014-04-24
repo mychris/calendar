@@ -122,6 +122,15 @@ trait AppointmentProposalDataAccessComponent {
         if p.id === pt.proposalId
       }
       yield (p, u)
+
+    def proposalTimesWithVotesFromProposal(proposalId: Int): Query[(ProposalTimeTable, ProposalTimeVoteTable, UserTable), (ProposalTime, ProposalTimeVote, User)] =
+      for {
+        ptv <- proposalTimeVotes
+        pt  <- ptv.proposalTime
+        u   <- ptv.user
+        if pt.proposalId === proposalId
+      }
+      yield (pt, ptv, u)
   }
 }
 

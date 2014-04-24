@@ -83,16 +83,28 @@ class ProposalService(db: Database)
     )
   }
 
+  def getProposalTimesFromProposal(msg: GetProposalTimesFromProposal) = db.withSession { implicit session =>
+    sender ! ProposalTimesFromProposal(
+      proposalTimesWithVotesFromProposal(msg.proposalId)
+        .buildColl[Seq]
+        .groupBy(_._1)
+        .mapValues(_.map { case (_, proposalTimeVote, user) => VoteWithUser(proposalTimeVote.vote, user) })
+        .toSeq
+        .map(ProposalTimeWithVotes.tupled)
+    )
+  }
+
   def removeProposal(msg: RemoveProposal) = db.withTransaction { implicit session =>
     proposals.filter(_.id === msg.id).delete
     sender ! ProposalRemoved
   }
 
   def receive = handled {
-    case msg: AddProposal         => addProposal(msg)
-    case msg: AddProposalTime     => addProposalTime(msg)
-    case msg: AddProposalTimeVote => addProposalTimeVote(msg)
-    case msg: GetProposalsForUser => getProposalsForUser(msg)
-    case msg: RemoveProposal      => removeProposal(msg)
+    case msg: AddProposal                  => addProposal(msg)
+    case msg: AddProposalTime              => addProposalTime(msg)
+    case msg: AddProposalTimeVote          => addProposalTimeVote(msg)
+    case msg: GetProposalsForUser          => getProposalsForUser(msg)
+    case msg: GetProposalTimesFromProposal => getProposalTimesFromProposal(msg)
+    case msg: RemoveProposal               => removeProposal(msg)
   }
 }

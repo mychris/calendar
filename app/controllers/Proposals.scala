@@ -34,6 +34,12 @@ object Proposals
     }
   }
 
+  def proposalTimesFromProposal(proposalId: Int) = Authenticated.async(parse.json) { implicit request =>
+    toJsonResult {
+      (Services.proposalService ? GetProposalTimesFromProposal(proposalId)).expecting[ProposalTimesFromProposal]
+    }
+  }
+
   def add = Authenticated.async(parse.json) { implicit request =>
     readBody[AddProposalRequestBody] { addProposal =>
       toJsonResult {

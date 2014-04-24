@@ -32,6 +32,7 @@ GET	            /tag/colors                             controllers.Tags.colors
 
 # Proposal
 GET             /proposals                              controllers.Proposals.list
+GET             /proposal/proposaltimes                 controllers.Proposals.proposalTimesFromProposal(proposalId: Int)
 POST            /proposal                               controllers.Proposals.add
 POST            /proposal/:proposalId/time              controllers.Proposals.addTime(proposalId: Int)
 POST            /proposal/:proposalId/vote/:timeId      controllers.Proposals.addVote(proposalId: Int, timeId: Int)
