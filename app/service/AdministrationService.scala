@@ -81,12 +81,27 @@ class AdministrationService(db: Database)
 
       // Insert sample data
 
-      val userId = (users returning users.map(_.id)) += User(-1, "test", "test")
+      val userIdtest = (users returning users.map(_.id)) += User(-1, "test", "test")
+      val userIdsimon = (users returning users.map(_.id)) += User(-1, "Simon", "test")
+      val userIdflorian = (users returning users.map(_.id)) += User(-1, "Florian", "test")
+      val userIdchristoph = (users returning users.map(_.id)) += User(-1, "Christoph", "test")
 
       val tagIds = (tags returning tags.map(_.id)) ++= Seq(
-        Tag(-1, "default", 0, Color.colors(6), userId),
-        Tag(-1, "family" , 1, Color.colors(14), userId),
-        Tag(-1, "work"   , 2, Color.colors(21), userId)
+        Tag(-1, "default", 0, Color.colors(6), userIdtest),
+        Tag(-1, "family" , 1, Color.colors(14), userIdtest),
+        Tag(-1, "work"   , 2, Color.colors(21), userIdtest),
+
+        Tag(-1, "default", 0, Color.colors(6), userIdsimon),
+        Tag(-1, "family" , 1, Color.colors(14), userIdsimon),
+        Tag(-1, "work"   , 2, Color.colors(21), userIdsimon),
+
+        Tag(-1, "default", 0, Color.colors(6), userIdflorian),
+        Tag(-1, "family" , 1, Color.colors(14), userIdflorian),
+        Tag(-1, "work"   , 2, Color.colors(21), userIdflorian),
+
+        Tag(-1, "default", 0, Color.colors(6), userIdchristoph),
+        Tag(-1, "family" , 1, Color.colors(14), userIdchristoph),
+        Tag(-1, "work"   , 2, Color.colors(21), userIdchristoph)
       )
 
       val defaultTagId = tagIds(0)
