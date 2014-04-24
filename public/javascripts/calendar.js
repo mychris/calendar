@@ -508,7 +508,7 @@ function saveAdd(tag) {
   var data = {
     "name": $("#edit-tag input[name=name]").val(),
     "priority": parseInt($("#edit-tag input[name=priority]").val()),
-    "color": "#000000"
+    "color": "#c3a12c"
   };
 
   $.postJson(jsRoutes.controllers.Tags.add().url, data)
