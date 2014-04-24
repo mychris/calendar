@@ -126,10 +126,41 @@ class AdministrationService(db: Database)
         // tag work
         addAppointment("Milestone Meeting", new DateTime("2014-01-08 10:00:00"), new DateTime("2014-01-08 12:00:00"), Seq(defaultTagId, workTagId))
       )
+
+      // add proposal with 3 times, test is the creator, other default user are participants.
+      val participants = Seq(userIdtest, userIdsimon, userIdflorian, userIdchristoph)
+      val proposalId = (proposals returning proposals.map(_.id)) += Proposal(-1, "Final presentation", userIdtest)
+
+      val proposalTime1 = (proposalTimes returning proposalTimes.map(_.id)) += ProposalTime(-1, new DateTime("2014-01-13 15:00"), new DateTime("2014-01-13 17:00"), proposalId)
+      proposalTimeVotes ++= participants.map(ProposalTimeVote(proposalTime1, _, Vote.NotVoted))
+      proposalTimeVotes
+        .filter(_.proposalTimeId === proposalTime1).filter(_.userId === userIdsimon)
+        .map(v => (v.vote)).update((Vote.Accepted))
+      proposalTimeVotes
+        .filter(_.proposalTimeId === proposalTime1).filter(_.userId === userIdtest)
+        .map(v => (v.vote)).update((Vote.Accepted))
+
+      val proposalTime2 = (proposalTimes returning proposalTimes.map(_.id)) += ProposalTime(-1, new DateTime("2014-01-14 15:00"), new DateTime("2014-01-14 17:00"), proposalId)
+      proposalTimeVotes ++= participants.map(ProposalTimeVote(proposalTime2, _, Vote.NotVoted))
+      proposalTimeVotes
+        .filter(_.proposalTimeId === proposalTime2).filter(_.userId === userIdflorian)
+        .map(v => (v.vote)).update((Vote.Refused))
+      proposalTimeVotes
+        .filter(_.proposalTimeId === proposalTime2).filter(_.userId === userIdtest)
+        .map(v => (v.vote)).update((Vote.Accepted))
+
+      val proposalTime3 = (proposalTimes returning proposalTimes.map(_.id)) += ProposalTime(-1, new DateTime("2014-01-15 15:00"), new DateTime("2014-01-15 17:00"), proposalId)
+      proposalTimeVotes ++= participants.map(ProposalTimeVote(proposalTime3, _, Vote.NotVoted))
+      proposalTimeVotes
+        .filter(_.proposalTimeId === proposalTime3).filter(_.userId === userIdchristoph)
+        .map(v => (v.vote)).update((Vote.Uncertain))
+      proposalTimeVotes
+        .filter(_.proposalTimeId === proposalTime3).filter(_.userId === userIdtest)
+        .map(v => (v.vote)).update((Vote.Accepted))
     }
 
     sender ! SampleDataCreated
-  } 
+  }
 
   def receive = handled {
     case CreateSchema     => createSchema
