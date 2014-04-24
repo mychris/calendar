@@ -72,45 +72,15 @@ class ProposalService(db: Database)
     sender ! ProposalTimeVoteAdded
   }
 
-  def getProposalsFromUser(msg: GetProposalsFromUser) = db.withTransaction { implicit session =>
-    val proposals = proposalsFromUser(msg.userId).buildColl[Seq].distinct
-    val times =
-      proposalTimes
-        .filter(_.id.inSet(proposals.map(_.id)))
+  def getProposalsForUser(msg: GetProposalsForUser) = db.withSession { implicit session =>
+    sender ! ProposalsForUser(
+      proposalsForUserWithParticipant(msg.userId)
         .buildColl[Seq]
-        .distinct
-        .groupBy(_.proposalId)
-
-    sender ! ProposalsFromUser(proposals.map({ proposal =>
-      val ptv =
-        times(proposal.id).map({ time =>
-          val votes =
-            (for {
-              ptv <- proposalTimeVotes
-              if (ptv.proposalTimeId === time.id)
-              u <- users
-              if (u.id === ptv.userId)
-            } yield (ptv, u))
-              .buildColl[Seq]
-              .map(pair => ProposalTimeVoteVoteWithUser(pair._1, UserWithoutPassword(pair._2.id, pair._2.name)))
-
-          ProposalTimeWithVotes(
-            time,
-            votes
-          )
-        })
-
-      ProposalFull(
-        proposal.id,
-        proposal.title,
-        users
-          .filter(_.id === proposal.creatorId)
-          .buildColl[Seq]
-          .map(u => UserWithoutPassword(u.id, u.name))
-          .head,
-        ptv
-      )
-    }))
+        .groupBy(_._1)
+        .mapValues(_.map(_._2))
+        .toSeq
+        .map(ProposalWithParticipants.tupled)
+    )
   }
 
   def removeProposal(msg: RemoveProposal) = db.withTransaction { implicit session =>
@@ -119,10 +89,10 @@ class ProposalService(db: Database)
   }
 
   def receive = handled {
-    case msg: AddProposal          => addProposal(msg)
-    case msg: AddProposalTime      => addProposalTime(msg)
-    case msg: AddProposalTimeVote  => addProposalTimeVote(msg)
-    case msg: GetProposalsFromUser => getProposalsFromUser(msg)
-    case msg: RemoveProposal       => removeProposal(msg)
+    case msg: AddProposal         => addProposal(msg)
+    case msg: AddProposalTime     => addProposalTime(msg)
+    case msg: AddProposalTimeVote => addProposalTimeVote(msg)
+    case msg: GetProposalsForUser => getProposalsForUser(msg)
+    case msg: RemoveProposal      => removeProposal(msg)
   }
 }

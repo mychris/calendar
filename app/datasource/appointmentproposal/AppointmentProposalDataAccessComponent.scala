@@ -105,6 +105,23 @@ trait AppointmentProposalDataAccessComponent {
         p   <- pt.proposal
         if (u.id === userId && ptv.userId === userId)
       } yield (p)
+
+    def proposalsForUser(userId: Int): Query[ProposalTable, Proposal] =
+      proposals.filter(p =>
+        proposalTimes.filter(pt =>
+          pt.proposalId === p.id && proposalTimeVotes.filter(_.proposalTimeId === pt.id).exists
+        ).exists
+      )
+
+    def proposalsForUserWithParticipant(userId: Int): Query[(ProposalTable, UserTable), (Proposal, User)] =
+      for {
+        p   <- proposalsForUser(userId)
+        ptv <- proposalTimeVotes
+        pt  <- ptv.proposalTime
+        u   <- ptv.user
+        if p.id === pt.proposalId
+      }
+      yield (p, u)
   }
 }
 

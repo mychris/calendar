@@ -109,22 +109,16 @@ package object formatters {
    * ProposalService
    */
   implicit val proposalFormat = Json.format[Proposal]
-  implicit val proposalTimeFromat = Json.format[ProposalTime]
-  implicit val proposalTimeVoteFormat = Json.format[ProposalTimeVote]
-
-  implicit val proposalTimeVoteVoteWithUserFormat = Json.format[ProposalTimeVoteVoteWithUser]
-  implicit val proposalTimeWithVotesFormat = Json.format[ProposalTimeWithVotes]
-  implicit val proposalFullFormat = Json.format[ProposalFull]
+  implicit val proposalWithParticipantsFormat = Json.format[ProposalWithParticipants]
 
    /* Responses */
-  
 
   implicit val proposalAddedFormat = Json.format[ProposalAdded]
   implicit val proposalTimeAddedFormat = Json.format[ProposalTimeAdded]
   implicit object proposalTimeVoteAddedFormat extends Writes[ProposalTimeVoteAdded.type] {
     def writes(o: ProposalTimeVoteAdded.type): JsValue = "TimeVoteAdded".toJson
   }
-  implicit val proposalsFromUserFormat = Json.format[ProposalsFromUser]
+  implicit val proposalsForUserFormat = Json.format[ProposalsForUser]
   implicit object proposalRemovedFormat extends Writes[ProposalRemoved.type] {
     def writes(o: ProposalRemoved.type): JsValue = "ProposalRemoved".toJson
   }

@@ -129,7 +129,6 @@ class CalendarService(db: Database)
     sender ! TagAdded((tags returning tags.map(_.id)) += Tag(-1, msg.name, msg.priority, msg.color, msg.userId)) }
 
   def updateTag(msg: UpdateTag) = db.withSession { implicit session =>
-    println("UpdateTag")
     sender ! TagUpdated(
       tags
         .filter(_.id === msg.tag.id)

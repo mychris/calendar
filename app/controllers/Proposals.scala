@@ -30,7 +30,7 @@ object Proposals
 
   def list = Authenticated.async(parse.json) { implicit request =>
     toJsonResult {
-      (Services.proposalService ? GetProposalsFromUser(request.user.id)).expecting[ProposalsFromUser]
+      (Services.proposalService ? GetProposalsForUser(request.user.id)).expecting[ProposalsForUser]
     }
   }
 
