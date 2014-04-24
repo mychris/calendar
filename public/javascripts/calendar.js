@@ -294,6 +294,10 @@ function findConflicts() {
         var start2 = $.fullCalendar.moment(conflict[1].start);
         if (start1.dayOfYear() == start2.dayOfYear()) {
           $("#calendar").fullCalendar('changeView', 'agendaDay');
+        } else if (start1.week() == start2.week()) {
+          $("#calendar").fullCalendar('changeView', 'agendaWeek');
+        } else {
+          $("#calendar").fullCalendar('changeView', 'month');
         }
         $("#calendar").fullCalendar('gotoDate', $.fullCalendar.moment(start1));
       })

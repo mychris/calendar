@@ -155,5 +155,40 @@ class ConflictFindingServiceSpec(_system: ActorSystem) extends TestKit(_system)
       )))
     }
 
+    "A" in {
+      val service = system.actorOf(ConflictFindingService.props)
+      val appointments = Seq(
+        Appointment(0, "Q", new DateTime("2014-01-01 13:30:00"), new DateTime("2014-01-01 17:30")),
+        Appointment(0, "D", new DateTime("2014-01-01 14:00:00"), new DateTime("2014-01-01 15:30")),
+        Appointment(0, "A", new DateTime("2014-01-01 15:00:00"), new DateTime("2014-01-01 16:00")),
+        Appointment(0, "C", new DateTime("2014-01-01 15:30:00"), new DateTime("2014-01-01 17:00"))
+      )
+
+      service ! FindConflicts(appointments)
+
+      expectMsg(Conflicts(Seq(
+          (
+            Appointment(0, "Q", new DateTime("2014-01-01 13:30:00"), new DateTime("2014-01-01 17:30")),
+            Appointment(0, "D", new DateTime("2014-01-01 14:00:00"), new DateTime("2014-01-01 15:30"))
+          ),
+          (
+            Appointment(0, "Q", new DateTime("2014-01-01 13:30:00"), new DateTime("2014-01-01 17:30")),
+            Appointment(0, "A", new DateTime("2014-01-01 15:00:00"), new DateTime("2014-01-01 16:00"))
+          ),
+          (
+            Appointment(0, "Q", new DateTime("2014-01-01 13:30:00"), new DateTime("2014-01-01 17:30")),
+            Appointment(0, "C", new DateTime("2014-01-01 15:30:00"), new DateTime("2014-01-01 17:00"))
+          ),
+          (
+            Appointment(0, "D", new DateTime("2014-01-01 14:00:00"), new DateTime("2014-01-01 15:30")),
+            Appointment(0, "A", new DateTime("2014-01-01 15:00:00"), new DateTime("2014-01-01 16:00"))
+          ),
+          (
+            Appointment(0, "A", new DateTime("2014-01-01 15:00:00"), new DateTime("2014-01-01 16:00")),
+            Appointment(0, "C", new DateTime("2014-01-01 15:30:00"), new DateTime("2014-01-01 17:00"))
+          )
+        )))
+    }
+
   }
 }
