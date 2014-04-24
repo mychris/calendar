@@ -100,15 +100,30 @@
                             <a class="close" data-dismiss="alert" href="#">×</a>@flash.get("error")
                         </div>
                     }
-                    @form(action = routes.Login.login) {
-                        @bootstrap.loginInput(loginForm("username"), 'type -> "text", 'placeholder -> "Username" )
-                        @bootstrap.loginInput(loginForm("password"), 'type -> "password", 'placeholder -> "Password" )
-                        <div class="checkbox">
+                    @form(action = routes.Login.login, 'class -> "form-horizontal", 'role -> "form") {
+                      <div class="form-group">
+                        <label class="col-md-3 control-label">Name</label>
+                        <div class='col-md-9'>
+                          @bootstrap.loginInput(loginForm("username"), 'type -> "text", 'placeholder -> "Username" )
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label class="col-md-3 control-label">Password</label>
+                        <div class='col-md-9'>
+                          @bootstrap.loginInput(loginForm("password"), 'type -> "password", 'placeholder -> "Password" )
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label class="col-md-3 control-label"></label>
+                        <div class="col-md-9">
+                          <div class="checkbox">
                             <label>
                               <input type="checkbox" name="remember" value="1"> Remember Me
                             </label>
+                          </div>
                         </div>
-                        <button type="submit" name="submit" class="btn btn-primary btn-block">Sign in</button>
+                      </div>
+                      <button type="submit" name="submit" class="btn btn-primary btn-block">Sign in</button>
                     }
                 </div>
             </div>
@@ -126,15 +141,22 @@
             <h4 class="modal-title">Register</h4>
           </div>
           <div class="modal-body">
-            <p>Enter your username and password</p>
-            <form>
-                 <div class="controls controls-row">
-                     <input id="name" name="name" type="text" class="form-control" placeholder="Name">
-                 </div>
-                 <div class="controls controls-row">
-                     <input id="password" name="password" type="password" class="form-control" placeholder="Password">
-                 </div>
-             </form>
+            <p>Select your username and password to register.</p>
+            <div class="spacer"></div>
+            <form class="form-horizontal" role="form">
+                <div class="form-group">
+                  <label class="col-md-3 control-label">Name</label>
+                  <div class='col-md-5'>
+                    <input type="text" class="form-control" id="name" name="name" placeholder="Name">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-md-3 control-label">Password</label>
+                  <div class='col-md-5'>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+                  </div>
+                </div>
+            </form>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

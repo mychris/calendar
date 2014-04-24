@@ -27,3 +27,6 @@ a.no-decoration:hover {
   text-decoration: none;
   color: #999 !important;
 }
+.spacer {
+  margin: 40px 0;
+}
