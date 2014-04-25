@@ -168,9 +168,9 @@ trait AppointmentProposalDataAccessComponentImpl extends AppointmentProposalData
 
     class ProposalTableImpl(tag: scala.slick.lifted.Tag) extends Table[Proposal](tag, "proposal") with AbstractProposalTable {
 
-      def id        = column[Int     ]("id", O.PrimaryKey, O.AutoInc)
-      def title     = column[String  ]("title", O.NotNull)
-      def creatorId = column[Int     ]("creator_id", O.NotNull)
+      def id        = column[Int   ]("id",         O.PrimaryKey, O.AutoInc)
+      def title     = column[String]("title",      O.NotNull)
+      def creatorId = column[Int   ]("creator_id", O.NotNull)
 
       def creator = foreignKey("creator_fk", creatorId, users)(_.id, onDelete = ForeignKeyAction.Cascade)
 
