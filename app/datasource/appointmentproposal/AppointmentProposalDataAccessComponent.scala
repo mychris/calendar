@@ -158,9 +158,9 @@ trait AppointmentProposalDataAccessComponentImpl extends AppointmentProposalData
      * Shapes
      */
 
-    implicit val proposalShape: Shape[_, ProposalTable, Proposal, ProposalTable] = implicitly[Shape[_, ProposalTable, Proposal, ProposalTable]]
-    implicit val proposalTimeShape: Shape[_, ProposalTimeTable, ProposalTime, ProposalTimeTable] = implicitly[Shape[_, ProposalTimeTable, ProposalTime, ProposalTimeTable]]
-    implicit val proposalTimeVoteShape: Shape[_, ProposalTimeVoteTable, ProposalTimeVote, ProposalTimeVoteTable] = implicitly[Shape[_, ProposalTimeVoteTable, ProposalTimeVote, ProposalTimeVoteTable]]
+    implicit val proposalShape         : Shape[_, ProposalTable        , Proposal        , ProposalTable        ] = implicitly[Shape[_, ProposalTable        , Proposal        , ProposalTable        ]]
+    implicit val proposalTimeShape     : Shape[_, ProposalTimeTable    , ProposalTime    , ProposalTimeTable    ] = implicitly[Shape[_, ProposalTimeTable    , ProposalTime    , ProposalTimeTable    ]]
+    implicit val proposalTimeVoteShape : Shape[_, ProposalTimeVoteTable, ProposalTimeVote, ProposalTimeVoteTable] = implicitly[Shape[_, ProposalTimeVoteTable, ProposalTimeVote, ProposalTimeVoteTable]]
 
     /*
      * Database tables
@@ -179,10 +179,10 @@ trait AppointmentProposalDataAccessComponentImpl extends AppointmentProposalData
 
     class ProposalTimeTableImpl(tag: scala.slick.lifted.Tag) extends Table[ProposalTime](tag, "proposal_time") with AbstractProposalTimeTable {
 
-      def id         = column[Int      ]("id", O.PrimaryKey, O.AutoInc)
-      def start      = column[DateTime ]("start", O.NotNull)
-      def end        = column[DateTime ]("end", O.NotNull)
-      def proposalId = column[Int      ]("proposal_id", O.NotNull)
+      def id         = column[Int     ]("id"         , O.PrimaryKey , O.AutoInc)
+      def start      = column[DateTime]("start"      , O.NotNull)
+      def end        = column[DateTime]("end"        , O.NotNull)
+      def proposalId = column[Int     ]("proposal_id", O.NotNull)
 
       def proposal = foreignKey("proposal_fk", proposalId, proposals)(_.id, onDelete = ForeignKeyAction.Cascade)
 
@@ -192,8 +192,8 @@ trait AppointmentProposalDataAccessComponentImpl extends AppointmentProposalData
     class ProposalTimeVoteTableImpl(tag: scala.slick.lifted.Tag) extends Table[ProposalTimeVote](tag, "proposal_time_vote") with AbstractProposalTimeVoteTable {
 
       def proposalTimeId = column[Int ]("proposal_time_id", O.NotNull)
-      def userId         = column[Int ]("user_id", O.NotNull)
-      def vote           = column[Vote]("vote", O.NotNull)
+      def userId         = column[Int ]("user_id"         , O.NotNull)
+      def vote           = column[Vote]("vote"            , O.NotNull)
 
       // def pk             = primaryKey("pk_proposal_time_belongsto_user", (proposalTimeId, userId))
       def proposalTime   = foreignKey("proposal_time_fk", proposalTimeId, proposalTimes)(_.id, onDelete = ForeignKeyAction.Cascade)
