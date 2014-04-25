@@ -97,15 +97,6 @@ trait AppointmentProposalDataAccessComponent {
     val proposalTimes: TableQuery[ProposalTimeTable]
     val proposalTimeVotes: TableQuery[ProposalTimeVoteTable]
 
-    def proposalsFromUser(userId: Int): Query[(ProposalTable), (Proposal)] = 
-      for {
-        ptv <- proposalTimeVotes
-        pt  <- ptv.proposalTime
-        u   <- ptv.user
-        p   <- pt.proposal
-        if (u.id === userId && ptv.userId === userId)
-      } yield (p)
-
     def proposalsForUser(userId: Int): Query[ProposalTable, Proposal] =
       proposals.filter(p =>
         proposalTimes.filter(pt =>
@@ -113,13 +104,19 @@ trait AppointmentProposalDataAccessComponent {
         ).exists
       )
 
+    def participants(proposalId: Column[Int]) =
+      users.filter(u =>
+        proposalTimeVotes.filter(ptv =>
+          ptv.userId === u.id && proposalTimes.filter(pt =>
+            ptv.proposalTimeId === pt.id && pt.proposalId === proposalId
+          ).exists
+        ).exists
+      )
+
     def proposalsForUserWithParticipant(userId: Int): Query[(ProposalTable, UserTable), (Proposal, User)] =
       for {
-        p   <- proposalsForUser(userId)
-        ptv <- proposalTimeVotes
-        pt  <- ptv.proposalTime
-        u   <- ptv.user
-        if p.id === pt.proposalId
+        p <- proposalsForUser(userId)
+        u <- participants(p.id)
       }
       yield (p, u)
 
