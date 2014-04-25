@@ -111,23 +111,23 @@ trait CalendarDataAccessComponent {
       yield a
 
     def appointmentsFromUser(userId: Int): Query[AppointmentTable, Appointment] =
-      for {
-        abtt <- appointmentBelongsToTag
-        t    <- abtt.tag
-        a    <- abtt.appointment
-        if t.userId === userId
-      }
-      yield a
+      appointments.filter(a =>
+        appointmentBelongsToTag.filter(abtt =>
+          abtt.appointmentId === a.id && tags.filter(t =>
+            t.id === abtt.tagId && t.userId === userId
+          ).exists
+        ).exists
+      )
 
     /** */
     def appointmentsFromUsers(userIds: Seq[Int]): Query[AppointmentTable, Appointment] =
-      for {
-        abtt <- appointmentBelongsToTag
-        t    <- abtt.tag
-        a    <- abtt.appointment
-        if t.userId.inSet(userIds)
-      }
-      yield a
+      appointments.filter(a =>
+        appointmentBelongsToTag.filter(abtt =>
+          abtt.appointmentId === a.id && tags.filter(t =>
+            t.id === abtt.tagId && t.userId.inSet(userIds)
+          ).exists
+        ).exists
+      )
 
     /** */
     def appointmentsFromUsers(userIds: Seq[Int], from: DateTime, to: DateTime): Query[AppointmentTable, Appointment] = 
