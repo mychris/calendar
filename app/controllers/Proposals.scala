@@ -28,7 +28,7 @@ object Proposals
           ResponseHandling with
           RequestBodyReader {
 
-  def list = Authenticated.async(parse.json) { implicit request =>
+  def list = Authenticated.async { implicit request =>
     toJsonResult {
       (Services.proposalService ? GetProposalsForUser(request.user.id)).expecting[ProposalsForUser]
     }
