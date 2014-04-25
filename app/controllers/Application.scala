@@ -78,7 +78,16 @@ object Application
         routes.javascript.Tags.list,
         routes.javascript.Tags.add,
         routes.javascript.Tags.update,
-        routes.javascript.Tags.delete
+        routes.javascript.Tags.delete,
+
+        // Proposals
+        routes.javascript.Proposals.list,
+        routes.javascript.Proposals.add,
+        routes.javascript.Proposals.proposalTimesFromProposal,
+        routes.javascript.Proposals.addTime,
+        routes.javascript.Proposals.addVote,
+        routes.javascript.Proposals.delete,
+        routes.javascript.Proposals.findFreeTimeSlots
 
       )
     ).as("text/javascript")
