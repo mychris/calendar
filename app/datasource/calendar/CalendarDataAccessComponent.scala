@@ -85,7 +85,6 @@ trait CalendarDataAccessComponent {
      * Queries
      */
 
-
     /** Appointments */
     val appointments: TableQuery[AppointmentTable]
     val appointmentBelongsToTag: TableQuery[AppointmentBelongsToTagTable]
