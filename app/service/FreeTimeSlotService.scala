@@ -11,6 +11,7 @@ import scala.slick.driver.PostgresDriver.simple._
 
 import service.protocol._
 
+import util.CustomColumnTypes._
 import util.DateTimeExtensions._
 
 /**

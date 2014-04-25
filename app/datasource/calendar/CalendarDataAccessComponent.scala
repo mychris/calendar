@@ -89,7 +89,7 @@ trait CalendarDataAccessComponent {
     val appointments: TableQuery[AppointmentTable]
     val appointmentBelongsToTag: TableQuery[AppointmentBelongsToTagTable]
 
-    def appointmentsById(id: Int): Query[AppointmentTable, Appointment] =
+    def appointmentsById(id: Column[Int]): Query[AppointmentTable, Appointment] =
       appointments.filter(_.id === id)
 
     def appointmentsByIdWithUserId(id: Int): Query[(AppointmentTable, Column[Int]), (Appointment, Int)] =
@@ -101,7 +101,7 @@ trait CalendarDataAccessComponent {
       }
       yield (a, t.userId)
 
-    def appointmentsWithTag(tagId: Int): Query[AppointmentTable, Appointment] =
+    def appointmentsWithTag(tagId: Column[Int]): Query[AppointmentTable, Appointment] =
       for {
         abtt <- appointmentBelongsToTag
         a    <- abtt.appointment
@@ -109,7 +109,7 @@ trait CalendarDataAccessComponent {
       }
       yield a
 
-    def appointmentsFromUser(userId: Int): Query[AppointmentTable, Appointment] =
+    def appointmentsFromUser(userId: Column[Int]): Query[AppointmentTable, Appointment] =
       appointments.filter(a =>
         appointmentBelongsToTag.filter(abtt =>
           abtt.appointmentId === a.id && tags.filter(t =>
@@ -129,11 +129,11 @@ trait CalendarDataAccessComponent {
       )
 
     /** */
-    def appointmentsFromUsers(userIds: Seq[Int], from: DateTime, to: DateTime): Query[AppointmentTable, Appointment] = 
+    def appointmentsFromUsers(userIds: Seq[Int], from: Column[DateTime], to: Column[DateTime]): Query[AppointmentTable, Appointment] = 
       appointmentsFromUsers(userIds).filter(a => !(a.end < from || a.start > to))
 
     /** From a user, receives all appointments including its tags, between a given time, where both, from and to are inclusive */
-    def appointmentFromUserWithTag(userId: Int, from: DateTime, to: DateTime): Query[(AppointmentTable, TagTable), (Appointment, Tag)] =
+    def appointmentFromUserWithTag(userId: Int, from: Column[DateTime], to: Column[DateTime]): Query[(AppointmentTable, TagTable), (Appointment, Tag)] =
       for {
         abtt <- appointmentBelongsToTag
         t    <- abtt.tag
@@ -146,11 +146,11 @@ trait CalendarDataAccessComponent {
     /** Tags */
     val tags: TableQuery[TagTable]
 
-    def tagsById(id: Int): Query[TagTable, Tag] = tags.filter(_.id === id)
+    def tagsById(id: Column[Int]): Query[TagTable, Tag] = tags.filter(_.id === id)
 
-    def tagsFromUser(userId: Int): Query[TagTable, Tag] = tags.filter(_.userId === userId)
+    def tagsFromUser(userId: Column[Int]): Query[TagTable, Tag] = tags.filter(_.userId === userId)
 
-    def tagsFromAppointment(appointmentId: Int): Query[TagTable, Tag] =
+    def tagsFromAppointment(appointmentId: Column[Int]): Query[TagTable, Tag] =
       for{
         abtt <- appointmentBelongsToTag
         t    <- abtt.tag
@@ -158,7 +158,7 @@ trait CalendarDataAccessComponent {
       }
       yield t
 
-    def tagsFromUserSortedByName(userId: Int) = tagsFromUser(userId).sortBy(_.name)
+    def tagsFromUserSortedByName(userId: Column[Int]) = tagsFromUser(userId).sortBy(_.name)
   }
 }
 

@@ -13,6 +13,7 @@ import scala.slick.driver.PostgresDriver.simple.{Tag =>_, _}
 import service.protocol._
 
 import util._
+import util.CustomColumnTypes._
 
 /**
  *
