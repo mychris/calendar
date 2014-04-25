@@ -237,6 +237,18 @@ function getTags() {
   });
 }
 
+function getProposals() {
+  return $.ajax({
+    url: '@routes.Proposals.list',
+    type: 'GET',
+    dataType: 'json',
+    headers: {
+      Accept: "application/json; charset=utf-8",
+      "Content-Type": "application/json; charset=utf-8"
+    }
+  });
+}
+
 function findFreeTimeSlots() {
   $.ajax({
     type: "POST",
@@ -306,6 +318,10 @@ function findConflicts() {
       });
     conflicts.exit().remove();
   })
+}
+
+function listProposals(){
+  
 }
 
 function listTags() {

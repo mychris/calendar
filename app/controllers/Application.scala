@@ -79,6 +79,7 @@ object Application
         routes.javascript.Tags.add,
         routes.javascript.Tags.update,
         routes.javascript.Tags.delete
+
       )
     ).as("text/javascript")
   }
