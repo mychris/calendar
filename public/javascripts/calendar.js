@@ -299,6 +299,9 @@ function findConflicts() {
         } else {
           $("#calendar").fullCalendar('changeView', 'month');
         }
+        if (start1.hour() == 0) {
+          start1 = start1.add("hour", 1);
+        }
         $("#calendar").fullCalendar('gotoDate', $.fullCalendar.moment(start1));
       })
       .text(function(conflict) {
