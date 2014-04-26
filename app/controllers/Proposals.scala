@@ -20,6 +20,7 @@ case class AddProposalWithTimesRequestBody(title: String, participants: Seq[Int]
 case class AddProposalTimeWithoutParticipantsRequestBody(start: DateTime, end: DateTime)
 case class AddProposalTimeRequestBody(start: DateTime, end: DateTime, participants: Seq[Int])
 case class AddProposalTimeVoteRequestBody(vote: Vote.Vote)
+case class FinishVoteRequestBody(times: Seq[Int])
 case class FindFreeTimeSlotsRequestBody(userIds: Seq[Int])
 
 object Proposals
@@ -106,6 +107,18 @@ object Proposals
   def delete(id: Int) = Authenticated.async { implicit request =>
     toJsonResult {
       (Services.proposalService ? RemoveProposal(id)).expecting[ProposalRemoved.type]
+    }
+  }
+
+  def finishVote(id: Int) = Authenticated.async(parse.json) { implicit request =>
+    readBody[FinishVoteRequestBody] { finishVote =>
+      toJsonResult {
+        (Services.proposalService ? FinishVote(
+          id,
+          1,
+          finishVote.times
+        )).expecting[VoteFinished.type]
+      }
     }
   }
 

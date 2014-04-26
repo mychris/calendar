@@ -129,6 +129,8 @@ trait AppointmentProposalDataAccessComponent {
         if pt.proposalId === proposalId
       }
       yield (pt, ptv, u)
+
+    def proposalById(id: Column[Int]): Query[ProposalTable, Proposal] = proposals.filter(_.id === id)
   }
 }
 

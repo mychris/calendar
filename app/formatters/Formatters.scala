@@ -123,6 +123,9 @@ package object formatters {
   implicit object proposalRemovedFormat extends Writes[ProposalRemoved.type] {
     def writes(o: ProposalRemoved.type): JsValue = "ProposalRemoved".toJson
   }
+  implicit object voteFinishedFormat extends Writes[VoteFinished.type] {
+    def writes(o: VoteFinished.type): JsValue = "VoteFinished".toJson
+  }
 
   /*
    * ConflictFindingService
@@ -184,6 +187,7 @@ package object formatters {
   implicit val addProposalTimeVoteRequestBodyFormat                = Json.format[AddProposalTimeVoteRequestBody]
   implicit val addProposalTimeWithoutParticipantsRequestBodyFormat = Json.format[AddProposalTimeWithoutParticipantsRequestBody]
   implicit val addProposalWithTimesRequestBodyFormat               = Json.format[AddProposalWithTimesRequestBody]
+  implicit val finishVoteRequestBodyFormat                         = Json.format[FinishVoteRequestBody]
 
   /* FreeTimeSlots */
   implicit val findFreeTimeSlotsRequestBody         = Json.format[FindFreeTimeSlotsRequestBody]
