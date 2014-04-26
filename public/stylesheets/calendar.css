@@ -46,12 +46,12 @@
   margin : 0px 30px;
 }
 
-#tags {
+#left-sidebar {
   width      : 130px;
   margin-top : 45px;
 }
 
-#conflicts {
+#right-sidebar {
   width      : 180px;
   margin-top : 45px;
 }
@@ -73,13 +73,13 @@
   color          : #444;
 }
 
-#tags ul {
-  padding       : 0 0 5px 0;
+.sidebar ul {
+  padding    : 0 0 5px 0;
+  list-style : none;
 }
 
-#tags > ul > li {
-  margin        : 5px 0 5px 0;
-  list-style    : none;
+.tag {
+  margin : 5px 0 5px 0;
 }
 
 .tag .name {
@@ -119,7 +119,7 @@
   opacity: 0.35;
 }
 .proposal-modal {
-    width: 650px;
+  width : 650px;
 }
 
 .selectize-dropdown-content div[data-selectable].option.active {

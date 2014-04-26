@@ -88,7 +88,6 @@ object Application
         routes.javascript.Proposals.addVote,
         routes.javascript.Proposals.delete,
         routes.javascript.Proposals.findFreeTimeSlots
-
       )
     ).as("text/javascript")
   }

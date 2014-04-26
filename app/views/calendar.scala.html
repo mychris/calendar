@@ -237,28 +237,27 @@
 
 
   <section id="main">
-    <section class="sidebar">
-      <div id="tags" class="span4">
+    <section id="left-sidebar" class="sidebar">
+      <section id="tags" class="span4">
         <h3>Tags</h3>
         <ul></ul>
         <button name="add-tag" class="btn btn-xs btn-default" onclick="startAddTag()">
           <span class="glyphicon glyphicon-plus" style="font-size: 9px;"></span> Add Tag
         </button>
         <div class="spacer"></div>
-      </div>
-      <div id="proposals" class="span4">
+      </section>
+      <section id="proposals" class="span4">
         <h3>Proposals</h3>
         <ul></ul>
         <button name="create-proposal" class="btn btn-xs btn-default" onclick="$('#proposalModal').modal('show')" >
           <span class="glyphicon glyphicon-bullhorn" style="font-size: 9px;"></span> Create Proposal
         </button>
-        
-      </div>
+      </section>
     </section>
 
     <section id="calendar"></section>
 
-    <section class="sidebar">
+    <section id="right-sidebar" class="sidebar">
       <div id="conflicts" class="span4">
         <h3>Conflicts</h3>
         <ul class="list-group"></ul>

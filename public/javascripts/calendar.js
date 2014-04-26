@@ -237,18 +237,6 @@ function getTags() {
   });
 }
 
-function getProposals() {
-  return $.ajax({
-    url: '@routes.Proposals.list',
-    type: 'GET',
-    dataType: 'json',
-    headers: {
-      Accept: "application/json; charset=utf-8",
-      "Content-Type": "application/json; charset=utf-8"
-    }
-  });
-}
-
 function findFreeTimeSlots() {
   $.ajax({
     type: "POST",
@@ -320,8 +308,31 @@ function findConflicts() {
   })
 }
 
-function listProposals(){
+function listProposals() {
   
+  d3.json(jsRoutes.controllers.Proposals.list().url, function(error, data) {
+
+    if(!error && data.proposals.length > 0) {
+
+      var proposals = d3.select("#proposals ul").selectAll("li").data(data.proposals);
+
+      proposals.enter()
+        .append("li")
+        .attr("class", "proposal")
+        .append("span")
+        .text(function(proposal) { return proposal.proposal.title; })
+        .append("ul")
+        .each(function(proposal) {
+          d3.select(this).selectAll("li").data(proposal.participants).enter()
+            .append("li")
+            .text(function(participant) { return participant.name; });
+        });
+    }
+    else {
+      d3.selectAll("#proposals li").remove;
+      d3.select("#proposals").append("p").text("No proposals found!");
+    }
+  });
 }
 
 function listTags() {
