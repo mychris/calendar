@@ -47,7 +47,7 @@
 }
 
 #left-sidebar {
-  width      : 130px;
+  width      : 150px;
   margin-top : 45px;
 }
 
@@ -120,6 +120,15 @@
 }
 .proposal-modal {
   width : 650px;
+}
+
+.proposal h3 {
+  font-weight    : bold;
+  white-space    : nowrap;
+  overflow       : hidden; 
+  border         : none;
+  padding-bottom : 0;
+  margin-bottom  : 6px; 
 }
 
 .selectize-dropdown-content div[data-selectable].option.active {

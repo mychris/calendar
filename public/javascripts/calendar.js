@@ -316,11 +316,15 @@ function listProposals() {
 
       var proposals = d3.select("#proposals ul").selectAll("li").data(data.proposals);
 
-      proposals.enter()
+      var listItem = proposals.enter()
         .append("li")
-        .attr("class", "proposal")
-        .append("span")
+        .attr("class", "proposal list-group-item")
+
+      listItem
+        .append("h3")
         .text(function(proposal) { return proposal.proposal.title; })
+
+      listItem
         .append("ul")
         .each(function(proposal) {
           d3.select(this).selectAll("li").data(proposal.participants).enter()
