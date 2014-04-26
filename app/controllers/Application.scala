@@ -82,7 +82,7 @@ object Application
 
         // Proposals
         routes.javascript.Proposals.list,
-        routes.javascript.Proposals.add,
+        routes.javascript.Proposals.addWithTimes,
         routes.javascript.Proposals.proposalTimesFromProposal,
         routes.javascript.Proposals.addTime,
         routes.javascript.Proposals.addVote,

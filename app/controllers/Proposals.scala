@@ -16,6 +16,8 @@ import java.util.TimeZone
 import datasource.calendar.{Appointment, Tag}
 
 case class AddProposalRequestBody(title: String)
+case class AddProposalWithTimesRequestBody(title: String, participants: Seq[Int], times: Seq[AddProposalTimeWithoutParticipantsRequestBody])
+case class AddProposalTimeWithoutParticipantsRequestBody(start: DateTime, end: DateTime)
 case class AddProposalTimeRequestBody(start: DateTime, end: DateTime, participants: Seq[Int])
 case class AddProposalTimeVoteRequestBody(vote: Vote.Vote)
 case class FindFreeTimeSlotsRequestBody(userIds: Seq[Int])
@@ -46,6 +48,23 @@ object Proposals
         (Services.proposalService ? AddProposal(
           addProposal.title,
           request.user.id
+        )).expecting[ProposalAdded]
+      }
+    }
+  }
+
+  def addWithTimes = Authenticated.async(parse.json) { implicit request =>
+    readBody[AddProposalWithTimesRequestBody] { addProposal =>
+      val requester = request.user.id
+      val participants =
+        if (addProposal.participants.exists(_ == requester)) addProposal.participants
+        else                                                 requester +: addProposal.participants
+      toJsonResult {
+        (Services.proposalService ? AddProposalWithTimes(
+          addProposal.title,
+          requester,
+          participants,
+          addProposal.times.map(p => (p.start, p.end))
         )).expecting[ProposalAdded]
       }
     }

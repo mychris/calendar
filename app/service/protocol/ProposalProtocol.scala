@@ -19,6 +19,7 @@ case class VoteWithUser(vote: Vote, user: User)
 
 /* Proposal */
 case class AddProposal(title: String, userId: Int) extends Request
+case class AddProposalWithTimes(title: String, userId: Int, participants: Seq[Int], times: Seq[(DateTime, DateTime)]) extends Request
 case class AddProposalTime(start: DateTime, end: DateTime, proposalId: Int, participants: Seq[Int], userId: Int) extends Request
 case class AddProposalTimeVote(proposalId: Int, proposalTimeId: Int, vote: Vote.Vote, userId: Int) extends Request
 case class GetProposalsForUser(userId: Int) extends Request

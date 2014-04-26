@@ -56,6 +56,15 @@ class ProposalService(db: Database)
     sender ! ProposalAdded((proposals returning proposals.map(_.id)) += Proposal(-1, msg.title, msg.userId))
   }
 
+  def addProposalWithTimes(msg: AddProposalWithTimes) = db.withTransaction { implicit session =>
+    val proposalId = (proposals returning proposals.map(_.id)) += Proposal(-1, msg.title, msg.userId)
+    msg.times.foreach({ time =>
+      val timeId = (proposalTimes returning proposalTimes.map(_.id)) += ProposalTime(-1, time._1, time._2, proposalId)
+      proposalTimeVotes ++= msg.participants.map(ProposalTimeVote(timeId, _, Vote.NotVoted))
+    })
+    sender ! ProposalAdded(proposalId)
+  }
+
   def addProposalTime(msg: AddProposalTime) = 
     sender ! ProposalTimeAdded(db.withTransaction { implicit session =>
       val proposalTimeId = (proposalTimes returning proposalTimes.map(_.id)) += ProposalTime(-1, msg.start, msg.end, msg.proposalId)
@@ -101,6 +110,7 @@ class ProposalService(db: Database)
 
   def receive = handled {
     case msg: AddProposal                  => addProposal(msg)
+    case msg: AddProposalWithTimes         => addProposalWithTimes(msg)
     case msg: AddProposalTime              => addProposalTime(msg)
     case msg: AddProposalTimeVote          => addProposalTimeVote(msg)
     case msg: GetProposalsForUser          => getProposalsForUser(msg)
