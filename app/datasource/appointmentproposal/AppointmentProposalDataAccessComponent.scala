@@ -113,12 +113,13 @@ trait AppointmentProposalDataAccessComponent {
         ).exists
       )
 
-    def proposalsForUserWithParticipant(userId: Column[Int]): Query[(ProposalTable, UserTable), (Proposal, User)] =
+    def proposalsForUserWithCreatorAndParticipant(userId: Column[Int]): Query[(ProposalTable, UserTable, UserTable), (Proposal, User, User)] =
       for {
-        p <- proposalsForUser(userId)
-        u <- participants(p.id)
+        p   <- proposalsForUser(userId)
+        cr  <- p.creator
+        par <- participants(p.id)
       }
-      yield (p, u)
+      yield (p, cr, par)
 
     def proposalTimesWithVotesFromProposal(proposalId: Column[Int]): Query[(ProposalTimeTable, ProposalTimeVoteTable, UserTable), (ProposalTime, ProposalTimeVote, User)] =
       for {

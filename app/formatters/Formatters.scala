@@ -105,11 +105,11 @@ package object formatters {
   /*
    * ProposalService
    */
-  implicit val proposalFormat                 = Json.format[Proposal]
-  implicit val propoalTimeFormat              = Json.format[ProposalTime]
-  implicit val proposalWithParticipantsFormat = Json.format[ProposalWithParticipants]
-  implicit val voteWithUserFormat             = Json.format[VoteWithUser]
-  implicit val proposalTimeWithVotesFormat    = Json.format[ProposalTimeWithVotes]
+  implicit val proposalFormat                           = Json.format[Proposal]
+  implicit val propoalTimeFormat                        = Json.format[ProposalTime]
+  implicit val proposalWithCreatorAndParticipantsFormat = Json.format[ProposalWithCreatorAndParticipants]
+  implicit val voteWithUserFormat                       = Json.format[VoteWithUser]
+  implicit val proposalTimeWithVotesFormat              = Json.format[ProposalTimeWithVotes]
 
    /* Responses */
 

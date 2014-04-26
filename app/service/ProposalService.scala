@@ -74,12 +74,12 @@ class ProposalService(db: Database)
 
   def getProposalsForUser(msg: GetProposalsForUser) = db.withSession { implicit session =>
     sender ! ProposalsForUser(
-      proposalsForUserWithParticipant(msg.userId)
+      proposalsForUserWithCreatorAndParticipant(msg.userId)
         .buildColl[Seq]
-        .groupBy(_._1)
-        .mapValues(_.map(_._2))
+        .groupBy { case (p, cr, _) => (p, cr) }
+        .mapValues(_.map(_._3))
         .toSeq
-        .map(ProposalWithParticipants.tupled)
+        .map { case ((p, cr), pars) => ProposalWithCreatorAndParticipants(p, cr, pars) }
     )
   }
 

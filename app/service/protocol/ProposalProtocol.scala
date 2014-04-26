@@ -9,7 +9,7 @@ import hirondelle.date4j.DateTime
 
 import util._
 
-case class ProposalWithParticipants(proposal: Proposal, participants: Seq[User])
+case class ProposalWithCreatorAndParticipants(proposal: Proposal, creator: User, participants: Seq[User])
 case class ProposalTimeWithVotes(proposalTime: ProposalTime, votes: Seq[VoteWithUser])
 case class VoteWithUser(vote: Vote, user: User)
 
@@ -33,6 +33,6 @@ case class RemoveProposal(id: Int) extends Request
 case class ProposalAdded(id: Int) extends Success
 case class ProposalTimeAdded(id: Int) extends Success
 case object ProposalTimeVoteAdded extends Success
-case class ProposalsForUser(proposals: Seq[ProposalWithParticipants]) extends Success
+case class ProposalsForUser(proposals: Seq[ProposalWithCreatorAndParticipants]) extends Success
 case class ProposalTimesFromProposal(proposalTimes: Seq[ProposalTimeWithVotes]) extends Success
 case object ProposalRemoved extends Success
