@@ -21,20 +21,26 @@
     @scripts
   </head>
   <body class="@bodyClass">
-    <!-- Navigation Bar -->
-    <div class="navbar-nav navbar-inverse navbar-fixed-top">
-        <div class="container">
+    <noscript>
+        <div id="noscript-padding"></div>
+        <div id="noscript-warning">This website only works with JavaScript enabled.</div>
+    </noscript>
+    <div id="container">
+        <!-- Navigation Bar -->
+        <div class="navbar-nav navbar-inverse navbar-fixed-top">
             <div class="container">
-                <a href="#" class="navbar-brand">Calendar</a>
-                <div class="navbar-collapse collapse pull-right">
-                    <ul class="navbar-nav navbar nav">
-                        @navigationBarElements
-                    </ul>
+                <div class="container">
+                    <a href="#" class="navbar-brand">Calendar</a>
+                    <div class="navbar-collapse collapse pull-right">
+                        <ul class="navbar-nav navbar nav">
+                            @navigationBarElements
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
+        <!-- Navigation Ends -->
+        @content
     </div>
-    <!-- Navigation Ends -->
-    @content
   </body>
 </html>
