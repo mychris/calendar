@@ -120,9 +120,11 @@ class AdministrationService(db: Database)
         // third week
         addAppointment("Anna piano lesson", new DateTime("2014-01-15 15:00:00"), new DateTime("2014-01-15 16:00:00"), Seq(defaultTagId, familyTagId)),
         addAppointment("Tim soccer"       , new DateTime("2014-01-16 15:00:00"), new DateTime("2014-01-16 17:00:00"), Seq(defaultTagId, familyTagId)),
+        addAppointment("Carl badminton"   , new DateTime("2014-01-16 16:30:00"), new DateTime("2014-01-16 19:00:00"), Seq(defaultTagId, familyTagId)),
         // fourth week
         addAppointment("Anna piano lesson", new DateTime("2014-01-22 15:00:00"), new DateTime("2014-01-22 16:00:00"), Seq(defaultTagId, familyTagId)),
         addAppointment("Tim soccer"       , new DateTime("2014-01-23 15:00:00"), new DateTime("2014-01-23 17:00:00"), Seq(defaultTagId, familyTagId)),
+        addAppointment("Release RC1A"     , new DateTime("2014-01-23 09:00:00"), new DateTime("2014-01-23 18:00:00"), Seq(defaultTagId, workTagId)),
         // tag work
         addAppointment("Milestone Meeting", new DateTime("2014-01-08 10:00:00"), new DateTime("2014-01-08 12:00:00"), Seq(defaultTagId, workTagId))
       )
