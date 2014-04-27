@@ -342,6 +342,22 @@ function listProposals() {
   });
 }
 
+function proposalSelectTimes(){
+  $('#proposalModal').modal('hide');  
+}
+
+function setProposalModalDefaultValues(){
+  $('#proposalModalForm').trigger("reset");
+  // Duration Picker (duration of event)
+  $('.durationpicker').data("DateTimePicker").setDate(new Date(1979, 0, 1, 2, 0, 0, 0));
+  // Datetime picker (time frame of proposal )
+  $('.datetimepicker1').data("DateTimePicker").setDate(new Date());
+  $('.datetimepicker2').data("DateTimePicker").setDate(moment().add('d', 14));
+  // Datetime picker (time frame within a day of proposal)
+  $('.timepicker1').data("DateTimePicker").setDate(new Date(1979, 0, 1, 08, 0, 0, 0));
+  $('.timepicker2').data("DateTimePicker").setDate(new Date(1979, 0, 1, 22, 0, 0, 0));
+}
+
 function listTags() {
   function generateMenu(tag) {
     return $(
