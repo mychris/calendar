@@ -48,7 +48,7 @@
         selectHelper: true,
         select: function(start, end, jsEvent, view) { // Reaction to the "select/click" event on the calendar (create new event)
           lastSelected = jsEvent.target;
-          createEventPopover(jsEvent.target, start.valueOf(), end.valueOf());
+          createEventPopover(jsEvent.target, start, end);
         },
         unselect: function( view, jsEvent ) {
         },

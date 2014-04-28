@@ -41,8 +41,8 @@ function createEvent(eventData, callback) {
     },
     data: JSON.stringify({
       'title': eventData.title,
-      'start': eventData.start, // Long
-      'end': eventData.end, // Long
+      'start': eventData.start.valueOf(), // Long
+      'end': eventData.end.valueOf(), // Long
       'tagIds': eventData.tagIds // TODO: Specify Tag from List
     }),
     error: function(err) {
@@ -113,11 +113,11 @@ function createEventPopover(selectedElement, start, end) {
             + "<div class='form-group'>"
             + "<label class='col-sm-3 control-label'>From</label>"
             + "<div class='col-sm-9'>"
-              + "<p class='form-control-static' id='newEventStart' date='" + start + "'>" + moment(start).format("dd, MMM DD, HH:mm") + "</p>"
+              + "<p class='form-control-static' id='newEventStart' date='" + start + "'>" + start.format("dd, MMM DD, HH:mm") + "</p>"
             + "</div>"
             + "<label class='col-sm-3 control-label'>To</label>"
             + "<div class='col-sm-9'>"
-              + "<p class='form-control-static' id='newEventEnd' date='" + end + "'>" + moment(end).format("dd, MMM DD, HH:mm") + "</p>"
+              + "<p class='form-control-static' id='newEventEnd' date='" + end + "'>" + end.format("dd, MMM DD, HH:mm") + "</p>"
             + "</div>"
             + "</div>"
 
