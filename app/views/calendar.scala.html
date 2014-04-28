@@ -24,6 +24,7 @@
 
     var lastSelected;
     var test = true;
+    var createProposalMode = false;
 
     $(document).ready(function() {
 
@@ -47,8 +48,22 @@
         selectable: true,
         selectHelper: true,
         select: function(start, end, jsEvent, view) { // Reaction to the "select/click" event on the calendar (create new event)
-          lastSelected = jsEvent.target;
-          createEventPopover(jsEvent.target, start, end);
+          if(createProposalMode){
+            var suggestionData = {
+              'title'  : "Time suggestion",
+              'start'  : start,
+              'end'    : end,
+              'color'  : 'rgb(40, 255, 40)',
+              'type'   : 'suggestion'
+            }
+
+            $('#calendar').fullCalendar('unselect');
+            $('#calendar').fullCalendar('renderEvent', suggestionData, true); // stick? = true
+          }
+          else {
+            lastSelected = jsEvent.target;
+            createEventPopover(jsEvent.target, start, end);
+          }
         },
         unselect: function( view, jsEvent ) {
         },
@@ -75,7 +90,8 @@
                   'start'  : moment(appointmentsWithTags[i].appointment.start),
                   'end'    : moment(appointmentsWithTags[i].appointment.end),
                   'color'  : highestPriorityTag.color,
-                  'tagIds' : $.map(appointmentsWithTags[i].tags, function(v) { return v.id; })
+                  'tagIds' : $.map(appointmentsWithTags[i].tags, function(v) { return v.id; }),
+                  'type'   : 'appointment'
                 })
 
               }
@@ -87,13 +103,21 @@
           });
         },
         eventRender: function(event, element) {
-          element.attr("tagIds", event.tagIds);
+          if ( event.type == "appointment" ) {
+            element.attr("tagIds", event.tagIds);
+          }
+          else if ( event.type == "proposal" ) {
+            element.attr("proposalIds", event.proposalIds);
+          }
+          else if ( event.type == "freetimeslot" ) {
+            element.addClass("freetimeslot")
+          }
         },
         loading: function(bool) {
           $('#loading').toggle(bool);
         },
         eventClick: function(calEvent, jsEvent, view) {
-          if (!(calEvent.type == "proposal") && confirm("Delete appointment '" + calEvent.title + "'?")) {
+          if (calEvent.type == "appointment" && confirm("Delete appointment '" + calEvent.title + "'?")) {
             $.ajax({
               url: '/appointment/' + calEvent.id,
               type: 'DELETE',
@@ -110,10 +134,12 @@
           }
         },
         eventDrop: function(eventData, revertFunc, jsEvent, ui, view) {
-          updateEvent(eventData, revertFunc);
+          if( !createProposalMode )
+            updateEvent(eventData, revertFunc);
         },
         eventResize: function(eventData, revertFunc, jsEvent, ui, view) {
-          updateEvent(eventData, revertFunc);
+          if( !createProposalMode )
+            updateEvent(eventData, revertFunc);
         }
       }); // END FULL CALENDAR
 
@@ -251,8 +277,14 @@
       <section id="proposals" class="span4">
         <h3>Proposals</h3>
         <ul></ul>
-        <button name="create-proposal" class="btn btn-xs btn-default" onclick="setProposalModalDefaultValues(); $('#proposalModal').modal('show');" >
+        <button id="createProposal" class="btn btn-xs btn-default" onclick="setProposalModalDefaultValues(); $('#proposalModal').modal('show');" >
           <span class="glyphicon glyphicon-bullhorn" style="font-size: 9px;"></span> Create Proposal
+        </button>
+        <button id="finishCreateProposal" class="btn btn-xs btn-primary" style="display:none;" onclick="finishCreateProposal();" >
+          <span class="glyphicon glyphicon glyphicon-ok" style="font-size: 9px;"></span> Finish
+        </button>
+        <button id="cancelCreateProposal" class="btn btn-xs btn-danger" style="display:none;" onclick="cancelCreateProposal();" >
+          <span class="glyphicon glyphicon glyphicon-remove" style="font-size: 9px;"></span> Cancel
         </button>
       </section>
     </section>
@@ -274,7 +306,7 @@
   <div class="modal fade bs-example-modal-md" id="proposalModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-md proposal-modal">
       <div class="modal-content">
-        <form role="form" id="proposalModalForm" onsubmit="proposalSelectTimes(); return false;">
+        <form role="form" id="proposalModalForm" onsubmit="proposalCreationMode(); return false;">
             <div class="modal-header">
               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
               <h4 class="modal-title">New Proposal</h4>

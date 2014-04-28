@@ -54,14 +54,15 @@ function createEvent(eventData, callback) {
       var highestPriorityTag = getHighestPriorityTag(appointmentWithTags.tags);
 
       var newEventData = {
-        'id': appointmentWithTags.appointment.id,
-        'title': appointmentWithTags.appointment.title,
-        'start': moment(appointmentWithTags.appointment.start),
-        'end': moment(appointmentWithTags.appointment.end),
-        'color': highestPriorityTag.color,
-        'tagIds': $.map(appointmentWithTags.tags, function(v) {
+        'id'     : appointmentWithTags.appointment.id,
+        'title'  : appointmentWithTags.appointment.title,
+        'start'  : moment(appointmentWithTags.appointment.start),
+        'end'    : moment(appointmentWithTags.appointment.end),
+        'color'  : highestPriorityTag.color,
+        'tagIds' : $.map(appointmentWithTags.tags, function(v) {
           return v.id;
-        })
+        }),
+        'type'   : 'appointment'
       }
 
       $('#calendar').fullCalendar('unselect');
@@ -237,7 +238,6 @@ function getTags() {
 }
 
 function findFreeTimeSlots() {
-
   var userIds   = $('#inputUsers').selectize()[0].selectize.items
   var duration  = (moment($('.durationpicker').data("DateTimePicker").getDate(), "HH:mm").hours() * 60 + moment($('.durationpicker').data("DateTimePicker").getDate(), "HH:mm").minutes()) * 60 * 1000  // hours and minutes in millis as Long
   var from      = moment($('.datetimepicker1').data("DateTimePicker").getDate()).valueOf()
@@ -321,16 +321,20 @@ function listProposals() {
   });
 }
 
-function proposalSelectTimes(){
+function proposalCreationMode(){
+  createProposalMode = true;
   var proposalName = $('#proposalName').val();
-  var inputUsers   = $('#inputUsers').val();
 
   findFreeTimeSlots()
   .done(function(data) {
-    console.log("got free time slots: ");
-    console.log(data);
-
     var timeSlots = data.slots;
+
+    if( timeSlots.length == 0 )
+      return;
+
+    $('#createProposal').hide();
+    $('#finishCreateProposal').show();
+    $('#cancelCreateProposal').show();
 
     for (var i = 0; i < timeSlots.length; i++) {
       eventData = {
@@ -338,11 +342,15 @@ function proposalSelectTimes(){
         'start'                : moment(timeSlots[i].start),
         'end'                  : moment(timeSlots[i].end),
         'color'                : "lightgreen",
+        'textColor'            : '#000000',
         'editable'             : false,
-        'type'                 : 'proposal'
+        'type'                 : 'freetimeslot'
       }
       $('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
     }
+    
+    $("#calendar").fullCalendar('gotoDate', data.slots[0].start);
+    $("#calendar").fullCalendar('changeView', 'agendaWeek');
   })
   .fail(function(xhr) {
       console.log("Unable to show free time slots:");
@@ -350,6 +358,51 @@ function proposalSelectTimes(){
   });
 
   $('#proposalModal').modal('hide');  
+}
+
+function createProposalCleanup(){
+  $('#finishCreateProposal').hide();
+  $('#cancelCreateProposal').hide();
+  $('#calendar').fullCalendar( 'removeEvents', function(event) {
+    return (event.type == "freetimeslot") || (event.type == "suggestion")
+  });
+  $('#createProposal').show();
+
+  createProposalMode = false;
+}
+
+function finishCreateProposal(){
+  var suggestions = $('#calendar').fullCalendar('clientEvents', function(event){
+    return event.type == 'suggestion'
+  }).map(function(suggestion) {
+    return {
+      'start' : suggestion.start.valueOf(),
+      'end'   : suggestion.end.valueOf()
+    };
+  });
+
+  var data = {
+    'title'        : $('#proposalName').val(),
+    'color'        : "#EDC000", 
+    'participants' : $('#inputUsers').selectize()[0].selectize.items.map(function(el){
+                        return parseInt(el);
+                      }),
+    'times'        : suggestions
+  };
+
+  $.postJson(jsRoutes.controllers.Proposals.addWithTimes().url, data)
+    .done(function(data) {
+      createProposalCleanup();
+      listProposals();
+    })
+    .fail(function(xhr) {
+      console.log("Unable to post new proposal!");
+      console.log(xhr.responseText)
+    });
+}
+
+function cancelCreateProposal(){
+  createProposalCleanup();
 }
 
 function setProposalModalDefaultValues(){
@@ -363,8 +416,8 @@ function setProposalModalDefaultValues(){
     $('#proposalName').val("TestProposal");
     $('#inputUsers').selectize()[0].selectize.addItem(1);
     $('#inputUsers').selectize()[0].selectize.addItem(2);
-    $('.datetimepicker1').data("DateTimePicker").setDate(new Date(2014, 0, 8, 08, 0, 0, 0));
-    $('.datetimepicker2').data("DateTimePicker").setDate(new Date(2014, 0, 8, 22, 0, 0, 0));
+    $('.datetimepicker1').data("DateTimePicker").setDate(new Date(2014, 0, 6, 08, 0, 0, 0));
+    $('.datetimepicker2').data("DateTimePicker").setDate(new Date(2014, 0, 11, 22, 0, 0, 0));
   }
   else {
     $('.datetimepicker1').data("DateTimePicker").setDate(new Date());

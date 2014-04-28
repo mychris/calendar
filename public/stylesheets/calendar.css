@@ -143,3 +143,8 @@
 .selectize-dropdown-content div[data-selectable].option.active {
   background-color: #eee;
 }
+
+.freetimeslot {
+  opacity        : 0.4;
+  pointer-events : none;
+}
