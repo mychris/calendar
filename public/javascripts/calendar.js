@@ -238,39 +238,21 @@ function getTags() {
 }
 
 function findFreeTimeSlots() {
-  $.ajax({
-    type: "POST",
-    url: jsRoutes.controllers.Appointments.freeTimeSlots().url,
+
+  var userIds   = $('#inputUsers').selectize()[0].selectize.items
+  var duration  = (moment(proposalDuration, "HH:mm") .hours() * 60 + moment(proposalDuration, "HH:mm") .minutes()) * 60 * 1000  // hours and minutes in millis as Long
+  var from      = moment(proposalFrom)               .utc()                                            .valueOf()
+  var to        = moment(proposalTo)                 .utc()                                            .valueOf()
+  var startTime = (moment(proposalTimeFrom, "h:mm A").hours() * 60 + moment(proposalTimeFrom, "h:mm A").minutes()) * 60 * 1000  // hours and minutes in millis as Long
+  var endTime   = (moment(proposalTimeTo, "h:mm A")  .hours() * 60 + moment(proposalTimeTo, "h:mm A")  .minutes()) * 60 * 1000  // hours and minutes in millis as Long
+
+  return $.ajax({
+    url: jsRoutes.controllers.Proposals.findFreeTimeSlots(userIds, duration, from, to, startTime, endTime).url,
+    type: "GET",
     dataType: "json",
     headers: {
       Accept: "application/json; charset=utf-8",
       "Content-Type": "application/json; charset=utf-8"
-    },
-    data: JSON.stringify({
-      'duration': $('#duration').val().toString(),
-      'start': $('#betweenFrom').val().toString(),
-      'end': $('#betweenTo').val().toString(),
-    }),
-    error: function(xhr) {
-      // var resp = JSON.parse(xhr.responseText)
-      // console.log(resp.errorMsg);
-      console.log("findFreeTimeSlots Error: ")
-      console.log(xhr.responseText);
-    },
-    success: function(data) {
-      console.log("got free time slots: ");
-      console.log(data);
-
-      var eventData;
-
-      for (var i = 0; i < data.length; i++) {
-        eventData = {
-          title: "freetimeslot",
-          start: data[i].start,
-          end: data[i].end
-        }
-        $('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
-      }
     }
   });
 }
@@ -341,19 +323,45 @@ function listProposals() {
 }
 
 function proposalSelectTimes(){
+  var proposalName = $('#proposalName').val();
+  var inputUsers   = $('#inputUsers').val();
+
+  findFreeTimeSlots()
+  .done(function(data) {
+      console.log("got free time slots: ");
+      console.log(data);
+
+      var eventData;
+
+      // for (var i = 0; i < data.length; i++) {
+      //   eventData = {
+      //     title: "freetimeslot",
+      //     start: data[i].start,
+      //     end: data[i].end
+      //   }
+      //   $('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
+      // }
+  })
+  .fail(function(xhr) {
+      console.log("Unable to show free time slots:");
+      console.log(xhr.responseText)
+  });
+
   $('#proposalModal').modal('hide');  
 }
 
 function setProposalModalDefaultValues(){
   $('#proposalModalForm').trigger("reset");
+  $('#inputUsers').selectize()[0].selectize.clear(); 
+  $('#inputUsers').selectize()[0].selectize.refreshItems();
   // Duration Picker (duration of event)
-  $('.durationpicker').data("DateTimePicker").setDate(new Date(1979, 0, 1, 2, 0, 0, 0));
+  $('.durationpicker') .data("DateTimePicker").setDate(new Date(1979, 0, 1, 2, 0, 0, 0));
   // Datetime picker (time frame of proposal )
   $('.datetimepicker1').data("DateTimePicker").setDate(new Date());
   $('.datetimepicker2').data("DateTimePicker").setDate(moment().add('d', 14));
   // Datetime picker (time frame within a day of proposal)
-  $('.timepicker1').data("DateTimePicker").setDate(new Date(1979, 0, 1, 08, 0, 0, 0));
-  $('.timepicker2').data("DateTimePicker").setDate(new Date(1979, 0, 1, 22, 0, 0, 0));
+  $('.timepicker1')    .data("DateTimePicker").setDate(new Date(1979, 0, 1, 08, 0, 0, 0));
+  $('.timepicker2')    .data("DateTimePicker").setDate(new Date(1979, 0, 1, 22, 0, 0, 0));
 }
 
 function listTags() {

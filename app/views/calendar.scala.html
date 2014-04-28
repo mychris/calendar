@@ -197,9 +197,8 @@
       $('#proposalModal').on('shown.bs.modal', function() {
         $("#proposalName").focus();
       })
-      $('#proposalModal').on('hidden.bs.modal', function () {
-        setProposalModalDefaultValues()
-      });
+      // $('#proposalModal').on('hidden.bs.modal', function () {
+      // });
       setProposalModalDefaultValues();
 
       findConflicts();
@@ -251,7 +250,7 @@
       <section id="proposals" class="span4">
         <h3>Proposals</h3>
         <ul></ul>
-        <button name="create-proposal" class="btn btn-xs btn-default" onclick="$('#proposalModal').modal('show');" >
+        <button name="create-proposal" class="btn btn-xs btn-default" onclick="setProposalModalDefaultValues(); $('#proposalModal').modal('show');" >
           <span class="glyphicon glyphicon-bullhorn" style="font-size: 9px;"></span> Create Proposal
         </button>
       </section>
@@ -354,7 +353,7 @@
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-default" aria-hidden="true" data-dismiss="modal">Close</button>
-              <input type="submit" id="register-submit" class="btn btn-primary">
+              <input type="submit" id="register-submit" class="btn btn-primary" value="Continue">
             </div>
         </form>
       </div>
