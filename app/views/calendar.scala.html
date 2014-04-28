@@ -23,6 +23,7 @@
   <script>
 
     var lastSelected;
+    var test = true;
 
     $(document).ready(function() {
 
@@ -250,7 +251,7 @@
       <section id="proposals" class="span4">
         <h3>Proposals</h3>
         <ul></ul>
-        <button name="create-proposal" class="btn btn-xs btn-default" onclick="$('#proposalModal').modal('show');" > <!-- vorher: setProposalModalDefaultValues(); -->
+        <button name="create-proposal" class="btn btn-xs btn-default" onclick="setProposalModalDefaultValues(); $('#proposalModal').modal('show');" >
           <span class="glyphicon glyphicon-bullhorn" style="font-size: 9px;"></span> Create Proposal
         </button>
       </section>

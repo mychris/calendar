@@ -243,7 +243,7 @@ function findFreeTimeSlots() {
   var from      = moment($('.datetimepicker1').data("DateTimePicker").getDate()).utc().valueOf()
   var to        = moment($('.datetimepicker2').data("DateTimePicker").getDate()).utc().valueOf()
   var startTime = (moment($('.timepicker1').data("DateTimePicker").getDate(), "h:mm A").hours() * 60 + moment($('.timepicker1').data("DateTimePicker").getDate(), "h:mm A").minutes()) * 60 * 1000  // hours and minutes in millis as Long
-  var endTime   = (moment($('.timepicker2').data("DateTimePicker").getDate(), "h:mm A").hours() * 60 + moment($('.timepicker2').data("DateTimePicker").getDate(), "h:mm A")  .minutes()) * 60 * 1000  // hours and minutes in millis as Long
+  var endTime   = (moment($('.timepicker2').data("DateTimePicker").getDate(), "h:mm A").hours() * 60 + moment($('.timepicker2').data("DateTimePicker").getDate(), "h:mm A").minutes()) * 60 * 1000  // hours and minutes in millis as Long
 
   return $.ajax({
     url: jsRoutes.controllers.Proposals.findFreeTimeSlots(userIds, duration, from, to, startTime, endTime).url,
@@ -327,20 +327,11 @@ function proposalSelectTimes(){
 
   findFreeTimeSlots()
   .done(function(data) {
+    console.log("got free time slots: ");
+    console.log(data);
+
     var timeSlots = data.slots;
-      console.log("got free time slots: ");
-      console.log(data);
 
-      var eventData;
-
-      // for (var i = 0; i < data.length; i++) {
-      //   eventData = {
-      //     title: "freetimeslot",
-      //     start: data[i].start,
-      //     end: data[i].end
-      //   }
-      //   $('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
-      // }
   })
   .fail(function(xhr) {
       console.log("Unable to show free time slots:");
@@ -357,8 +348,17 @@ function setProposalModalDefaultValues(){
   // Duration Picker (duration of event)
   $('.durationpicker') .data("DateTimePicker").setDate(new Date(1979, 0, 1, 2, 0, 0, 0));
   // Datetime picker (time frame of proposal )
-  $('.datetimepicker1').data("DateTimePicker").setDate(new Date());
-  $('.datetimepicker2').data("DateTimePicker").setDate(moment().add('d', 14));
+  if(test) {
+    $('#proposalName').val("TestProposal");
+    $('#inputUsers').selectize()[0].selectize.addItem(1);
+    $('#inputUsers').selectize()[0].selectize.addItem(2);
+    $('.datetimepicker1').data("DateTimePicker").setDate(new Date(2014, 0, 8, 08, 0, 0, 0));
+    $('.datetimepicker2').data("DateTimePicker").setDate(new Date(2014, 0, 8, 22, 0, 0, 0));
+  }
+  else {
+    $('.datetimepicker1').data("DateTimePicker").setDate(new Date());
+    $('.datetimepicker2').data("DateTimePicker").setDate(moment().add('d', 14));
+  }
   // Datetime picker (time frame within a day of proposal)
   $('.timepicker1')    .data("DateTimePicker").setDate(new Date(1979, 0, 1, 08, 0, 0, 0));
   $('.timepicker2')    .data("DateTimePicker").setDate(new Date(1979, 0, 1, 22, 0, 0, 0));
