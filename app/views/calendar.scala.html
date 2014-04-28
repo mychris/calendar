@@ -93,7 +93,7 @@
           $('#loading').toggle(bool);
         },
         eventClick: function(calEvent, jsEvent, view) {
-          if (confirm("Delete appointment '" + calEvent.title + "'?")) {
+          if (!(calEvent.type == "proposal") && confirm("Delete appointment '" + calEvent.title + "'?")) {
             $.ajax({
               url: '/appointment/' + calEvent.id,
               type: 'DELETE',

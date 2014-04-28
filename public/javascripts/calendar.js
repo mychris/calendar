@@ -334,11 +334,12 @@ function proposalSelectTimes(){
 
     for (var i = 0; i < timeSlots.length; i++) {
       eventData = {
-        'title'           : proposalName,
-        'start'           : moment(timeSlots[i].start),
-        'end'             : moment(timeSlots[i].end),
-        'eventBackgroundColor' : "#DDDDDD",
-        'editable'        : true
+        'title'                : proposalName,
+        'start'                : moment(timeSlots[i].start),
+        'end'                  : moment(timeSlots[i].end),
+        'color'                : "lightgreen",
+        'editable'             : false,
+        'type'                 : 'proposal'
       }
       $('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
     }
