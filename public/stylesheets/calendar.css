@@ -122,6 +122,30 @@
   width : 650px;
 }
 
+.finish-proposal-modal {
+  width : 1150px;
+}
+
+.finish-proposal-modal table tr, .finish-proposal-modal table th {
+  text-align: center;
+}
+
+.finish-proposal-modal table .not-voted {
+  //background-color: #F691B2;
+}
+
+.finish-proposal-modal table .accepted {
+  background-color: #42D692;
+}
+
+.finish-proposal-modal table .refused {
+  background-color: #F691B2;
+}
+
+.finish-proposal-modal table .uncertain {
+  background-color: #F0AD4E;
+}
+
 .proposal {
   font-size : 12px;
   padding   : 10px 10px;

@@ -285,6 +285,8 @@
         </button>
         <button id="cancelCreateProposal" class="btn btn-xs btn-danger" style="display:none;" onclick="cancelCreateProposal();" >
           <span class="glyphicon glyphicon glyphicon-remove" style="font-size: 9px;"></span> Cancel
+        <button name="create-proposal" class="btn btn-xs btn-default" onclick="setFinishProposalModalValues(1); $('#finishProposalModal').modal('show');" >
+          <span class="glyphicon glyphicon-bullhorn" style="font-size: 9px;"></span> Dummy Finish Vote
         </button>
       </section>
     </section>
@@ -387,6 +389,40 @@
             <div class="modal-footer">
               <button type="button" class="btn btn-default" aria-hidden="true" data-dismiss="modal">Close</button>
               <input type="submit" id="register-submit" class="btn btn-primary" value="Continue">
+            </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Finish Proposal Model Box -->
+  <div class="modal fade bs-example-modal-md" id="finishProposalModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-md finish-proposal-modal">
+      <div class="modal-content">
+        <form role="form" id="finishProposalModalForm" onsubmit="proposalSelectTimes(); return false;">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+              <h4 class="modal-title">Finish Proposal</h4>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>test</td>
+                    <td>Christoph</td>
+                    <td>Simon</td>
+                    <td>Florian</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" aria-hidden="true" data-dismiss="modal">Close</button>
+              <!--<input type="submit" id="register-submit" class="btn btn-primary" value="Finish Vote">-->
             </div>
         </form>
       </div>

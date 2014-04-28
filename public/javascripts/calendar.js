@@ -315,7 +315,7 @@ function listProposals() {
         .text(function(proposal) { return $.map(proposal.participants, function(par) { return par.name; }).join(", "); });
     }
     else {
-      d3.selectAll("#proposals li").remove;
+      d3.select("#proposals ul").selectAll("li").data([]).exit().remove();
       d3.select("#proposals ul").append("li").text("No proposals found!");
     }
   });
@@ -427,6 +427,105 @@ function setProposalModalDefaultValues(){
   // Datetime picker (time frame within a day of proposal)
   $('.timepicker1')    .data("DateTimePicker").setDate(new Date(1979, 0, 1, 08, 0, 0, 0));
   $('.timepicker2')    .data("DateTimePicker").setDate(new Date(1979, 0, 1, 22, 0, 0, 0));
+}
+
+function setFinishProposalModalValues(proposalId) {
+  $("#finishProposalModal table thead th").remove();
+  $("#finishProposalModal table tbody tr").remove();
+
+  $.ajax({
+    url: jsRoutes.controllers.Proposals.proposalTimesFromProposal(proposalId).url,
+    type: 'GET',
+    dataType: 'json',
+    headers: {
+      Accept: "application/json; charset=utf-8",
+      "Content-Type": "application/json; charset=utf-8"
+    },
+    success: function(proposals) {
+      var participants = $.map(proposals["proposalTimes"], function(time, index) {
+        return $.map(time["votes"], function(vote, index) {
+          return vote["user"]["name"];
+        });
+      });
+      // make participants unique
+      participants = participants.filter(function(item, i, a) {
+        return i == participants.indexOf(item);
+      });
+      // add participants to table
+      $.each(participants, function(index, participant) {
+        $("#finishProposalModal table tbody").append("<tr></tr>");
+        $("#finishProposalModal table tbody tr:last").append("<td>" + participant + "</td>");
+        $("#finishProposalModal table tbody tr:last").addClass("participant").addClass("participant-" + participant);
+      });
+
+      $("#finishProposalModal table thead tr").append("<th></th>");
+      $.each(proposals["proposalTimes"], function(index, value) {
+        // add th to thead
+        var start = moment(value["proposalTime"]["start"]);
+        var end = moment(value["proposalTime"]["end"]);
+        var title = start.format("MMM D YYYY hh:mma") + " - " + end.format("MMM D YYYY hh:mma")
+        $("#finishProposalModal table thead tr").append( "<th>"+title+"</th>" );
+
+        var votes = value["votes"];
+        if (!votes || votes.length <= 0) {
+          return
+        }
+
+        // add tr to tbody
+        // first add names
+        $.each(votes, function(index, vote) {
+          var name = vote["user"]["name"];
+          var content, title, clazz;
+          if (vote["vote"] == 1) {
+            clazz = "accepted";
+            title = "Accepted";
+            content = '<i class="glyphicon glyphicon-thumbs-up"></i>';
+          } else if (vote["vote"] == 2) {
+            clazz = "refused";
+            title = "Refused";
+            content = '<i class="glyphicon glyphicon-thumbs-down"></i>';
+          } else if (vote["vote"] == 3) {
+            clazz = "uncertain";
+            title = "Uncertain";
+            content = '<i class="glyphicon glyphicon-question-sign"></i>';
+          } else {
+            clazz = "not-voted";
+            title = "Not voted";
+            content = '<i class="glyphicon glyphicon-ban-circle";"></i>';
+          }
+          $("#finishProposalModal table tbody tr.participant-" + name).append('<td class="'+clazz+'" title="' + title +'">' + content + '</td>');
+        });
+      });
+      // add finish submit buttons
+      $("#finishProposalModal table tbody").append("<tr></tr>");
+      $("#finishProposalModal table tbody tr:last").append("<td></td>");
+      $.each(proposals["proposalTimes"], function(index, value) {
+
+        $("#finishProposalModal table tbody tr:last").append('<td><button type="button" class="btn btn-default" onclick="javascript: finishProposalVote('+proposalId+','+value["proposalTime"]["id"]+');">Use this time</button></td>');
+      });
+    }
+  })
+}
+
+function finishProposalVote(proposalId, proposalTimeId) {
+  $.ajax({
+    type: "POST",
+    url: jsRoutes.controllers.Proposals.finishVote(proposalId).url,
+    dataType: "json",
+    accepts: "application/json; charset=utf-8",
+    headers: {
+      Accept: "application/json; charset=utf-8",
+      "Content-Type": "application/json; charset=utf-8"
+    },
+    data: JSON.stringify({
+      'times': [proposalTimeId]
+    }),
+    success: function(data) {
+      $('#calendar').fullCalendar('refetchEvents');
+      listProposals();
+    }
+  });
+  $("#finishProposalModal").modal('hide');
 }
 
 function listTags() {
