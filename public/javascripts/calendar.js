@@ -394,6 +394,7 @@ function finishCreateProposal(){
     .done(function(data) {
       createProposalCleanup();
       listProposals();
+      $("#calendar").fullCalendar('changeView', 'month');
     })
     .fail(function(xhr) {
       console.log("Unable to post new proposal!");
