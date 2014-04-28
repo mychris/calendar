@@ -312,6 +312,21 @@ function findConflicts() {
 }
 
 function listProposals() {
+
+  function generatePopover(prop) {
+
+    return _.template(
+      "<div>" + 
+      "  <h3>Participants</h3>" +
+      "  <ul>" +
+      "    <% _.map(proposal.participants, function(par) { %><li><%= par.name %></li><% }); %>" +
+      "  </ul>" +
+      "  <h3>Creator</h3>" +
+      "  <p><%= proposal.creator.name %></p>" +
+      "</div>"
+      , { proposal : prop}
+    );
+  }
   
   d3.json(jsRoutes.controllers.Proposals.list().url, function(error, data) {
 
@@ -319,21 +334,23 @@ function listProposals() {
 
       var proposals = d3.select("#proposals ul").selectAll("li").data(data.proposals);
 
-      var listItem = proposals.enter()
+      // Enter
+      proposals.enter()
         .append("li")
-        .attr("class", "proposal list-group-item")
-
-      listItem
-        .append("h3")
+        .append("a")
+        .attr("class", "proposal btn btn-xs btn-default")
         .text(function(proposal) { return proposal.proposal.title; })
-
-      listItem
-        .append("ul")
+        .attr("data-container", "body")
+        .attr("data-toggle", "popover")
+        .attr("data-placement", "right")
         .each(function(proposal) {
-          d3.select(this).selectAll("li").data(proposal.participants).enter()
-            .append("li")
-            .text(function(participant) { return participant.name; });
+          $(this).popover({
+            trigger : "hover",
+            html    : true,
+            content : function() { return generatePopover(proposal); }
+          });
         });
+
     }
     else {
       d3.selectAll("#proposals li").remove;
@@ -359,6 +376,7 @@ function setProposalModalDefaultValues(){
 }
 
 function listTags() {
+  
   function generateMenu(tag) {
     return $(
       "<div class='menu dropdown'>" +
