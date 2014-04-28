@@ -127,8 +127,8 @@ class ProposalService(db: Database)
         proposalById(msg.proposalId).delete
         sender ! VoteFinished
       }
-      case Some(_)                                             => sender ! PermissionDeniedError("Proposal does not belong to specified user!")
-      case _                                                   => sender ! NoSuchProposalError(s"Proposal with id $msg.id does not exist!")
+      case Some(_) => sender ! PermissionDeniedError("Proposal does not belong to specified user!")
+      case _       => sender ! NoSuchProposalError(s"Proposal with id $msg.id does not exist!")
     }
   }
 

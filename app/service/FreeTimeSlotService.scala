@@ -5,6 +5,8 @@ import akka.actor._
 import datasource.calendar._
 import datasource.user._
 
+import formatters._
+
 import hirondelle.date4j.DateTime
 
 import scala.slick.driver.PostgresDriver.simple._
@@ -13,6 +15,7 @@ import service.protocol._
 
 import util.CustomColumnTypes._
 import util.DateTimeExtensions._
+import util.JsonConversion._
 
 /**
   *
@@ -45,7 +48,10 @@ class FreeTimeSlotService(db: Database)
   private type Acc = (Seq[TimeSlot], DateTime)
 
   def receive = {
-    case FindFreeTimeSlots(userIds, duration, from, to, startTime, endTime) =>
+    case fftss @ FindFreeTimeSlots(userIds, duration, from, to, startTime, endTime) =>
+
+      log.debug(s"Received free time slot request with ${fftss.toJson}")
+
       val appointments = db.withSession { implicit session =>
         appointmentsFromUsers(userIds, from, to)
           .buildColl[Seq]
@@ -65,7 +71,7 @@ class FreeTimeSlotService(db: Database)
 
       val sorted = (appointments ++ constraints :+ Appointment(-1, "", to, to)).sortBy(_.start.millisUTC)
 
-      sender ! FreeTimeSlots(
+      val freeTimeSlots =
         sorted
           .foldLeft[Acc]((Seq(), from)) {
             case ((slots, lastEnd), appointment) =>
@@ -74,6 +80,9 @@ class FreeTimeSlotService(db: Database)
               else
                 (slots, appointment.end)
           }._1
-      )
+
+      log.debug(s"Free time slots ${freeTimeSlots.toJson}")
+
+      sender ! FreeTimeSlots(freeTimeSlots)
   }
 }

@@ -139,6 +139,9 @@ package object formatters {
    */
   implicit val timeSlotFormat = Json.format[TimeSlot]
 
+  /* Requests */
+  implicit val findFreeTimeSlotsFormat = Json.format[FindFreeTimeSlots]
+
   /* Responses */
   implicit val freeTimeSlotsFormat = Json.format[FreeTimeSlots]
 
