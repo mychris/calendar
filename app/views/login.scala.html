@@ -45,14 +45,16 @@
         function registerError(msg) {
             $("#register .modal-body div.alert").remove()
             if (msg != "") {
-                $("#register .modal-body p").after("<div class='alert alert-error'><a class='close' data-dismiss='alert' href='#'>×</a>" + msg + "</div>");
+                $("#register .modal-body p").after("<div class='alert alert-danger'><a class='close' data-dismiss='alert' href='#'>×</a>" + msg + "</div>");
             }
         }
 
         function registerSuccess(msg) {
             $("#register .modal-body div.alert").remove()
+            $('#register').modal('hide')
+
             if (msg != "") {
-                $("#register .modal-body p").after("<div class='alert alert-success'><a class='close' data-dismiss='alert' href='#'>×</a>" + msg + "</div>");
+                $('form').prepend("<div class='alert alert-success'><a class='close' data-dismiss='alert' href='#'>×</a>" + msg + "</div>");
             }
         }
     </script>
