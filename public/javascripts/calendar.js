@@ -313,6 +313,41 @@ function findConflicts() {
 
 function listProposals() {
 
+  d3.json(jsRoutes.controllers.Proposals.list().url, function(error, data) {
+
+    if(!error && data.proposals.length > 0) {
+
+      var proposals = d3.select("#proposals ul").selectAll("li").data(data.proposals);
+
+      var listItem = proposals.enter()
+        .append("li")
+        .attr("class", "proposal list-group-item")
+
+      listItem
+        .append("h3")
+        .text(function(proposal) { return proposal.proposal.title; })
+
+      /* listItem
+        .append("ul")
+        .each(function(proposal) {
+          d3.select(this).selectAll("li").data(proposal.participants).enter()
+            .append("li")
+            .text(function(participant) { return participant.name; });
+        }); */
+
+      listItem
+        .append("span")
+        .text(function(proposal) { return $.map(proposal.participants, function(par) { return par.name; }).join(", "); });
+    }
+    else {
+      d3.selectAll("#proposals li").remove;
+      d3.select("#proposals").append("p").text("No proposals found!");
+    }
+  });
+}
+
+/*function listProposals() {
+
   function generatePopover(prop) {
 
     return _.template(
@@ -357,7 +392,7 @@ function listProposals() {
       d3.select("#proposals").append("p").text("No proposals found!");
     }
   });
-}
+}*/
 
 function proposalSelectTimes(){
   $('#proposalModal').modal('hide');  
