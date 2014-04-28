@@ -210,7 +210,7 @@ function filterEventsByTagIds(tagIds) {
   });
 
   var eventsBelongingToNoTag = $('[tagIds]').filter(function(index, el) {
-    var isFiltered = !listContainsAny($(el).attr('tagIds').split(","), tagIds);
+    var isFiltered = !listContainsAny($.data(el, "tagIds"), tagIds);
     // un-comment for test purposes: 
     // console.log($(el).attr('tagIds').split(",") + ": " + isFiltered);
     return isFiltered;
