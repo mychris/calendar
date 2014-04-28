@@ -40,6 +40,6 @@ trait AbstractProposalTimeVote {
   def vote           : Vote
 }
 
-case class Proposal(id: Int, title: String, creatorId: Int) extends AbstractProposal
+case class Proposal(id: Int, title: String, color:Color, creatorId: Int) extends AbstractProposal
 case class ProposalTime(id: Int, start: DateTime, end: DateTime, proposalId: Int) extends AbstractProposalTime
 case class ProposalTimeVote(proposalTimeId: Int, userId: Int, vote: Vote) extends AbstractProposalTimeVote

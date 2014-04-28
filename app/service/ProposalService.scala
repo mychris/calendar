@@ -53,15 +53,15 @@ class ProposalService(db: Database)
    */
 
   def addProposal(msg: AddProposal) = db.withSession { implicit session =>
-    sender ! ProposalAdded((proposals returning proposals.map(_.id)) += Proposal(-1, msg.title, msg.userId))
+    sender ! ProposalAdded((proposals returning proposals.map(_.id)) += Proposal(-1, msg.title, msg.color, msg.creatorId))
   }
 
   def addProposalWithTimes(msg: AddProposalWithTimes) = db.withTransaction { implicit session =>
-    val proposalId = (proposals returning proposals.map(_.id)) += Proposal(-1, msg.title, msg.userId)
-    msg.times.foreach({ time =>
+    val proposalId = (proposals returning proposals.map(_.id)) += Proposal(-1, msg.title, msg.color, msg.creatorId)
+    msg.times.foreach { time =>
       val timeId = (proposalTimes returning proposalTimes.map(_.id)) += ProposalTime(-1, time._1, time._2, proposalId)
       proposalTimeVotes ++= msg.participants.map(ProposalTimeVote(timeId, _, Vote.NotVoted))
-    })
+    }
     sender ! ProposalAdded(proposalId)
   }
 
@@ -76,12 +76,13 @@ class ProposalService(db: Database)
     proposalTimeVotes
       .filter(_.proposalTimeId === msg.proposalTimeId)
       .filter(_.userId === msg.userId)
-      .map(v => (v.vote))
+      .map(v => v.vote)
       .update((msg.vote))
     sender ! ProposalTimeVoteAdded
   }
 
   def getProposalsForUser(msg: GetProposalsForUser) = db.withSession { implicit session =>
+
     sender ! ProposalsForUser(
       proposalsForUserWithCreatorAndParticipant(msg.userId)
         .buildColl[Seq]

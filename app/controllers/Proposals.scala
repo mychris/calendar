@@ -1,22 +1,27 @@
 package controllers
 
-import play.api.mvc._
-
 import akka.pattern.ask
-import scala.concurrent._
 
-import hirondelle.date4j.DateTime
+import datasource.calendar._
+import datasource.proposal._
 
 import formatters._
 
+import java.util.TimeZone
+
+import scala.concurrent.{util => _, _}
+
+import hirondelle.date4j.DateTime
+
+import play.api.mvc._
+
 import service._
 import service.protocol._
-import datasource.proposal._
-import java.util.TimeZone
-import datasource.calendar.{Appointment, Tag}
 
-case class AddProposalRequestBody(title: String)
-case class AddProposalWithTimesRequestBody(title: String, participants: Seq[Int], times: Seq[AddProposalTimeWithoutParticipantsRequestBody])
+import util.Color
+
+case class AddProposalRequestBody(title: String, color: Color)
+case class AddProposalWithTimesRequestBody(title: String, color: Color, participants: Seq[Int], times: Seq[AddProposalTimeWithoutParticipantsRequestBody])
 case class AddProposalTimeWithoutParticipantsRequestBody(start: DateTime, end: DateTime)
 case class AddProposalTimeRequestBody(start: DateTime, end: DateTime, participants: Seq[Int])
 case class AddProposalTimeVoteRequestBody(vote: Vote.Vote)
@@ -48,6 +53,7 @@ object Proposals
       toJsonResult {
         (Services.proposalService ? AddProposal(
           addProposal.title,
+          addProposal.color,
           request.user.id
         )).expecting[ProposalAdded]
       }
@@ -58,11 +64,15 @@ object Proposals
     readBody[AddProposalWithTimesRequestBody] { addProposal =>
       val requester = request.user.id
       val participants =
-        if (addProposal.participants.exists(_ == requester)) addProposal.participants
-        else                                                 requester +: addProposal.participants
+        if
+          (addProposal.participants.exists(_ == requester)) addProposal.participants
+        else
+          requester +: addProposal.participants
+
       toJsonResult {
         (Services.proposalService ? AddProposalWithTimes(
           addProposal.title,
+          addProposal.color,
           requester,
           participants,
           addProposal.times.map(p => (p.start, p.end))

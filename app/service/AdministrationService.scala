@@ -81,27 +81,27 @@ class AdministrationService(db: Database)
 
       // Insert sample data
 
-      val userIdtest = (users returning users.map(_.id)) += User(-1, "test", "test")
-      val userIdsimon = (users returning users.map(_.id)) += User(-1, "Simon", "test")
-      val userIdflorian = (users returning users.map(_.id)) += User(-1, "Florian", "test")
-      val userIdchristoph = (users returning users.map(_.id)) += User(-1, "Christoph", "test")
+      val test      = (users returning users.map(_.id)) += User(-1, "test", "test")
+      val simon     = (users returning users.map(_.id)) += User(-1, "Simon", "test")
+      val florian   = (users returning users.map(_.id)) += User(-1, "Florian", "test")
+      val christoph = (users returning users.map(_.id)) += User(-1, "Christoph", "test")
 
       val tagIds = (tags returning tags.map(_.id)) ++= Seq(
-        Tag(-1, "default", 0, Color.colors(6), userIdtest),
-        Tag(-1, "family" , 1, Color.colors(14), userIdtest),
-        Tag(-1, "work"   , 2, Color.colors(21), userIdtest),
+        Tag(-1, "default", 0, Color.colors(6), test),
+        Tag(-1, "family" , 1, Color.colors(14), test),
+        Tag(-1, "work"   , 2, Color.colors(21), test),
 
-        Tag(-1, "default", 0, Color.colors(6), userIdsimon),
-        Tag(-1, "family" , 1, Color.colors(14), userIdsimon),
-        Tag(-1, "work"   , 2, Color.colors(21), userIdsimon),
+        Tag(-1, "default", 0, Color.colors(6), simon),
+        Tag(-1, "family" , 1, Color.colors(14), simon),
+        Tag(-1, "work"   , 2, Color.colors(21), simon),
 
-        Tag(-1, "default", 0, Color.colors(6), userIdflorian),
-        Tag(-1, "family" , 1, Color.colors(14), userIdflorian),
-        Tag(-1, "work"   , 2, Color.colors(21), userIdflorian),
+        Tag(-1, "default", 0, Color.colors(6), florian),
+        Tag(-1, "family" , 1, Color.colors(14), florian),
+        Tag(-1, "work"   , 2, Color.colors(21), florian),
 
-        Tag(-1, "default", 0, Color.colors(6), userIdchristoph),
-        Tag(-1, "family" , 1, Color.colors(14), userIdchristoph),
-        Tag(-1, "work"   , 2, Color.colors(21), userIdchristoph)
+        Tag(-1, "default", 0, Color.colors(6), christoph),
+        Tag(-1, "family" , 1, Color.colors(14), christoph),
+        Tag(-1, "work"   , 2, Color.colors(21), christoph)
       )
 
       val defaultTagId = tagIds(0)
@@ -130,34 +130,34 @@ class AdministrationService(db: Database)
       )
 
       // add proposal with 3 times, test is the creator, other default user are participants.
-      val participants = Seq(userIdtest, userIdsimon, userIdflorian, userIdchristoph)
-      val proposalId = (proposals returning proposals.map(_.id)) += Proposal(-1, "Final presentation", userIdtest)
+      val participants = Seq(test, simon, florian, christoph)
+      val proposalId = (proposals returning proposals.map(_.id)) += Proposal(-1, "Final presentation", Color.colors(23), test)
 
       val proposalTime1 = (proposalTimes returning proposalTimes.map(_.id)) += ProposalTime(-1, new DateTime("2014-01-13 15:00"), new DateTime("2014-01-13 17:00"), proposalId)
       proposalTimeVotes ++= participants.map(ProposalTimeVote(proposalTime1, _, Vote.NotVoted))
       proposalTimeVotes
-        .filter(_.proposalTimeId === proposalTime1).filter(_.userId === userIdsimon)
+        .filter(_.proposalTimeId === proposalTime1).filter(_.userId === simon)
         .map(v => (v.vote)).update((Vote.Accepted))
       proposalTimeVotes
-        .filter(_.proposalTimeId === proposalTime1).filter(_.userId === userIdtest)
+        .filter(_.proposalTimeId === proposalTime1).filter(_.userId === test)
         .map(v => (v.vote)).update((Vote.Accepted))
 
       val proposalTime2 = (proposalTimes returning proposalTimes.map(_.id)) += ProposalTime(-1, new DateTime("2014-01-14 15:00"), new DateTime("2014-01-14 17:00"), proposalId)
       proposalTimeVotes ++= participants.map(ProposalTimeVote(proposalTime2, _, Vote.NotVoted))
       proposalTimeVotes
-        .filter(_.proposalTimeId === proposalTime2).filter(_.userId === userIdflorian)
+        .filter(_.proposalTimeId === proposalTime2).filter(_.userId === florian)
         .map(v => (v.vote)).update((Vote.Refused))
       proposalTimeVotes
-        .filter(_.proposalTimeId === proposalTime2).filter(_.userId === userIdtest)
+        .filter(_.proposalTimeId === proposalTime2).filter(_.userId === test)
         .map(v => (v.vote)).update((Vote.Accepted))
 
       val proposalTime3 = (proposalTimes returning proposalTimes.map(_.id)) += ProposalTime(-1, new DateTime("2014-01-15 15:00"), new DateTime("2014-01-15 17:00"), proposalId)
       proposalTimeVotes ++= participants.map(ProposalTimeVote(proposalTime3, _, Vote.NotVoted))
       proposalTimeVotes
-        .filter(_.proposalTimeId === proposalTime3).filter(_.userId === userIdchristoph)
+        .filter(_.proposalTimeId === proposalTime3).filter(_.userId === christoph)
         .map(v => (v.vote)).update((Vote.Uncertain))
       proposalTimeVotes
-        .filter(_.proposalTimeId === proposalTime3).filter(_.userId === userIdtest)
+        .filter(_.proposalTimeId === proposalTime3).filter(_.userId === test)
         .map(v => (v.vote)).update((Vote.Accepted))
     }
 

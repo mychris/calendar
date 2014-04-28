@@ -13,6 +13,8 @@ import util.CustomColumnTypes._
 
 import Vote.Vote
 
+import util._
+
 /**
   *
   * @author Christoph Goettschkes
@@ -60,6 +62,7 @@ trait ProposalDataAccessComponent {
 
       def id        : Column[Int]
       def title     : Column[String]
+      def color     : Column[Color]
       def creatorId : Column[Int]
 
       def creator: Query[UserTable, User]
@@ -173,16 +176,17 @@ trait ProposalDataAccessComponentImpl extends ProposalDataAccessComponent {
 
       def id        = column[Int   ]("id",         O.PrimaryKey, O.AutoInc)
       def title     = column[String]("title",      O.NotNull)
+      def color     = column[Color ]("color",      O.NotNull)
       def creatorId = column[Int   ]("creator_id", O.NotNull)
 
       def creator = foreignKey("creator_fk", creatorId, users)(_.id, onDelete = ForeignKeyAction.Cascade)
 
-      def * = (id, title, creatorId) <> (Proposal.tupled, Proposal.unapply)
+      def * = (id, title, color, creatorId) <> (Proposal.tupled, Proposal.unapply)
     }
 
     class ProposalTimeTableImpl(tag: scala.slick.lifted.Tag) extends Table[ProposalTime](tag, "proposal_time") with AbstractProposalTimeTable {
 
-      def id         = column[Int     ]("id"         , O.PrimaryKey , O.AutoInc)
+      def id         = column[Int     ]("id"         , O.PrimaryKey, O.AutoInc)
       def start      = column[DateTime]("start"      , O.NotNull)
       def end        = column[DateTime]("end"        , O.NotNull)
       def proposalId = column[Int     ]("proposal_id", O.NotNull)

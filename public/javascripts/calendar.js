@@ -322,6 +322,7 @@ function listProposals() {
       var listItem = proposals.enter()
         .append("li")
         .attr("class", "proposal list-group-item")
+        .style("background-color", function(proposal) { return proposal.proposal.color; });
 
       listItem
         .append("h3")
@@ -329,11 +330,12 @@ function listProposals() {
 
       listItem
         .append("span")
+        .attr("class", "participants")
         .text(function(proposal) { return $.map(proposal.participants, function(par) { return par.name; }).join(", "); });
     }
     else {
       d3.selectAll("#proposals li").remove;
-      d3.select("#proposals").append("p").text("No proposals found!");
+      d3.select("#proposals ul").append("li").text("No proposals found!");
     }
   });
 }
