@@ -126,7 +126,22 @@ class AdministrationService(db: Database)
         addAppointment("Tim soccer"       , new DateTime("2014-01-23 15:00:00"), new DateTime("2014-01-23 17:00:00"), Seq(defaultTagId, familyTagId)),
         addAppointment("Release RC1A"     , new DateTime("2014-01-23 09:00:00"), new DateTime("2014-01-23 18:00:00"), Seq(defaultTagId, workTagId)),
         // tag work
-        addAppointment("Milestone Meeting", new DateTime("2014-01-08 10:00:00"), new DateTime("2014-01-08 12:00:00"), Seq(defaultTagId, workTagId))
+        addAppointment("Milestone Meeting", new DateTime("2014-01-08 10:00:00"), new DateTime("2014-01-08 12:00:00"), Seq(defaultTagId, workTagId)),
+
+        // Create 3 appointments for Simon
+        addAppointment("Simon appointment #1", new DateTime("2014-01-06 10:00:00"), new DateTime("2014-01-06 15:00:00"), Seq(tagIds(3))),
+        addAppointment("Simon appointment #2", new DateTime("2014-01-07 10:00:00"), new DateTime("2014-01-07 15:00:00"), Seq(tagIds(3))),
+        addAppointment("Simon appointment #3", new DateTime("2014-01-10 13:00:00"), new DateTime("2014-01-10 14:00:00"), Seq(tagIds(3))),
+
+        // Create 3 appointments for Florian
+        addAppointment("Florian appointment #1", new DateTime("2014-01-13 10:00:00"), new DateTime("2014-01-13 15:00:00"), Seq(tagIds(6))),
+        addAppointment("Florian appointment #2", new DateTime("2014-01-14 10:00:00"), new DateTime("2014-01-14 15:00:00"), Seq(tagIds(6))),
+        addAppointment("Florian appointment #3", new DateTime("2014-01-17 13:00:00"), new DateTime("2014-01-17 14:00:00"), Seq(tagIds(6))),
+
+        // Create 3 appointments for Christoph
+        addAppointment("Christoph appointment #1", new DateTime("2014-01-20 10:00:00"), new DateTime("2014-01-20 15:00:00"), Seq(tagIds(9))),
+        addAppointment("Christoph appointment #2", new DateTime("2014-01-21 10:00:00"), new DateTime("2014-01-21 15:00:00"), Seq(tagIds(9))),
+        addAppointment("Christoph appointment #3", new DateTime("2014-01-24 13:00:00"), new DateTime("2014-01-24 14:00:00"), Seq(tagIds(9)))
       )
 
       // add proposal with 3 times, test is the creator, other default user are participants.
