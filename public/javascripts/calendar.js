@@ -293,6 +293,7 @@ function findConflicts() {
 }
 
 function listProposals() {
+  d3.select("#proposals ul").selectAll("li").data([]).exit().remove();
 
   d3.json(jsRoutes.controllers.Proposals.list().url, function(error, data) {
 
@@ -315,7 +316,6 @@ function listProposals() {
         .text(function(proposal) { return $.map(proposal.participants, function(par) { return par.name; }).join(", "); });
     }
     else {
-      d3.select("#proposals ul").selectAll("li").data([]).exit().remove();
       d3.select("#proposals ul").append("li").text("No proposals found!");
     }
   });
