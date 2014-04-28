@@ -327,14 +327,6 @@ function listProposals() {
         .append("h3")
         .text(function(proposal) { return proposal.proposal.title; })
 
-      /* listItem
-        .append("ul")
-        .each(function(proposal) {
-          d3.select(this).selectAll("li").data(proposal.participants).enter()
-            .append("li")
-            .text(function(participant) { return participant.name; });
-        }); */
-
       listItem
         .append("span")
         .text(function(proposal) { return $.map(proposal.participants, function(par) { return par.name; }).join(", "); });
@@ -345,54 +337,6 @@ function listProposals() {
     }
   });
 }
-
-/*function listProposals() {
-
-  function generatePopover(prop) {
-
-    return _.template(
-      "<div>" + 
-      "  <h3>Participants</h3>" +
-      "  <ul>" +
-      "    <% _.map(proposal.participants, function(par) { %><li><%= par.name %></li><% }); %>" +
-      "  </ul>" +
-      "  <h3>Creator</h3>" +
-      "  <p><%= proposal.creator.name %></p>" +
-      "</div>"
-      , { proposal : prop}
-    );
-  }
-  
-  d3.json(jsRoutes.controllers.Proposals.list().url, function(error, data) {
-
-    if(!error && data.proposals.length > 0) {
-
-      var proposals = d3.select("#proposals ul").selectAll("li").data(data.proposals);
-
-      // Enter
-      proposals.enter()
-        .append("li")
-        .append("a")
-        .attr("class", "proposal btn btn-xs btn-default")
-        .text(function(proposal) { return proposal.proposal.title; })
-        .attr("data-container", "body")
-        .attr("data-toggle", "popover")
-        .attr("data-placement", "right")
-        .each(function(proposal) {
-          $(this).popover({
-            trigger : "hover",
-            html    : true,
-            content : function() { return generatePopover(proposal); }
-          });
-        });
-
-    }
-    else {
-      d3.selectAll("#proposals li").remove;
-      d3.select("#proposals").append("p").text("No proposals found!");
-    }
-  });
-}*/
 
 function proposalSelectTimes(){
   $('#proposalModal').modal('hide');  

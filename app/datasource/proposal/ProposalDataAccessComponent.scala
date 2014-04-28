@@ -1,4 +1,4 @@
-package datasource.appointmentproposal
+package datasource.proposal
 
 import datasource.user._
 import datasource.calendar._
@@ -17,7 +17,7 @@ import Vote.Vote
   *
   * @author Christoph Goettschkes
   */
-trait AppointmentProposalDataAccessComponent {
+trait ProposalDataAccessComponent {
   
   self: UserDataAccessComponent =>
 
@@ -26,7 +26,7 @@ trait AppointmentProposalDataAccessComponent {
 
   import userDataAccess._
 
-  trait AppointmentProposalDataAccessModule {
+  trait ProposalDataAccessModule {
 
     /*
      * Types
@@ -50,7 +50,7 @@ trait AppointmentProposalDataAccessComponent {
     /*
      * Mapping from Vote to Int and Int to Vote.
      */
-    implicit val eliminationPathwayTypeMapper = MappedColumnType.base[Vote, Int](_.id, Vote(_))
+    implicit val voteTypeMapper = MappedColumnType.base[Vote, Int](_.id, Vote(_))
 
     /*
      * Database tables
@@ -138,23 +138,23 @@ trait AppointmentProposalDataAccessComponent {
   *
   * @author Christoph Goettschkes
   */
-trait AppointmentProposalDataAccessComponentImpl extends AppointmentProposalDataAccessComponent {
+trait ProposalDataAccessComponentImpl extends ProposalDataAccessComponent {
   
   self: UserDataAccessComponent =>
 
   import userDataAccess._
 
-  trait AppointmentProposalDataAccessModuleImpl extends AppointmentProposalDataAccessModule {
+  trait ProposalDataAccessModuleImpl extends ProposalDataAccessModule {
 
     /*
      * Types
      */
 
-    type Proposal              = datasource.appointmentproposal.Proposal
+    type Proposal              = datasource.proposal.Proposal
     type ProposalTable         = ProposalTableImpl
-    type ProposalTime          = datasource.appointmentproposal.ProposalTime
+    type ProposalTime          = datasource.proposal.ProposalTime
     type ProposalTimeTable     = ProposalTimeTableImpl
-    type ProposalTimeVote      = datasource.appointmentproposal.ProposalTimeVote
+    type ProposalTimeVote      = datasource.proposal.ProposalTimeVote
     type ProposalTimeVoteTable = ProposalTimeVoteTableImpl
 
     /*

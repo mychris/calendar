@@ -4,7 +4,7 @@ import akka.actor._
 
 import datasource.user._
 import datasource.calendar._
-import datasource.appointmentproposal._
+import datasource.proposal._
 
 import hirondelle.date4j.DateTime
 

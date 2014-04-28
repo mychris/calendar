@@ -133,7 +133,7 @@
   font-size      : 14px;
   border         : none;
   padding-bottom : 0;
-  margin-bottom  : 3px; 
+  margin-bottom  : 3px;
 }
 
 .selectize-dropdown-content div[data-selectable].option.active {

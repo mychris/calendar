@@ -4,7 +4,7 @@ import akka.actor._
 
 import datasource.user._
 import datasource.calendar._
-import datasource.appointmentproposal._
+import datasource.proposal._
 
 import hirondelle.date4j.DateTime
 
@@ -33,7 +33,7 @@ class ProposalService(db: Database)
           ActorLogging with
           UserDataAccessComponentImpl with
           CalendarDataAccessComponentImpl with
-          AppointmentProposalDataAccessComponentImpl with
+          ProposalDataAccessComponentImpl with
           ExceptionHandling {
 
   /** */
@@ -42,10 +42,10 @@ class ProposalService(db: Database)
   /** */
   protected object calendarDataAccess extends CalendarDataAccessModuleImpl
 
-  protected object appointmentProposalDataAccess extends AppointmentProposalDataAccessModuleImpl
+  protected object proposalDataAccess extends ProposalDataAccessModuleImpl
 
   import calendarDataAccess._
-  import appointmentProposalDataAccess._
+  import proposalDataAccess._
   import userDataAccess._
 
   /*

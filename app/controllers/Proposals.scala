@@ -11,7 +11,7 @@ import formatters._
 
 import service._
 import service.protocol._
-import datasource.appointmentproposal._
+import datasource.proposal._
 import java.util.TimeZone
 import datasource.calendar.{Appointment, Tag}
 

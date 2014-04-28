@@ -2,8 +2,8 @@ package service.protocol
 
 import datasource.user._
 import datasource.calendar._
-import datasource.appointmentproposal._
-import datasource.appointmentproposal.Vote.Vote
+import datasource.proposal._
+import datasource.proposal.Vote.Vote
 
 import hirondelle.date4j.DateTime
 

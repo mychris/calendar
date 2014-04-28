@@ -102,5 +102,5 @@ Aufgaben:
 
 
 Notes
-  1. The tables of the AppointmentProposalDataAccessService are not created at the moment. Support will be added as soon as the component's implementation is finished.
+  1. The tables of the ProposalDataAccessService are not created at the moment. Support will be added as soon as the component's implementation is finished.
   2. There seems to be a bug in slick regarding compound primary keys. Therefore the compound keys are commented out in CalendarDataAccessService.

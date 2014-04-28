@@ -2,7 +2,7 @@ package service
 
 import akka.actor._
 
-import datasource.appointmentproposal._
+import datasource.proposal._
 import datasource.calendar._
 import datasource.user._
 
@@ -32,16 +32,16 @@ class AdministrationService(db: Database)
           ActorLogging with
           UserDataAccessComponentImpl with
           CalendarDataAccessComponentImpl with
-          AppointmentProposalDataAccessComponentImpl with
+          ProposalDataAccessComponentImpl with
           ExceptionHandling {
 
   protected object userDataAccess extends UserDataAccessModuleImpl
   protected object calendarDataAccess extends CalendarDataAccessModuleImpl
-  protected object appointmentProposalDataAccess extends AppointmentProposalDataAccessModuleImpl
+  protected object proposalDataAccess extends ProposalDataAccessModuleImpl
 
   import userDataAccess._
   import calendarDataAccess._
-  import appointmentProposalDataAccess._
+  import proposalDataAccess._
 
   def addAppointment(title: String, start: DateTime, end: DateTime, tagIds: Seq[Int])(implicit session: Session) = {
     val appointmentId = (appointments returning appointments.map(_.id)) += Appointment(-1, title, start, end)

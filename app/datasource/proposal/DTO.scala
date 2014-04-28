@@ -1,8 +1,10 @@
-package datasource.appointmentproposal
+package datasource.proposal
 
 import scala.slick.driver.PostgresDriver.simple.{Tag => _, _}
 
 import hirondelle.date4j.DateTime
+
+import util._
 
 object Vote extends Enumeration {
 
