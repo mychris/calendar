@@ -12,8 +12,8 @@ function updateEvent(eventData, revertFunc) {
       },
       data: JSON.stringify({
         'title': eventData.title,
-        'start': eventData.start.utc().valueOf(),
-        'end': eventData.end.utc().valueOf(),
+        'start': eventData.start.valueOf(),
+        'end': eventData.end.valueOf(),
         'tagIds': eventData.tagIds
       }),
       success: function(data) {
@@ -71,7 +71,7 @@ function createEvent(eventData, callback) {
   });
 }
 
-function createEventPopover(selectedElement, startLong, endLong) {
+function createEventPopover(selectedElement, start, end) {
   getTags()
     .done(function(res) {
       $(selectedElement).popover({
@@ -113,11 +113,11 @@ function createEventPopover(selectedElement, startLong, endLong) {
             + "<div class='form-group'>"
             + "<label class='col-sm-3 control-label'>From</label>"
             + "<div class='col-sm-9'>"
-              + "<p class='form-control-static' id='newEventStart' date='" + startLong + "'>" + moment.utc(moment(startLong)).format("dd, MMM DD, HH:mm") + "</p>"
+              + "<p class='form-control-static' id='newEventStart' date='" + start + "'>" + moment(start).format("dd, MMM DD, HH:mm") + "</p>"
             + "</div>"
             + "<label class='col-sm-3 control-label'>To</label>"
             + "<div class='col-sm-9'>"
-              + "<p class='form-control-static' id='newEventEnd' date='" + endLong + "'>" + moment.utc(moment(endLong)).format("dd, MMM DD, HH:mm") + "</p>"
+              + "<p class='form-control-static' id='newEventEnd' date='" + end + "'>" + moment(end).format("dd, MMM DD, HH:mm") + "</p>"
             + "</div>"
             + "</div>"
 
@@ -166,10 +166,10 @@ function createEventPopover(selectedElement, startLong, endLong) {
         }).get();
 
         var eventData = {
-          title: newEventTitle.val(),
-          start: startLong,
-          end: endLong,
-          tagIds: checkedTags
+          'title'  : newEventTitle.val(),
+          'start'  : start,
+          'end'    : end,
+          'tagIds' : checkedTags
         }
         createEvent(eventData, function() {
           $(selectedElement).popover('destroy');
@@ -240,8 +240,8 @@ function findFreeTimeSlots() {
 
   var userIds   = $('#inputUsers').selectize()[0].selectize.items
   var duration  = (moment($('.durationpicker').data("DateTimePicker").getDate(), "HH:mm").hours() * 60 + moment($('.durationpicker').data("DateTimePicker").getDate(), "HH:mm").minutes()) * 60 * 1000  // hours and minutes in millis as Long
-  var from      = moment($('.datetimepicker1').data("DateTimePicker").getDate()).utc().valueOf()
-  var to        = moment($('.datetimepicker2').data("DateTimePicker").getDate()).utc().valueOf()
+  var from      = moment($('.datetimepicker1').data("DateTimePicker").getDate()).valueOf()
+  var to        = moment($('.datetimepicker2').data("DateTimePicker").getDate()).valueOf()
   var startTime = (moment($('.timepicker1').data("DateTimePicker").getDate(), "h:mm A").hours() * 60 + moment($('.timepicker1').data("DateTimePicker").getDate(), "h:mm A").minutes()) * 60 * 1000  // hours and minutes in millis as Long
   var endTime   = (moment($('.timepicker2').data("DateTimePicker").getDate(), "h:mm A").hours() * 60 + moment($('.timepicker2').data("DateTimePicker").getDate(), "h:mm A").minutes()) * 60 * 1000  // hours and minutes in millis as Long
 
@@ -332,6 +332,16 @@ function proposalSelectTimes(){
 
     var timeSlots = data.slots;
 
+    for (var i = 0; i < timeSlots.length; i++) {
+      eventData = {
+        'title'           : proposalName,
+        'start'           : timeSlots[i].start,
+        'end'             : timeSlots[i].end,
+        'eventBackgroundColor' : "#DDDDDD",
+        'editable'        : true
+      }
+      $('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
+    }
   })
   .fail(function(xhr) {
       console.log("Unable to show free time slots:");

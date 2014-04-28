@@ -43,12 +43,12 @@
           right: 'month,agendaWeek,agendaDay'
         },
         defaultDate: '2014-01-12',
-        timezone: 'UTC',
+        timezone: 'local',
         selectable: true,
         selectHelper: true,
         select: function(start, end, jsEvent, view) { // Reaction to the "select/click" event on the calendar (create new event)
           lastSelected = jsEvent.target;
-          createEventPopover(jsEvent.target, start.utc().valueOf(), end.utc().valueOf());
+          createEventPopover(jsEvent.target, start.valueOf(), end.valueOf());
         },
         unselect: function( view, jsEvent ) {
         },
@@ -72,8 +72,8 @@
                 events.push({
                   'id'     : appointmentsWithTags[i].appointment.id,
                   'title'  : appointmentsWithTags[i].appointment.title + " [tags: " + $.map(appointmentsWithTags[i].tags, function(val) { return val.name; })+"]",
-                  'start'  : appointmentsWithTags[i].appointment.start,
-                  'end'    : appointmentsWithTags[i].appointment.end,
+                  'start'  : moment(appointmentsWithTags[i].appointment.start),
+                  'end'    : moment(appointmentsWithTags[i].appointment.end),
                   'color'  : highestPriorityTag.color,
                   'tagIds' : $.map(appointmentsWithTags[i].tags, function(v) { return v.id; })
                 })
