@@ -523,6 +523,7 @@ function finishProposalVote(proposalId, proposalTimeId) {
     success: function(data) {
       $('#calendar').fullCalendar('refetchEvents');
       listProposals();
+      findConflicts();
     }
   });
   $("#finishProposalModal").modal('hide');
