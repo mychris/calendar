@@ -6,6 +6,8 @@ import datasource.user._
 import datasource.calendar._
 import datasource.proposal._
 
+import formatters._
+
 import hirondelle.date4j.DateTime
 
 import scala.slick.driver.PostgresDriver.simple.{Tag =>_, _}
@@ -14,6 +16,7 @@ import service.protocol._
 
 import util._
 import util.CustomColumnTypes._
+import util.JsonConversion._
 
 /**
  *
@@ -77,6 +80,7 @@ class CalendarService(db: Database)
 
   def addAppointment(msg: AddAppointment) =
     sender ! AppointmentAdded(db.withTransaction { implicit session =>
+      log.debug(s"Received request for adding appointment with ${msg.toJson}")
       val appointmentId = (appointments returning appointments.map(_.id)) += Appointment(-1, msg.title, msg.start, msg.end)
       appointmentBelongsToTag ++= msg.tagIds.map((appointmentId, _))
       appointmentId

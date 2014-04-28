@@ -79,6 +79,9 @@ package object formatters {
   implicit val appointmentFormat         = Json.format[Appointment]
   implicit val appointmentWithTagsFormat = Json.format[AppointmentWithTags]
 
+  /* Requests */
+  implicit val addAppointmentFormat = Json.format[AddAppointment]
+
   /* Responses */
   // Appointment
   implicit val appointmentByIdFormat             = Json.format[AppointmentById]
