@@ -30,10 +30,13 @@ package object formatters {
    * Base types
    */
   implicit object dateTimeFormat extends Format[DateTime] {
-    def writes(o: DateTime): JsValue = o.toString.toJson  // sending time as String
+
+    val timeZone = TimeZone.getTimeZone("UTC")
+
+    def writes(o: DateTime): JsValue = o.getMilliseconds(timeZone).toJson  // sending time as String
 
     def reads(json: JsValue): JsResult[DateTime] = json match { // receiving time as Long
-      case JsNumber(ms) => JsSuccess(DateTime.forInstant(ms.toLong, TimeZone.getTimeZone("UTC"))) // Frontend sends millis, not nanos!
+      case JsNumber(ms) => JsSuccess(DateTime.forInstant(ms.toLong, timeZone)) // Frontend sends millis, not nanos!
       case _            => JsError(Seq(JsPath() -> Seq(ValidationError("error.expected.jsnumber"))))
     }
   }

@@ -40,9 +40,9 @@ function createEvent(eventData, callback) {
       "Content-Type": "application/json; charset=utf-8"
     },
     data: JSON.stringify({
-      'title': eventData.title,
-      'start': eventData.start.valueOf(), // Long
-      'end': eventData.end.valueOf(), // Long
+      'title' : eventData.title,
+      'start' : eventData.start.valueOf(), // Long
+      'end'   : eventData.end.valueOf(), // Long
       'tagIds': eventData.tagIds // TODO: Specify Tag from List
     }),
     error: function(err) {
@@ -56,8 +56,8 @@ function createEvent(eventData, callback) {
       var newEventData = {
         'id': appointmentWithTags.appointment.id,
         'title': appointmentWithTags.appointment.title,
-        'start': appointmentWithTags.appointment.start,
-        'end': appointmentWithTags.appointment.end,
+        'start': moment(appointmentWithTags.appointment.start),
+        'end': moment(appointmentWithTags.appointment.end),
         'color': highestPriorityTag.color,
         'tagIds': $.map(appointmentWithTags.tags, function(v) {
           return v.id;
