@@ -335,8 +335,8 @@ function proposalSelectTimes(){
     for (var i = 0; i < timeSlots.length; i++) {
       eventData = {
         'title'           : proposalName,
-        'start'           : timeSlots[i].start,
-        'end'             : timeSlots[i].end,
+        'start'           : moment(timeSlots[i].start),
+        'end'             : moment(timeSlots[i].end),
         'eventBackgroundColor' : "#DDDDDD",
         'editable'        : true
       }
