@@ -10,6 +10,9 @@ object Binders {
 
   val timeZone = TimeZone.getTimeZone("UTC")
 
+  implicit def stringToSeqInt(listString: String): Seq[Int] =
+    listString.split(",").toSeq.map(_.trim.toInt)
+
   implicit object bindableDateTime extends Parsing[DateTime](
     str => DateTime.forInstant(str.toLong, timeZone),
     _.getMilliseconds(timeZone).toString,

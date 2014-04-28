@@ -46,7 +46,6 @@ class FreeTimeSlotService(db: Database)
 
   def receive = {
     case FindFreeTimeSlots(duration, from, to, startTime, endTime, userIds) =>
-
       val appointments = db.withSession { implicit session =>
         appointmentsFromUsers(userIds, from, to)
           .buildColl[Seq]

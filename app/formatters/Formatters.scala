@@ -189,6 +189,4 @@ package object formatters {
   implicit val addProposalWithTimesRequestBodyFormat               = Json.format[AddProposalWithTimesRequestBody]
   implicit val finishVoteRequestBodyFormat                         = Json.format[FinishVoteRequestBody]
 
-  /* FreeTimeSlots */
-  implicit val findFreeTimeSlotsRequestBody         = Json.format[FindFreeTimeSlotsRequestBody]
 }

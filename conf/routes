@@ -39,7 +39,7 @@ POST            /proposal/:proposalId/time              controllers.Proposals.ad
 POST            /proposal/:proposalId/finish            controllers.Proposals.finishVote(proposalId: Int)
 POST            /proposal/:proposalId/vote/:timeId      controllers.Proposals.addVote(proposalId: Int, timeId: Int)
 DELETE          /proposal/:id                           controllers.Proposals.delete(id: Int)
-GET             /proposal/freetimeslots                 controllers.Proposals.findFreeTimeSlots(duration: Int, from: DateTime, to: DateTime, startTime: Option[DateTime], endTime: Option[DateTime])
+GET             /proposal/freetimeslots                 controllers.Proposals.findFreeTimeSlots(userIds: Seq[Int], duration: Int, from: DateTime, to: DateTime, startTime: Option[DateTime], endTime: Option[DateTime])
 
 # Database setup
 GET	            /admin                                  controllers.Application.admin

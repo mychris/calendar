@@ -26,7 +26,6 @@ case class AddProposalTimeWithoutParticipantsRequestBody(start: DateTime, end: D
 case class AddProposalTimeRequestBody(start: DateTime, end: DateTime, participants: Seq[Int])
 case class AddProposalTimeVoteRequestBody(vote: Vote.Vote)
 case class FinishVoteRequestBody(times: Seq[Int])
-case class FindFreeTimeSlotsRequestBody(userIds: Seq[Int])
 
 object Proposals
   extends Controller with
@@ -132,21 +131,19 @@ object Proposals
     }
   }
 
-  def findFreeTimeSlots(duration: Int, from: DateTime, to: DateTime, startTime: Option[DateTime], endTime: Option[DateTime]) = 
-    Authenticated.async(parse.json) { implicit request =>
-      readBody[FindFreeTimeSlotsRequestBody] { findFreeTimeSlots =>
-        toJsonResult {
-          (Services.freeTimeSlotService ?
-            FindFreeTimeSlots(
-              duration,
-              from,
-              to,
-              startTime,
-              endTime,
-              findFreeTimeSlots.userIds
-            )
-          ).expecting[FreeTimeSlots]
-        }
+  def findFreeTimeSlots(userIds: Seq[Int], duration: Int, from: DateTime, to: DateTime, startTime: Option[DateTime], endTime: Option[DateTime]) =
+    Authenticated.async { implicit request =>
+      toJsonResult {
+        (Services.freeTimeSlotService ?
+          FindFreeTimeSlots(
+            userIds,
+            duration,
+            from,
+            to,
+            startTime,
+            endTime
+          )
+        ).expecting[FreeTimeSlots]
       }
     }
 }
