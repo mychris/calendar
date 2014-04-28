@@ -239,11 +239,11 @@ function getTags() {
 function findFreeTimeSlots() {
 
   var userIds   = $('#inputUsers').selectize()[0].selectize.items
-  var duration  = (moment(proposalDuration, "HH:mm") .hours() * 60 + moment(proposalDuration, "HH:mm") .minutes()) * 60 * 1000  // hours and minutes in millis as Long
-  var from      = moment(proposalFrom)               .utc()                                            .valueOf()
-  var to        = moment(proposalTo)                 .utc()                                            .valueOf()
-  var startTime = (moment(proposalTimeFrom, "h:mm A").hours() * 60 + moment(proposalTimeFrom, "h:mm A").minutes()) * 60 * 1000  // hours and minutes in millis as Long
-  var endTime   = (moment(proposalTimeTo, "h:mm A")  .hours() * 60 + moment(proposalTimeTo, "h:mm A")  .minutes()) * 60 * 1000  // hours and minutes in millis as Long
+  var duration  = (moment($('.durationpicker').data("DateTimePicker").getDate(), "HH:mm").hours() * 60 + moment($('.durationpicker').data("DateTimePicker").getDate(), "HH:mm").minutes()) * 60 * 1000  // hours and minutes in millis as Long
+  var from      = moment($('.datetimepicker1').data("DateTimePicker").getDate()).utc().valueOf()
+  var to        = moment($('.datetimepicker2').data("DateTimePicker").getDate()).utc().valueOf()
+  var startTime = (moment($('.timepicker1').data("DateTimePicker").getDate(), "h:mm A").hours() * 60 + moment($('.timepicker1').data("DateTimePicker").getDate(), "h:mm A").minutes()) * 60 * 1000  // hours and minutes in millis as Long
+  var endTime   = (moment($('.timepicker2').data("DateTimePicker").getDate(), "h:mm A").hours() * 60 + moment($('.timepicker2').data("DateTimePicker").getDate(), "h:mm A")  .minutes()) * 60 * 1000  // hours and minutes in millis as Long
 
   return $.ajax({
     url: jsRoutes.controllers.Proposals.findFreeTimeSlots(userIds, duration, from, to, startTime, endTime).url,
@@ -327,6 +327,7 @@ function proposalSelectTimes(){
 
   findFreeTimeSlots()
   .done(function(data) {
+    var timeSlots = data.slots;
       console.log("got free time slots: ");
       console.log(data);
 
