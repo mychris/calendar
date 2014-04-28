@@ -14,6 +14,7 @@ import scala.concurrent.{util => _, _}
 import hirondelle.date4j.DateTime
 
 import play.api.mvc._
+import play.api.Logger
 
 import service._
 import service.protocol._
