@@ -197,22 +197,22 @@ function getHighestPriorityTag(tags) {
   return highestPriorityTag;
 }
 
-/* Shows only events belonging to any tag given in tagIds */
-function filterEventsByTagIds(tagIds) {
+/* Shows only events belonging to any tag given in ids */
+function filterEventsByIds(ids, attr) {
   function listContainsAny(list, filters) {
     return $.inArray(true, $.map(filters, function(val) {
       return $.inArray(val, list) > -1;
     })) > -1;
   }
 
-  $('[tagIds]').each(function(index) {
+  $("[" + attr + "]").each(function(index) {
     $(this).removeClass("hidden");
   });
 
-  var eventsBelongingToNoTag = $('[tagIds]').filter(function(index, el) {
-    var isFiltered = !listContainsAny($.data(el, "tagIds"), tagIds);
+  var eventsBelongingToNoTag = $("[" + attr + "]").filter(function(index, el) {
+    var isFiltered = !listContainsAny($(el).attr(attr).split(","), ids);
     // un-comment for test purposes: 
-    // console.log($(el).attr('tagIds').split(",") + ": " + isFiltered);
+    // console.log($(el).attr(attr).split(",") + ": " + isFiltered);
     return isFiltered;
   });
 
@@ -220,7 +220,6 @@ function filterEventsByTagIds(tagIds) {
     $(this).addClass("hidden");
   });
 }
-
 
 /** 
  * Returns a promise of tags
@@ -429,9 +428,9 @@ function listTags() {
         .on("click", function() {
           $(this).toggleClass("tag-filter-on");
           $(this).toggleClass("tag-filter-off");
-          filterEventsByTagIds($(".tag-filter-on").parent().map(function() {
+          filterEventsByIds($(".tag-filter-on").parent().map(function() {
             return $(this).attr("tagid");
-          }).get());
+          }).get(), "tagIds");
         })
 
 

@@ -86,7 +86,7 @@
           });
         },
         eventRender: function(event, element) {
-          $.data(element, "tagIds", event.tagIds)
+          element.attr("tagIds", event.tagIds);
         },
         loading: function(bool) {
           $('#loading').toggle(bool);
