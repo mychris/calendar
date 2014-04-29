@@ -80,6 +80,7 @@
 
 .tag {
   margin : 5px 0 5px 0;
+  white-space: nowrap;
 }
 
 .tag span {
@@ -152,6 +153,7 @@
 
 .proposal {
   padding   : 0px;
+  white-space: nowrap;
 }
 
 .proposal span.btn {
