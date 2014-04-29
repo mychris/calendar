@@ -152,8 +152,9 @@
 }
 
 .proposal {
-  padding   : 0 18px 0 0;
-  white-space: nowrap;
+  padding       : 0 18px 0 0;
+  white-space   : nowrap;
+  margin        : 5px 0;
 }
 
 .proposal span.btn {
