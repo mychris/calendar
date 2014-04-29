@@ -43,11 +43,11 @@
 
 #calendar {
   width  : 780px;
-  margin : 0px 30px;
+  margin : 0px 20px;
 }
 
 #left-sidebar {
-  width      : 150px;
+  width      : 170px;
   margin-top : 45px;
 }
 
@@ -80,6 +80,7 @@
 
 .tag {
   margin : 5px 0 5px 0;
+  padding   : 0 18px 0 0;
   white-space: nowrap;
 }
 
@@ -152,7 +153,7 @@
 }
 
 .proposal {
-  padding   : 0px;
+  padding   : 0 18px 0 0;
   white-space: nowrap;
 }
 

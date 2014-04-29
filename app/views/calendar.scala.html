@@ -107,7 +107,7 @@
             element.attr("tagIds", event.tagIds);
           }
           else if ( event.type == "proposal" ) {
-            element.attr("proposalIds", event.proposalIds);
+            element.attr("proposalId", event.id);
           }
           else if ( event.type == "freetimeslot" ) {
             element.addClass("freetimeslot")
@@ -266,7 +266,7 @@
 
   <section id="main">
     <section id="left-sidebar" class="sidebar">
-      <section id="tags" class="span4">
+      <section id="tags">
         <h3>Tags</h3>
         <ul></ul>
         <button name="add-tag" class="btn btn-xs btn-default" onclick="startAddTag()">
@@ -274,7 +274,7 @@
         </button>
         <div class="spacer"></div>
       </section>
-      <section id="proposals" class="span4">
+      <section id="proposals">
         <h3>Proposals</h3>
         <ul></ul>
         <button id="createProposal" class="btn btn-xs btn-default" onclick="setProposalModalDefaultValues(); $('#proposalModal').modal('show');" >
@@ -291,7 +291,7 @@
     <section id="calendar"></section>
 
     <section id="right-sidebar" class="sidebar">
-      <div id="conflicts" class="span4">
+      <div id="conflicts">
         <h3>Conflicts</h3>
         <ul></ul>
         <div class="spacer"></div>
