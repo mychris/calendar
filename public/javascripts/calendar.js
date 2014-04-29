@@ -436,7 +436,7 @@ function listProposals(successCallback) {
         successCallback();
 
     } else {
-      d3.selectAll("#proposals li").remove;
+      d3.selectAll("#proposals li").remove();
       d3.select("#proposals ul").append("li").text("No proposals found!");
     }
   });
