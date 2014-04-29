@@ -261,7 +261,7 @@ function findFreeTimeSlots() {
 function findConflicts() {
   d3.json(jsRoutes.controllers.Appointments.conflicts().url, function(error, data) {
     if (error) {
-      d3.select("#conflicts li").remove;
+      d3.select("#conflicts li").remove();
       d3.select("#conflicts").append("p").text("No conflicts found!");
       return;
     }
@@ -760,7 +760,7 @@ function listTags() {
       tags.exit().remove();
 
     } else {
-      d3.selectAll("#tags li").remove;
+      d3.selectAll("#tags li").remove();
       d3.select("#tags").append("p").text("No tags found!");
     }
   })
