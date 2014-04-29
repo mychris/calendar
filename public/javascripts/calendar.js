@@ -307,6 +307,14 @@ function listProposals() {
         .attr("proposalid", function(proposal) {
           return proposal.proposal.id;
         })
+        .on("mouseenter", function() {
+          if (!$("#proposals").data("editing") && !$(".menu ul", this).is(":visible"))
+            showMenu(this);
+        })
+        .on("mouseleave", function() {
+          if (!$(".menu ul", this).is(":visible"))
+            hideMenu(this);
+        })
 
       var listItemSpan = listItem
         .append("span")
@@ -545,7 +553,7 @@ function finishProposalVote(proposalId, proposalTimeId) {
 
 function listTags() {
   
-  function generateMenu(tag) {
+  function generateTagMenu(tag) {
     return $(
       "<div class='menu dropdown'>" +
       "  <a class='open-menu dropdown-toggle caret'" +
@@ -565,14 +573,14 @@ function listTags() {
     );
   }
 
-  function showMenu(container) {
-    $(container).append(generateMenu(container.__data__));
+  function showTagMenu(container) {
+    $(container).append(generateTagMenu(container.__data__));
     $(".menu", container).on("hidden.bs.dropdown", function() {
       hideMenu(container);
     });
   }
 
-  function hideMenu(container) {
+  function hideTagMenu(container) {
     d3.select(container).select(".menu").remove();
   }
 
@@ -591,11 +599,11 @@ function listTags() {
         })
         .on("mouseenter", function() {
           if (!$("#tags").data("editing") && !$(".menu ul", this).is(":visible"))
-            showMenu(this);
+            showTagMenu(this);
         })
         .on("mouseleave", function() {
           if (!$(".menu ul", this).is(":visible"))
-            hideMenu(this);
+            hideTagMenu(this);
         })
         .append("span")
         .attr("class", "name btn btn-xs tag-filter-on")
