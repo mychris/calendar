@@ -323,9 +323,6 @@ function listProposals() {
     d3.select(container).select(".menu").remove();
   }
 
-
-  d3.select("#proposals ul").selectAll("li").data([]).exit().remove();
-
   d3.json(jsRoutes.controllers.Proposals.list().url, function(error, data) {
 
     if(!error && data.proposals.length > 0) {
@@ -368,6 +365,8 @@ function listProposals() {
         .append("span")
         .attr("class", "participants")
         .text(function(proposal) { return $.map(proposal.participants, function(par) { return par.name; }).join(", "); });
+
+      proposals.exit().remove();
     }
     else {
       d3.select("#proposals ul").append("li").text("No proposals found!");
