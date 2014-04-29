@@ -397,7 +397,8 @@ function listProposals(successCallback) {
                   'color'                : clickedProposal.proposal.color,
                   'textColor'            : '#000000',
                   'editable'             : false,
-                  'type'                 : 'proposal'
+                  'type'                 : 'proposal',
+                  'timeId'               : proposalTimes[i].proposalTime.id
                 }
                 $('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
               }
@@ -675,7 +676,18 @@ function deleteProposal(proposalId) {
   });
 }
 
-function initVotingPopover(target, proposalId) {
+function voteForTimeSuggestion(proposalId, timeId, voteId){
+  $.postJson(jsRoutes.controllers.Proposals.addVote(proposalId, timeId).url, { vote : voteId } )
+    .done(function() {
+      console.log("vote " + voteId + " success!");
+    })
+    .fail(function(err) {
+      console.log("Unable to vote for proposal. proposalId: " + proposalId + ", timeId: " + timeId + ", voteId: " + voteId + ".");
+      console.log(err.responseText)
+    });
+}
+
+function initVotingPopover(proposalId, timeId) {
   $("div.fc-event[proposalid]").popover({
       container: 'body',
       placement: 'auto top',
@@ -687,20 +699,21 @@ function initVotingPopover(target, proposalId) {
         hide: 100
       },
       content     : function(){
+
         var content = ""
           + "<ul class='list-inline'>"
             + "<li>"
-              + "<a title='Accept' onclick='console.log(\"Accept!\")'>"
+              + "<a title='Accept' onclick='voteForTimeSuggestion(" + proposalId + ", " + timeId + ", \"Accepted\")'>"
                 + "<i class='glyphicon glyphicon-thumbs-up'></i>"
               + "</a>"
             + "</li>"
             + "<li>"
-              + "<a title='Refuse' onclick='console.log(\"Refuse!\")'>"
+              + "<a title='Refuse' onclick='voteForTimeSuggestion(" + proposalId + ", " + timeId + ", \"Refused\")'>"
                 + "<i class='glyphicon glyphicon-thumbs-down'></i>"
               + "</a>"
             + "</li>"
             + "<li>"
-              + "<a title='Uncertain' onclick='console.log(\"Uncertain!\")'>"
+              + "<a title='Uncertain' onclick='voteForTimeSuggestion(" + proposalId + ", " + timeId  +", \"Uncertain\")'>"
                 + "<i class='glyphicon glyphicon-question-sign'></i>"
               + "</a>"
             + "</li>"

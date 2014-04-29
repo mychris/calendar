@@ -108,14 +108,14 @@
           }
           else if ( event.type == "proposal" ) {
             element.attr("proposalId", event.id);
+            element.attr("timeId", event.timeId);
+            initVotingPopover(event.id, event.timeId);
           }
           else if ( event.type == "freetimeslot" ) {
             element.addClass("freetimeslot")
           }
         },
         eventAfterAllRender : function(view){
-          console.log("allrendered!");
-          initVotingPopover();
         },
         loading: function(bool) {
           $('#loading').toggle(bool);
