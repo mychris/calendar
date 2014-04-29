@@ -351,13 +351,14 @@ function listProposals() {
 
       var listItemSpan = listItem
         .append("span")
-        .attr("class", "btn proposal-filter-on")
+        .attr("class", "btn filter-off")
         .on("click", function() {
           $(this).toggleClass("proposal-filter-on");
           $(this).toggleClass("filter-off");
           filterEventsByIds($(".proposal-filter-on").parent().map(function() {
             return $(this).attr("proposalid");
           }).get(), "proposalIds");
+
         })
         .style("background-color", function(proposal) { return proposal.proposal.color; });
 

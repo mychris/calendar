@@ -32,12 +32,12 @@ GET	            /tag/colors                             controllers.Tags.colors
 
 # Proposal
 GET             /proposals                              controllers.Proposals.list
-GET             /proposal/proposaltimes                 controllers.Proposals.proposalTimesFromProposal(proposalId: Int)
+GET             /proposal/:id/times                     controllers.Proposals.proposalTimesFromProposal(id: Int)
 #POST            /proposal                               controllers.Proposals.add
 POST            /proposal                               controllers.Proposals.addWithTimes
-POST            /proposal/:proposalId/time              controllers.Proposals.addTime(proposalId: Int)
-POST            /proposal/:proposalId/finish            controllers.Proposals.finishVote(proposalId: Int)
-POST            /proposal/:proposalId/vote/:timeId      controllers.Proposals.addVote(proposalId: Int, timeId: Int)
+POST            /proposal/:id/time                      controllers.Proposals.addTime(id: Int)
+POST            /proposal/:id/finish                    controllers.Proposals.finishVote(id: Int)
+POST            /proposal/:id/vote/:timeId              controllers.Proposals.addVote(id: Int, timeId: Int)
 DELETE          /proposal/:id                           controllers.Proposals.delete(id: Int)
 GET             /proposal/freetimeslots                 controllers.Proposals.findFreeTimeSlots(userIds: List[Int], duration: Int, from: DateTime, to: DateTime, startTime: Option[DateTime], endTime: Option[DateTime])
 
