@@ -613,7 +613,7 @@ function listTags() {
   function showTagMenu(container) {
     $(container).append(generateTagMenu(container.__data__));
     $(".menu", container).on("hidden.bs.dropdown", function() {
-      hideMenu(container);
+      hideTagMenu(container);
     });
   }
 
