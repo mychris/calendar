@@ -140,17 +140,33 @@
 .finish-proposal-modal table .not-voted {
   //background-color: #F691B2;
 }
-
 .finish-proposal-modal table .accepted {
   background-color: #42D692;
 }
-
 .finish-proposal-modal table .refused {
   background-color: #FF4444;
 }
-
 .finish-proposal-modal table .uncertain {
   background-color: #F0AD4E;
+}
+
+
+i.glyphicon.accepted:before {
+  color: #252525;
+  content: "\e013"
+}
+i.glyphicon.refused:before {
+  color: #252525;
+  content: "\e014"
+}
+i.glyphicon.uncertain:before {
+  color: #252525;
+  content: "\e085"
+}
+
+.fc-event {
+  color: #252525;
+  font-size: .85em;
 }
 
 .proposal {
@@ -170,12 +186,12 @@
   border         : none;
   padding-bottom : 0;
   margin-bottom  : 3px;
-  color          : black;
+  color          : #252525;
 }
 
 .proposal .participants {
-  font-size : 12px;
-  color : white;
+  font-size : .85em;
+  color : #252525;
 }
 
 .selectize-dropdown-content div[data-selectable].option.active {

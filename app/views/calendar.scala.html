@@ -86,7 +86,7 @@
                 // console.log(JSON.stringify(highestPriorityTag));
                 events.push({
                   'id'     : appointmentsWithTags[i].appointment.id,
-                  'title'  : appointmentsWithTags[i].appointment.title + " [tags: " + $.map(appointmentsWithTags[i].tags, function(val) { return val.name; })+"]",
+                  'title'  : appointmentsWithTags[i].appointment.title,
                   'start'  : moment(appointmentsWithTags[i].appointment.start),
                   'end'    : moment(appointmentsWithTags[i].appointment.end),
                   'color'  : highestPriorityTag.color,
@@ -107,9 +107,10 @@
             element.attr("tagIds", event.tagIds);
           }
           else if ( event.type == "proposal" ) {
-            element.attr("proposalId", event.id);
+            element.attr("proposalId", event.proposalId);
             element.attr("timeId", event.timeId);
-            initVotingPopover(event.id, event.timeId);
+            element.find('.fc-event-title').html(event.title);
+            initVotingPopover(event, event.timeId);
           }
           else if ( event.type == "freetimeslot" ) {
             element.addClass("freetimeslot")
@@ -244,7 +245,7 @@
 @navigationBarElements = {
 
     <li>
-        <a href="#">Welcome, @userName!</a>
+        <a href="#">Welcome, <span id="username">@userName</span>!</a>
     </li>
     <li class="divider-vertical"></li>
     <li>

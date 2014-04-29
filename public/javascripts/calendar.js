@@ -43,7 +43,7 @@ function createEvent(eventData) {
       'title' : eventData.title,
       'start' : eventData.start.valueOf(), // Long
       'end'   : eventData.end.valueOf(), // Long
-      'tagIds': eventData.tagIds // TODO: Specify Tag from List
+      'tagIds': eventData.tagIds
     })
   });
 }
@@ -308,6 +308,20 @@ function fetchProposalTimes(proposalId){
   });
 }
 
+function getIconForVoteIdOrName(vote){
+    var content = "";
+    if ( (vote == 1) || (vote == "Accepted") ) {
+      content = "<i title='Accept' class='glyphicon accepted'></i>";
+    } else if ( (vote == 2) || (vote == "Refused") ) {
+      content = "<i title='Refuse' class='glyphicon refused'></i>";
+    } else if ( (vote == 3) || (vote == "Uncertain") ) {
+      content = "<i title='Uncertain' class='glyphicon uncertain'></i>";
+    } else {
+      content = "<i class='glyphicon glyphicon-minus'></i>"
+    }
+    return content;
+  }
+
 function listProposals(successCallback) {
 
   function generateProposalMenu(proposal) {
@@ -389,13 +403,22 @@ function listProposals(successCallback) {
               var proposalTimes = data.proposalTimes;
 
               for (var i = 0; i < proposalTimes.length; i++) {
+                var votes = [];
+                  for (var j = 0; j < proposalTimes[i].votes.length; j++) {
+                     votes.push( "<div class='" + (($('#username').text() == proposalTimes[i].votes[j].user.name)?"you":"") + "'><span>" + proposalTimes[i].votes[j].user.name + " </span><span vote>" + getIconForVoteIdOrName(proposalTimes[i].votes[j].vote) + "</span></div>");
+                   }; 
+
                 eventData = {
-                  'id'                   : clickedProposal.proposal.id,
-                  'title'                : clickedProposal.proposal.title,
+                  'proposalId'           : clickedProposal.proposal.id,
+                  'title'                : "<span>"
+                                            + "<span>" + clickedProposal.proposal.title + "</span>"
+                                            + "<hr style='margin: 3px 0 7px 0; border-color: #252525;'>"
+                                            + votes.join("") 
+                                         + "</span>",
                   'start'                : moment(proposalTimes[i].proposalTime.start),
                   'end'                  : moment(proposalTimes[i].proposalTime.end),
                   'color'                : clickedProposal.proposal.color,
-                  'textColor'            : '#000000',
+                  'textColor'            : '#252525',
                   'editable'             : false,
                   'type'                 : 'proposal',
                   'timeId'               : proposalTimes[i].proposalTime.id
@@ -410,7 +433,7 @@ function listProposals(successCallback) {
           } 
           else {
             $('#calendar').fullCalendar( 'removeEvents', function(event) {
-              return (event.type == "proposal") && (event.id == clickedProposal.proposal.id)
+              return (event.type == "proposal") && (event.proposalId == clickedProposal.proposal.id)
             });
           }
           // In case we would have used filtering:
@@ -465,7 +488,7 @@ function proposalCreationMode(){
         'start'                : moment(timeSlots[i].start),
         'end'                  : moment(timeSlots[i].end),
         'color'                : "lightgreen",
-        'textColor'            : '#000000',
+        'textColor'            : '#252525',
         'editable'             : false,
         'type'                 : 'freetimeslot'
       }
@@ -608,11 +631,11 @@ function setFinishProposalModalValues(proposalId) {
           if (vote["vote"] == 1) {
             clazz = "accepted";
             title = "Accepted";
-            content = '<i class="glyphicon glyphicon-thumbs-up"></i>';
+            content = '<i class="glyphicon glyphicon-ok"></i>';
           } else if (vote["vote"] == 2) {
             clazz = "refused";
             title = "Refused";
-            content = '<i class="glyphicon glyphicon-thumbs-down"></i>';
+            content = '<i class="glyphicon glyphicon-remove"></i>';
           } else if (vote["vote"] == 3) {
             clazz = "uncertain";
             title = "Uncertain";
@@ -620,7 +643,7 @@ function setFinishProposalModalValues(proposalId) {
           } else {
             clazz = "not-voted";
             title = "Not voted";
-            content = '<i class="glyphicon glyphicon-ban-circle";"></i>';
+            content = '<i class="glyphicon glyphicon-minus";"></i>';
           }
           $("#finishProposalModal table tbody tr.participant-" + name).append('<td class="'+clazz+'" title="' + title +'">' + content + '</td>');
         });
@@ -654,7 +677,7 @@ function finishProposalVote(proposalId, proposalTimeId) {
       listProposals();
       findConflicts();
       $('#calendar').fullCalendar( 'removeEvents', function(event) {
-        return (event.type == "proposal") && (event.id == proposalId);
+        return (event.type == "proposal") && (event.proposalId == proposalId);
       });
     }
   });
@@ -670,24 +693,32 @@ function deleteProposal(proposalId) {
     success: function(data) {
       listProposals();
       $('#calendar').fullCalendar( 'removeEvents', function(event) {
-        return (event.type == "proposal") && (event.id == proposalId);
+        return (event.type == "proposal") && (event.proposalId == proposalId);
       });
     }
   });
 }
 
-function voteForTimeSuggestion(proposalId, timeId, voteId){
-  $.postJson(jsRoutes.controllers.Proposals.addVote(proposalId, timeId).url, { vote : voteId } )
+function voteForTimeSuggestion(proposalEventID, timeId, voteId){
+
+  var proposalEvent = $('#calendar').fullCalendar('clientEvents', function(event){
+    return (event.proposalId == proposalEventID) && (event.timeId == timeId);
+  })[0];
+
+  $.postJson(jsRoutes.controllers.Proposals.addVote(proposalEventID, timeId).url, { vote : voteId } )
     .done(function() {
-      console.log("vote " + voteId + " success!");
+        var newTitle = $(proposalEvent.title) 
+        newTitle.find('div.you span[vote]').html(getIconForVoteIdOrName(voteId))
+        proposalEvent.title = newTitle;
+        $('#calendar').fullCalendar('updateEvent', proposalEvent);
     })
     .fail(function(err) {
-      console.log("Unable to vote for proposal. proposalId: " + proposalId + ", timeId: " + timeId + ", voteId: " + voteId + ".");
+      console.log("Unable to vote for proposal. proposalId: " + proposalEventID + ", timeId: " + timeId + ", voteId: " + voteId + ".");
       console.log(err.responseText)
     });
 }
 
-function initVotingPopover(proposalId, timeId) {
+function initVotingPopover(proposalEvent, timeId) {
   $("div.fc-event[proposalid]").popover({
       container: 'body',
       placement: 'auto top',
@@ -698,23 +729,23 @@ function initVotingPopover(proposalId, timeId) {
         show: 100,
         hide: 100
       },
-      content     : function(){
+      content : function(){
 
         var content = ""
           + "<ul class='list-inline'>"
             + "<li>"
-              + "<a title='Accept' onclick='voteForTimeSuggestion(" + proposalId + ", " + timeId + ", \"Accepted\")'>"
-                + "<i class='glyphicon glyphicon-thumbs-up'></i>"
+              + "<a title='Accept' onclick='voteForTimeSuggestion(" + proposalEvent.proposalId + ", " + timeId + ", \"Accepted\")'>"
+                + "<i class='glyphicon accepted'></i>"
               + "</a>"
             + "</li>"
             + "<li>"
-              + "<a title='Refuse' onclick='voteForTimeSuggestion(" + proposalId + ", " + timeId + ", \"Refused\")'>"
-                + "<i class='glyphicon glyphicon-thumbs-down'></i>"
+              + "<a title='Refuse' onclick='voteForTimeSuggestion(" + proposalEvent.proposalId + ", " + timeId + ", \"Refused\")'>"
+                + "<i class='glyphicon refused'></i>"
               + "</a>"
             + "</li>"
             + "<li>"
-              + "<a title='Uncertain' onclick='voteForTimeSuggestion(" + proposalId + ", " + timeId  +", \"Uncertain\")'>"
-                + "<i class='glyphicon glyphicon-question-sign'></i>"
+              + "<a title='Uncertain' onclick='voteForTimeSuggestion(" + proposalEvent.proposalId + ", " + timeId  +", \"Uncertain\")'>"
+                + "<i class='glyphicon uncertain'></i>"
               + "</a>"
             + "</li>"
           + "</ul>"
