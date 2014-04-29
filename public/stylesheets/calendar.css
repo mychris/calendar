@@ -82,9 +82,11 @@
   margin : 5px 0 5px 0;
 }
 
+.tag span {
+  white-space: normal;
+}
+
 .tag .name {
-  cursor      : default;
-  white-space : nowrap;
   overflow    : hidden;
 }
 
@@ -154,6 +156,7 @@
 
 .proposal span.btn {
   text-align: left;
+  white-space: normal;
 }
 
 .proposal h3 {
