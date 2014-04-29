@@ -115,7 +115,7 @@
   width   : 40px;
   padding : 4px 4px 4px 8px;
 }
-.tag-filter-off {
+.filter-off {
   opacity: 0.35;
 }
 .proposal-modal {
@@ -147,8 +147,12 @@
 }
 
 .proposal {
-  font-size : 12px;
-  padding   : 10px 10px;
+  padding   : 0px;
+}
+
+.proposal span.btn {
+  text-align: left;
+  width:  100%;
 }
 
 .proposal h3 {
@@ -161,6 +165,7 @@
 }
 
 .proposal .participants {
+  font-size : 12px;
   color : white;
 }
 

@@ -303,14 +303,28 @@ function listProposals() {
 
       var listItem = proposals.enter()
         .append("li")
-        .attr("class", "proposal list-group-item")
+        .attr("class", "proposal")
+        .attr("proposalid", function(proposal) {
+          return proposal.proposal.id;
+        })
+
+      var listItemSpan = listItem
+        .append("span")
+        .attr("class", "btn proposal-filter-on")
+        .on("click", function() {
+          $(this).toggleClass("proposal-filter-on");
+          $(this).toggleClass("filter-off");
+          filterEventsByIds($(".proposal-filter-on").parent().map(function() {
+            return $(this).attr("proposalid");
+          }).get(), "proposalIds");
+        })
         .style("background-color", function(proposal) { return proposal.proposal.color; });
 
-      listItem
+      listItemSpan  
         .append("h3")
         .text(function(proposal) { return proposal.proposal.title; })
 
-      listItem
+      listItemSpan
         .append("span")
         .attr("class", "participants")
         .text(function(proposal) { return $.map(proposal.participants, function(par) { return par.name; }).join(", "); });
@@ -593,7 +607,7 @@ function listTags() {
         })
         .on("click", function() {
           $(this).toggleClass("tag-filter-on");
-          $(this).toggleClass("tag-filter-off");
+          $(this).toggleClass("filter-off");
           filterEventsByIds($(".tag-filter-on").parent().map(function() {
             return $(this).attr("tagid");
           }).get(), "tagIds");
