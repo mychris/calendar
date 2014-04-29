@@ -293,6 +293,39 @@ function findConflicts() {
 }
 
 function listProposals() {
+
+  function generateProposalMenu(proposal) {
+    return $(
+      "<div class='menu dropdown'>" +
+      "  <a class='open-menu dropdown-toggle caret'" +
+      "     style='color:" + proposal.color + ";'" +
+      "     role='button'" +
+      "     data-toggle='dropdown'" +
+      "     href='#'/>" +
+      "  <ul class='dropdown-menu' role='menu'>" +
+      "    <li role='presentation'>" +
+      "      <a role='menuitem' tabindex='-1' onclick='setFinishProposalModalValues($(this).closest(\".proposal\").attr(\"proposalid\")); $(\"#finishProposalModal\").modal(\"show\");'>Finish proposal</a>" +
+      "    </li>" +
+      "    <li role='presentation'>" +
+      "      <a role='menuitem' tabindex='-1' onclick='deleteProposal(" + proposal.id + ")'>Delete proposal</a>" +
+      "    </li>" +
+      "  </ul>" +
+      "</div>"
+    );
+  }
+
+  function showProposalMenu(container) {
+    $(container).append(generateProposalMenu(container.__data__));
+    $(".menu", container).on("hidden.bs.dropdown", function() {
+      hideProposalMenu(container);
+    });
+  }
+
+  function hideProposalMenu(container) {
+    d3.select(container).select(".menu").remove();
+  }
+
+
   d3.select("#proposals ul").selectAll("li").data([]).exit().remove();
 
   d3.json(jsRoutes.controllers.Proposals.list().url, function(error, data) {
@@ -309,11 +342,11 @@ function listProposals() {
         })
         .on("mouseenter", function() {
           if (!$("#proposals").data("editing") && !$(".menu ul", this).is(":visible"))
-            showMenu(this);
+            showProposalMenu(this);
         })
         .on("mouseleave", function() {
           if (!$(".menu ul", this).is(":visible"))
-            hideMenu(this);
+            hideProposalMenu(this);
         })
 
       var listItemSpan = listItem
@@ -549,6 +582,10 @@ function finishProposalVote(proposalId, proposalTimeId) {
     }
   });
   $("#finishProposalModal").modal('hide');
+}
+
+function deleteProposal() {
+  // TODO: Implementation
 }
 
 function listTags() {

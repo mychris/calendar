@@ -88,12 +88,14 @@
   overflow    : hidden;
 }
 
-.tag .menu {
+.tag .menu,
+.proposal .menu {
   margin-left : 6px;
   display     : inline-block;
 }
 
-.tag .open-menu {
+.tag .open-menu,
+.proposal .open-menu {
   cursor : pointer;
 } 
 
@@ -152,7 +154,6 @@
 
 .proposal span.btn {
   text-align: left;
-  width:  100%;
 }
 
 .proposal h3 {
