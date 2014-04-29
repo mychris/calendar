@@ -323,7 +323,7 @@ function listProposals(successCallback) {
       "      <a role='menuitem' tabindex='-1' onclick='setFinishProposalModalValues($(this).closest(\".proposal\").attr(\"proposalId\")); $(\"#finishProposalModal\").modal(\"show\");'>Finish proposal</a>" +
       "    </li>" +
       "    <li role='presentation'>" +
-      "      <a role='menuitem' tabindex='-1' onclick='deleteProposal(" + proposal.id + ")'>Delete proposal</a>" +
+      "      <a role='menuitem' tabindex='-1' onclick='deleteProposal($(this).closest(\".proposal\").attr(\"proposalId\"))'>Delete proposal</a>" +
       "    </li>" +
       "  </ul>" +
       "</div>"
@@ -648,13 +648,27 @@ function finishProposalVote(proposalId, proposalTimeId) {
       $('#calendar').fullCalendar('refetchEvents');
       listProposals();
       findConflicts();
+      $('#calendar').fullCalendar( 'removeEvents', function(event) {
+        return (event.type == "proposal") && (event.id == proposalId);
+      });
     }
   });
   $("#finishProposalModal").modal('hide');
 }
 
-function deleteProposal() {
-  // TODO: Implementation
+function deleteProposal(proposalId) {
+  $.ajax({
+    type: "DELETE",
+    url: jsRoutes.controllers.Proposals.delete(proposalId).url,
+    dataType: "json",
+    accepts: "application/json; charset=utf-8",
+    success: function(data) {
+      listProposals();
+      $('#calendar').fullCalendar( 'removeEvents', function(event) {
+        return (event.type == "proposal") && (event.id == proposalId);
+      });
+    }
+  });
 }
 
 function listTags() {
