@@ -113,6 +113,10 @@
             element.addClass("freetimeslot")
           }
         },
+        eventAfterAllRender : function(view){
+          console.log("allrendered!");
+          initVotingPopover();
+        },
         loading: function(bool) {
           $('#loading').toggle(bool);
         },
@@ -131,6 +135,7 @@
                 console.log("Can not delete appointment " + JSON.stringify(calEvent));
               },
             })
+          } else if ( calEvent.type == "proposal" ) {
           }
         },
         eventDrop: function(eventData, revertFunc, jsEvent, ui, view) {
@@ -226,6 +231,7 @@
       })
       // $('#proposalModal').on('hidden.bs.modal', function () {
       // });
+
       setProposalModalDefaultValues();
 
       findConflicts();

@@ -457,6 +457,7 @@ function proposalCreationMode(){
     $('#finishCreateProposal').show();
     $('#cancelCreateProposal').show();
 
+    // var eventDatas = [];
     for (var i = 0; i < timeSlots.length; i++) {
       eventData = {
         'title'                : proposalName,
@@ -467,9 +468,12 @@ function proposalCreationMode(){
         'editable'             : false,
         'type'                 : 'freetimeslot'
       }
-      $('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
+      // eventDatas.push(eventData);
+     $('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
     }
     
+    // $('#calendar').fullCalendar('rerenderEvents');
+
     $("#calendar").fullCalendar('gotoDate', data.slots[0].start);
     $("#calendar").fullCalendar('changeView', 'agendaWeek');
   })
@@ -671,6 +675,45 @@ function deleteProposal(proposalId) {
   });
 }
 
+function initVotingPopover(target, proposalId) {
+  $("div.fc-event[proposalid]").popover({
+      container: 'body',
+      placement: 'auto top',
+      html: 'true',
+      trigger: 'click',
+      // title       : 'Create a new event',
+      delay: {
+        show: 100,
+        hide: 100
+      },
+      content     : function(){
+        var content = ""
+          + "<ul class='list-inline'>"
+            + "<li>"
+              + "<a title='Accept' onclick='console.log(\"Accept!\")'>"
+                + "<i class='glyphicon glyphicon-thumbs-up'></i>"
+              + "</a>"
+            + "</li>"
+            + "<li>"
+              + "<a title='Refuse' onclick='console.log(\"Refuse!\")'>"
+                + "<i class='glyphicon glyphicon-thumbs-down'></i>"
+              + "</a>"
+            + "</li>"
+            + "<li>"
+              + "<a title='Uncertain' onclick='console.log(\"Uncertain!\")'>"
+                + "<i class='glyphicon glyphicon-question-sign'></i>"
+              + "</a>"
+            + "</li>"
+          + "</ul>"
+        return "" 
+        + "<div id='votePopoverContent'>"
+          + content
+        + "<div>";
+      }
+  }); 
+}
+
+      
 function listTags() {
   
   function generateTagMenu(tag) {
