@@ -81,6 +81,7 @@ class ProposalService(db: Database)
     sender ! ProposalTimeVoteAdded
   }
 
+  // returns all proposals of user sorted by proposal id
   def getProposalsForUser(msg: GetProposalsForUser) = db.withSession { implicit session =>
 
     sender ! ProposalsForUser(
@@ -89,10 +90,11 @@ class ProposalService(db: Database)
         .groupBy { case (p, cr, _) => (p, cr) }
         .mapValues(_.map(_._3))
         .toSeq
+        .sortBy(_._1._1.id)
         .map { case ((p, cr), pars) => ProposalWithCreatorAndParticipants(p, cr, pars) }
     )
   }
-
+  // returns proposal time suggestions sorted by proposal id
   def getProposalTimesFromProposal(msg: GetProposalTimesFromProposal) = db.withSession { implicit session =>
     sender ! ProposalTimesFromProposal(
       proposalTimesWithVotesFromProposal(msg.proposalId)
@@ -100,6 +102,7 @@ class ProposalService(db: Database)
         .groupBy(_._1)
         .mapValues(_.map { case (_, proposalTimeVote, user) => VoteWithUser(proposalTimeVote.vote, user) })
         .toSeq
+        .sortBy(_._1.id)
         .map(ProposalTimeWithVotes.tupled)
     )
   }
