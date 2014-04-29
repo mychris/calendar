@@ -230,8 +230,7 @@ function getTags() {
     type: 'GET',
     dataType: 'json',
     headers: {
-      Accept: "application/json; charset=utf-8",
-      "Content-Type": "application/json; charset=utf-8"
+      Accept: "application/json; charset=utf-8"
     }
   });
 }
@@ -249,8 +248,7 @@ function findFreeTimeSlots() {
     type: "GET",
     dataType: "json",
     headers: {
-      Accept: "application/json; charset=utf-8",
-      "Content-Type": "application/json; charset=utf-8"
+      Accept: "application/json; charset=utf-8"
     }
   });
 }
@@ -290,6 +288,7 @@ function findConflicts() {
     conflicts.exit().remove();
   })
 }
+
 
 function listProposals() {
 
@@ -493,8 +492,7 @@ function setFinishProposalModalValues(proposalId) {
     type: 'GET',
     dataType: 'json',
     headers: {
-      Accept: "application/json; charset=utf-8",
-      "Content-Type": "application/json; charset=utf-8"
+      Accept: "application/json; charset=utf-8"
     },
     success: function(proposals) {
       var participants = $.map(proposals["proposalTimes"], function(time, index) {
