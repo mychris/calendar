@@ -29,7 +29,7 @@ function updateEvent(eventData, revertFunc) {
  * Create and post an event to the server. If successful, show in calendar.
  * param eventData: Object with 'description', 'start' and 'end'
  */
-function createEvent(eventData, callback) {
+function createEvent(eventData) {
   return $.ajax({
     type: "POST",
     url: jsRoutes.controllers.Appointments.add().url,
@@ -44,31 +44,7 @@ function createEvent(eventData, callback) {
       'start' : eventData.start.valueOf(), // Long
       'end'   : eventData.end.valueOf(), // Long
       'tagIds': eventData.tagIds // TODO: Specify Tag from List
-    }),
-    error: function(err) {
-      console.log("createEvent Error: ");
-      console.log(err.responseText);
-      $('#calendar').fullCalendar('unselect');
-    },
-    success: function(appointmentWithTags) {
-      var highestPriorityTag = getHighestPriorityTag(appointmentWithTags.tags);
-
-      var newEventData = {
-        'id'     : appointmentWithTags.appointment.id,
-        'title'  : appointmentWithTags.appointment.title,
-        'start'  : moment(appointmentWithTags.appointment.start),
-        'end'    : moment(appointmentWithTags.appointment.end),
-        'color'  : highestPriorityTag.color,
-        'tagIds' : $.map(appointmentWithTags.tags, function(v) {
-          return v.id;
-        }),
-        'type'   : 'appointment'
-      }
-
-      $('#calendar').fullCalendar('unselect');
-      $('#calendar').fullCalendar('renderEvent', newEventData, true); // stick? = true
-      callback();
-    }
+    })
   });
 }
 
@@ -172,10 +148,33 @@ function createEventPopover(selectedElement, start, end) {
           'end'    : end,
           'tagIds' : checkedTags
         }
-        createEvent(eventData, function() {
+        createEvent(eventData)
+        .done(function(appointmentWithTags) {
+          var highestPriorityTag = getHighestPriorityTag(appointmentWithTags.tags);
+
+          var newEventData = {
+            'id'     : appointmentWithTags.appointment.id,
+            'title'  : appointmentWithTags.appointment.title,
+            'start'  : moment(appointmentWithTags.appointment.start),
+            'end'    : moment(appointmentWithTags.appointment.end),
+            'color'  : highestPriorityTag.color,
+            'tagIds' : $.map(appointmentWithTags.tags, function(v) {
+              return v.id;
+            }),
+            'type'   : 'appointment'
+          }
+
+          $('#calendar').fullCalendar('unselect');
+          $('#calendar').fullCalendar('renderEvent', newEventData, true); // stick? = true
+
           $(selectedElement).popover('destroy');
           $(lastSelected).popover('destroy');
           findConflicts();
+        })
+        .fail(function(err){
+          console.log("createEvent Error: ");
+          console.log(err.responseText);
+          $('#calendar').fullCalendar('unselect');
         });
       });
 
