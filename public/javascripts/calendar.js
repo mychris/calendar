@@ -630,14 +630,13 @@ function listTags() {
       tags.exit().remove();
 
     } else {
-
       d3.selectAll("#tags li").remove;
       d3.select("#tags").append("p").text("No tags found!");
     }
   })
 }
 
-function generateForm(name, priority) {
+function generateTagEditForm(name, priority) {
   return $(
     "<form id='edit-tag'>" +
     "  <input name='name'" +
@@ -668,7 +667,7 @@ function startEditTag(tag) {
 
   $(".name", tag).remove();
 
-  var form = generateForm(name, priority);
+  var form = generateTagEditForm(name, priority);
 
   tag.append(form);
   $("input[name=name]", form).focus();
@@ -722,7 +721,7 @@ function startAddTag() {
   $("#tags").data("editing", true);
 
   var tag = $("<li class='tag'></li>").appendTo($("#tags ul"));
-  var form = generateForm("", 1);
+  var form = generateTagEditForm("", 1);
 
   tag.append(form);
   $("input[name=name]", form).focus();
