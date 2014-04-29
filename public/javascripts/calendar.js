@@ -197,22 +197,27 @@ function getHighestPriorityTag(tags) {
   return highestPriorityTag;
 }
 
-/* Shows only events belonging to any tag given in ids */
-function filterEventsByIds(ids, attr) {
+/* Shows only events belonging (eventAttributeName contains IDs) to any tag given in ids 
+ * param ids filter IDs which eventAttributeName must contain to be filtered
+ * param eventAttributeName: name of event attribute which contains the IDs to be filtered
+*/
+function filterEventsByIds(ids, eventAttributeName) {
   function listContainsAny(list, filters) {
     return $.inArray(true, $.map(filters, function(val) {
       return $.inArray(val, list) > -1;
     })) > -1;
   }
 
-  $("[" + attr + "]").each(function(index) {
+  var eventsWithAttribute = $("[" + eventAttributeName + "].fc-event");
+
+  eventsWithAttribute.each(function(index) {
     $(this).removeClass("hidden");
   });
 
-  var eventsBelongingToNoTag = $("[" + attr + "]").filter(function(index, el) {
-    var isFiltered = !listContainsAny($(el).attr(attr).split(","), ids);
+  var eventsBelongingToNoTag = eventsWithAttribute.filter(function(index, el) {
+    var isFiltered = !listContainsAny($(el).attr(eventAttributeName).split(","), ids);
     // un-comment for test purposes: 
-    // console.log($(el).attr(attr).split(",") + ": " + isFiltered);
+    // console.log($(el).attr(eventAttributeName).split(",") + ": " + isFiltered);
     return isFiltered;
   });
 
@@ -254,7 +259,6 @@ function findFreeTimeSlots() {
 }
 
 function findConflicts() {
-  d3.select("#conflicts ul").selectAll("li").data([]).exit().remove();
   d3.json(jsRoutes.controllers.Appointments.conflicts().url, function(error, data) {
     if (error) {
       d3.select("#conflicts li").remove;
@@ -262,6 +266,8 @@ function findConflicts() {
       return;
     }
     var conflicts = d3.select("#conflicts ul").selectAll("li").data(data.conflicts);
+
+    // enter
     conflicts.enter()
       .append("li")
       .classed({
@@ -285,12 +291,24 @@ function findConflicts() {
       .text(function(conflict) {
         return conflict[0].title + " - " + conflict[1].title;
       });
+
+    // exit
     conflicts.exit().remove();
   })
 }
 
+function fetchProposalTimes(proposalId){
+  return $.ajax({
+    url: jsRoutes.controllers.Proposals.proposalTimesFromProposal(proposalId).url,
+    type: 'GET',
+    dataType: 'json',
+    headers: {
+      Accept: "application/json; charset=utf-8"
+    }
+  });
+}
 
-function listProposals() {
+function listProposals(successCallback) {
 
   function generateProposalMenu(proposal) {
     return $(
@@ -302,7 +320,7 @@ function listProposals() {
       "     href='#'/>" +
       "  <ul class='dropdown-menu' role='menu'>" +
       "    <li role='presentation'>" +
-      "      <a role='menuitem' tabindex='-1' onclick='setFinishProposalModalValues($(this).closest(\".proposal\").attr(\"proposalid\")); $(\"#finishProposalModal\").modal(\"show\");'>Finish proposal</a>" +
+      "      <a role='menuitem' tabindex='-1' onclick='setFinishProposalModalValues($(this).closest(\".proposal\").attr(\"proposalId\")); $(\"#finishProposalModal\").modal(\"show\");'>Finish proposal</a>" +
       "    </li>" +
       "    <li role='presentation'>" +
       "      <a role='menuitem' tabindex='-1' onclick='deleteProposal(" + proposal.id + ")'>Delete proposal</a>" +
@@ -323,16 +341,30 @@ function listProposals() {
     d3.select(container).select(".menu").remove();
   }
 
-  d3.json(jsRoutes.controllers.Proposals.list().url, function(error, data) {
+  return d3.json(jsRoutes.controllers.Proposals.list().url, function(error, data) {
 
     if(!error && data.proposals.length > 0) {
 
       var proposals = d3.select("#proposals ul").selectAll("li").data(data.proposals);
 
-      var listItem = proposals.enter()
+      // Update
+      // proposals.each(function() {
+      //   var thisSpan = d3.select(this).select("span")
+      //   thisSpan.select("h3")
+      //     .text(function(proposal) { return proposal.proposal.title; })
+          
+      //   thisSpan.select("span")
+      //     .text(function(proposal) { return $.map(proposal.participants, function(par) { return par.name; }).join(", "); });
+
+      // });
+
+
+      // Enter
+      var missingListItem = proposals.enter();
+      var listItem = missingListItem
         .append("li")
         .attr("class", "proposal")
-        .attr("proposalid", function(proposal) {
+        .attr("proposalId", function(proposal) {
           return proposal.proposal.id;
         })
         .on("mouseenter", function() {
@@ -347,13 +379,44 @@ function listProposals() {
       var listItemSpan = listItem
         .append("span")
         .attr("class", "btn filter-off")
-        .on("click", function() {
+        .on("click", function(clickedProposal) {
           $(this).toggleClass("proposal-filter-on");
           $(this).toggleClass("filter-off");
-          filterEventsByIds($(".proposal-filter-on").parent().map(function() {
-            return $(this).attr("proposalid");
-          }).get(), "proposalIds");
 
+          if( $(this).hasClass("proposal-filter-on") ) {
+            fetchProposalTimes(clickedProposal.proposal.id)
+            .done(function(data){
+              var proposalTimes = data.proposalTimes;
+
+              for (var i = 0; i < proposalTimes.length; i++) {
+                eventData = {
+                  'id'                   : clickedProposal.proposal.id,
+                  'title'                : clickedProposal.proposal.title,
+                  'start'                : moment(proposalTimes[i].proposalTime.start),
+                  'end'                  : moment(proposalTimes[i].proposalTime.end),
+                  'color'                : clickedProposal.proposal.color,
+                  'textColor'            : '#000000',
+                  'editable'             : false,
+                  'type'                 : 'proposal'
+                }
+                $('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
+              }
+            })
+            .fail(function(err){
+              console.log("Unable to show proposal times:");
+              console.log(err.responseText);
+            });
+          } 
+          else {
+            $('#calendar').fullCalendar( 'removeEvents', function(event) {
+              return (event.type == "proposal") && (event.id == clickedProposal.proposal.id)
+            });
+          }
+          // In case we would have used filtering:
+          // var proposalIds = $(".proposal-filter-on").parent().map(function() {
+          //   return $(this).attr("proposalId");
+          // }).get()
+          // filterEventsByIds(proposalIds, "proposalId");
         })
         .style("background-color", function(proposal) { return proposal.proposal.color; });
 
@@ -366,9 +429,14 @@ function listProposals() {
         .attr("class", "participants")
         .text(function(proposal) { return $.map(proposal.participants, function(par) { return par.name; }).join(", "); });
 
+      // Exit
       proposals.exit().remove();
-    }
-    else {
+
+      if(successCallback)
+        successCallback();
+
+    } else {
+      d3.selectAll("#proposals li").remove;
       d3.select("#proposals ul").append("li").text("No proposals found!");
     }
   });
@@ -405,9 +473,9 @@ function proposalCreationMode(){
     $("#calendar").fullCalendar('gotoDate', data.slots[0].start);
     $("#calendar").fullCalendar('changeView', 'agendaWeek');
   })
-  .fail(function(xhr) {
+  .fail(function(err) {
       console.log("Unable to show free time slots:");
-      console.log(xhr.responseText)
+      console.log(err.responseText)
   });
 
   $('#proposalModal').modal('hide');  
@@ -444,9 +512,13 @@ function finishCreateProposal(){
   };
 
   $.postJson(jsRoutes.controllers.Proposals.addWithTimes().url, data)
-    .done(function(data) {
+    .done(function(proposal) {
       createProposalCleanup();
-      listProposals();
+
+      listProposals(function(){
+        $("li[proposalId=" + proposal.id + "] > span").click(); // turns on filter (shows suggestion times) for proposal after creation
+      });
+
       $("#calendar").fullCalendar('changeView', 'month');
     })
     .fail(function(xhr) {
@@ -589,7 +661,7 @@ function listTags() {
   
   function generateTagMenu(tag) {
     return $(
-      "<div class='menu dropdown'>" +
+      "<span class='menu dropdown'>" +
       "  <a class='open-menu dropdown-toggle caret'" +
       "     style='color:" + tag.color + ";'" +
       "     role='button'" +
@@ -603,7 +675,7 @@ function listTags() {
       "      <a role='menuitem' tabindex='-1' onclick='deleteTag(" + tag.id + ")'>Delete tag</a>" +
       "    </li>" +
       "  </ul>" +
-      "</div>"
+      "</span>"
     );
   }
 
@@ -623,6 +695,18 @@ function listTags() {
     if (!error && data.tags.length > 0) {
 
       var tags = d3.select("#tags ul").selectAll("li").data(data.tags);
+
+      // Update
+      tags.each(function() {
+        d3.select(this).select(".name")
+          .style("background-color", function(tag) {
+            return tag.color;
+          })
+          .text(function(tag) {
+            return tag.name;
+          });
+      });
+
 
       // Enter
       tags.enter()
@@ -650,23 +734,13 @@ function listTags() {
         .on("click", function() {
           $(this).toggleClass("tag-filter-on");
           $(this).toggleClass("filter-off");
-          filterEventsByIds($(".tag-filter-on").parent().map(function() {
+
+          var tagIds = $(".tag-filter-on").parent().map(function() {
             return $(this).attr("tagid");
-          }).get(), "tagIds");
+          }).get()
+
+          filterEventsByIds(tagIds, "tagIds");
         })
-
-
-      // Update
-      tags
-        .each(function() {
-          d3.select(this).select(".name")
-            .style("background-color", function(tag) {
-              return tag.color;
-            })
-            .text(function(tag) {
-              return tag.name;
-            });
-        });
 
       // Exit
       tags.exit().remove();

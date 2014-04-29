@@ -92,8 +92,7 @@
   overflow    : hidden;
 }
 
-.tag .menu,
-.proposal .menu {
+.menu {
   margin-left : 6px;
   display     : inline-block;
 }
