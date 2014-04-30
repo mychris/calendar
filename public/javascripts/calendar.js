@@ -246,8 +246,8 @@ function findFreeTimeSlots() {
   
   var userIds   = $('#inputUsers').selectize()[0].selectize.items
   var duration  = duration($('.durationpicker').data("DateTimePicker").getDate());
-  var from      = moment($('.datetimepicker1').data("DateTimePicker").getDate()).valueOf();
-  var to        = moment($('.datetimepicker2').data("DateTimePicker").getDate()).valueOf();
+  var from      = $('.datetimepicker1').data("DateTimePicker").getDate().valueOf();
+  var to        = $('.datetimepicker2').data("DateTimePicker").getDate().valueOf();
   var startTime = $('.timepicker1').data("DateTimePicker").getDate().valueOf();
   var endTime   = $('.timepicker2').data("DateTimePicker").getDate().valueOf();
 

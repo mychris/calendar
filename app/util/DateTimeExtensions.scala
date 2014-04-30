@@ -30,5 +30,5 @@ class DateTimeExtensions(dateTime: DateTime) {
 
   /** */
   def withTimeOf(that: DateTime) =
-    that.getStartOfDay.plus(0, 0, 0, that.getHour, that.getMinute, that.getSecond, that.getNanoseconds, DateTime.DayOverflow.Spillover)
+    dateTime.getStartOfDay.plus(0, 0, 0, that.getHour, that.getMinute, that.getSecond, that.getNanoseconds, DateTime.DayOverflow.Spillover)
 }
