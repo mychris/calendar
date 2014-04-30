@@ -103,7 +103,9 @@ trait ProposalDataAccessComponent {
     def proposalsForUser(userId: Column[Int]): Query[ProposalTable, Proposal] =
       proposals.filter(p =>
         proposalTimes.filter(pt =>
-          pt.proposalId === p.id && proposalTimeVotes.filter(_.proposalTimeId === pt.id).exists
+          pt.proposalId === p.id && proposalTimeVotes.filter(ptv =>
+            ptv.proposalTimeId === pt.id && ptv.userId === userId
+          ).exists
         ).exists
       )
 
