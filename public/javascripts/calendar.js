@@ -248,8 +248,8 @@ function findFreeTimeSlots() {
   var duration  = duration($('.durationpicker').data("DateTimePicker").getDate());
   var from      = moment($('.datetimepicker1').data("DateTimePicker").getDate()).valueOf();
   var to        = moment($('.datetimepicker2').data("DateTimePicker").getDate()).valueOf();
-  var startTime = moment($('.timepicker1').data("DateTimePicker").getDate(), "h:mm A").valueOf();
-  var endTime   = moment($('.timepicker2').data("DateTimePicker").getDate(), "h:mm A").valueOf();
+  var startTime = $('.timepicker1').data("DateTimePicker").getDate().valueOf();
+  var endTime   = $('.timepicker2').data("DateTimePicker").getDate().valueOf();
 
   return $.getJSON(jsRoutes.controllers.Proposals.findFreeTimeSlots(userIds, duration, from, to, startTime, endTime).url);
 }
