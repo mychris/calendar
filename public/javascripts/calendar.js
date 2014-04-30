@@ -361,18 +361,6 @@ function listProposals(successCallback) {
 
       var proposals = d3.select("#proposals ul").selectAll("li").data(data.proposals);
 
-      // Update
-      // proposals.each(function() {
-      //   var thisSpan = d3.select(this).select("span")
-      //   thisSpan.select("h3")
-      //     .text(function(proposal) { return proposal.proposal.title; })
-          
-      //   thisSpan.select("span")
-      //     .text(function(proposal) { return $.map(proposal.participants, function(par) { return par.name; }).join(", "); });
-
-      // });
-
-
       // Enter
       var missingListItem = proposals.enter();
       var listItem = missingListItem
@@ -452,6 +440,23 @@ function listProposals(successCallback) {
         .append("span")
         .attr("class", "participants")
         .text(function(proposal) { return $.map(proposal.participants, function(par) { return par.name; }).join(", "); });
+
+      // Update
+      proposals.attr("proposalId", function(proposal) {
+        return proposal.proposal.id;
+      });
+
+      proposals.each(function() {
+
+        var thisSpan = d3.select(this).select("span")
+          .style("background-color", function(proposal) { return proposal.proposal.color; });
+
+        thisSpan.select("h3")
+          .text(function(proposal) { return proposal.proposal.title; })
+          
+        thisSpan.select("span")
+          .text(function(proposal) { return $.map(proposal.participants, function(par) { return par.name; }).join(", "); });
+      });
 
       // Exit
       proposals.exit().remove();
