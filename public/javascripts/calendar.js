@@ -17,7 +17,7 @@ function updateEvent(eventData, revertFunc) {
         'tagIds': eventData.tagIds
       }),
       success: function(data) {
-        findConflicts();
+        listConflicts();
       },
       error: function(xhr) {
         revertFunc();
@@ -169,7 +169,7 @@ function createEventPopover(selectedElement, start, end) {
 
           $(selectedElement).popover('destroy');
           $(lastSelected).popover('destroy');
-          findConflicts();
+          listConflicts();
         })
         .fail(function(err){
           console.log("createEvent Error: ");
@@ -254,43 +254,46 @@ function findFreeTimeSlots() {
   return $.getJSON(jsRoutes.controllers.Proposals.findFreeTimeSlots(userIds, duration, from, to, startTime, endTime).url);
 }
 
-function findConflicts() {
+function listConflicts() {
   d3.json(jsRoutes.controllers.Appointments.conflicts().url, function(error, data) {
-    if (error) {
+
+    if(!error && data.conflicts.length > 0) {
+
+      d3.select("#conflicts ul li.nonefound").remove();
+
+      var conflicts = d3.select("#conflicts ul").selectAll("li.conflict").data(data.conflicts);
+
+      // Enter
+      conflicts.enter()
+        .append("li")
+        .attr("class", "conflict list-group-itemproposal")
+        .on("click", function(conflict) {
+          var start1 = $.fullCalendar.moment(conflict[0].start);
+          var start2 = $.fullCalendar.moment(conflict[1].start);
+          if (start1.dayOfYear() == start2.dayOfYear()) {
+            $("#calendar").fullCalendar('changeView', 'agendaDay');
+          } else if (start1.week() == start2.week()) {
+            $("#calendar").fullCalendar('changeView', 'agendaWeek');
+          } else {
+            $("#calendar").fullCalendar('changeView', 'month');
+          }
+          if (start1.hour() == 0) {
+            start1 = start1.add("hour", 1);
+          }
+          $("#calendar").fullCalendar('gotoDate', $.fullCalendar.moment(start1));
+        })
+        .text(function(conflict) {
+          return conflict[0].title + " - " + conflict[1].title;
+        });
+
+      // Exit
+      conflicts.exit().remove();
+
+    } else {
       d3.select("#conflicts li").remove();
-      d3.select("#conflicts").append("p").text("No conflicts found!");
-      return;
+      d3.select("#conflicts ul").append("li").attr("class", "nonefound").text("No conflicts found!");
     }
-    var conflicts = d3.select("#conflicts ul").selectAll("li").data(data.conflicts);
-
-    // enter
-    conflicts.enter()
-      .append("li")
-      .classed({
-        "list-group-item": true
-      })
-      .on("click", function(conflict) {
-        var start1 = $.fullCalendar.moment(conflict[0].start);
-        var start2 = $.fullCalendar.moment(conflict[1].start);
-        if (start1.dayOfYear() == start2.dayOfYear()) {
-          $("#calendar").fullCalendar('changeView', 'agendaDay');
-        } else if (start1.week() == start2.week()) {
-          $("#calendar").fullCalendar('changeView', 'agendaWeek');
-        } else {
-          $("#calendar").fullCalendar('changeView', 'month');
-        }
-        if (start1.hour() == 0) {
-          start1 = start1.add("hour", 1);
-        }
-        $("#calendar").fullCalendar('gotoDate', $.fullCalendar.moment(start1));
-      })
-      .text(function(conflict) {
-        return conflict[0].title + " - " + conflict[1].title;
-      });
-
-    // exit
-    conflicts.exit().remove();
-  })
+  });
 }
 
 function fetchProposalTimes(proposalId){
@@ -355,7 +358,9 @@ function listProposals(successCallback) {
 
     if(!error && data.proposals.length > 0) {
 
-      var proposals = d3.select("#proposals ul").selectAll("li").data(data.proposals);
+      d3.select("#conflicts ul li.nonefound").remove();
+
+      var proposals = d3.select("#proposals ul").selectAll("li.proposal").data(data.proposals);
 
       // Enter
       var missingListItem = proposals.enter();
@@ -437,7 +442,8 @@ function listProposals(successCallback) {
         .attr("class", "participants")
         .text(function(proposal) { return $.map(proposal.participants, function(par) { return par.name; }).join(", "); });
 
-      // Update
+
+       // Update
       proposals.attr("proposalId", function(proposal) {
         return proposal.proposal.id;
       });
@@ -453,6 +459,7 @@ function listProposals(successCallback) {
         thisSpan.select("span")
           .text(function(proposal) { return $.map(proposal.participants, function(par) { return par.name; }).join(", "); });
       });
+      
 
       // Exit
       proposals.exit().remove();
@@ -462,7 +469,7 @@ function listProposals(successCallback) {
 
     } else {
       d3.selectAll("#proposals li").remove();
-      d3.select("#proposals ul").append("li").text("No proposals found!");
+      d3.select("#proposals ul").append("li").attr("class", "nonefound").text("No proposals found!");
     }
   });
 }
@@ -675,7 +682,7 @@ function finishProposalVote(proposalId, proposalTimeId) {
     success: function(data) {
       $('#calendar').fullCalendar('refetchEvents');
       listProposals();
-      findConflicts();
+      listConflicts();
       $('#calendar').fullCalendar( 'removeEvents', function(event) {
         return (event.type == "proposal") && (event.proposalId == proposalId);
       });
@@ -795,7 +802,9 @@ function listTags() {
 
     if (!error && data.tags.length > 0) {
 
-      var tags = d3.select("#tags ul").selectAll("li").data(data.tags);
+      d3.select("#conflicts ul li.nonefound").remove();
+
+      var tags = d3.select("#tags ul").selectAll("li.tag").data(data.tags);
 
       // Update
       tags.each(function() {
@@ -848,7 +857,7 @@ function listTags() {
 
     } else {
       d3.selectAll("#tags li").remove();
-      d3.select("#tags").append("p").text("No tags found!");
+      d3.select("#tags ul").append("li").attr("class", "nonefound").text("No tags found!");
     }
   })
 }

@@ -130,7 +130,7 @@
                 $('#calendar').fullCalendar('removeEvents', function(ev) {
                   return ev.id == calEvent.id;
                 });
-                findConflicts();
+                listConlicts();
               },
               error: function(xhr) {
                 console.log("Can not delete appointment " + JSON.stringify(calEvent));
@@ -235,7 +235,7 @@
 
       setProposalModalDefaultValues();
 
-      findConflicts();
+      listConflicts();
       listTags();
       listProposals();
     });  // END DOCUMENT READY
