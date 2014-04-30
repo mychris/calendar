@@ -137,6 +137,9 @@
               },
             })
           } else if ( calEvent.type == "proposal" ) {
+
+          } else if ( calEvent.type == "suggestion" ) {
+            $('#calendar').fullCalendar( 'removeEvents', calEvent._id );
           }
         },
         eventDrop: function(eventData, revertFunc, jsEvent, ui, view) {
