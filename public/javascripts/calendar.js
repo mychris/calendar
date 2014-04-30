@@ -366,7 +366,7 @@ function listProposals(successCallback) {
           return proposal.proposal.id;
         })
         .on("mouseenter", function() {
-          if (!$("#proposals").data("editing") && !$(".menu ul", this).is(":visible"))
+          if (!$("#proposals").data("editing") && !$(".menu ul", this).is(":visible") && (this.__data__.creator.name == $('#username').text()) )
             showProposalMenu(this);
         })
         .on("mouseleave", function() {
