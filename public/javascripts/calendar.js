@@ -246,8 +246,8 @@ function findFreeTimeSlots() {
   
   var userIds   = $('#inputUsers').selectize()[0].selectize.items
   var duration  = duration($('.durationpicker').data("DateTimePicker").getDate());
-  var from      = $('.datetimepicker1').data("DateTimePicker").getDate().valueOf();
-  var to        = $('.datetimepicker2').data("DateTimePicker").getDate().valueOf();
+  var from      = $('.datepicker1').data("DateTimePicker").getDate().valueOf();
+  var to        = $('.datepicker2').data("DateTimePicker").getDate().valueOf();
   var startTime = $('.timepicker1').data("DateTimePicker").getDate().valueOf();
   var endTime   = $('.timepicker2').data("DateTimePicker").getDate().valueOf();
 
@@ -571,22 +571,22 @@ function setProposalModalDefaultValues(){
   $('#inputUsers').selectize()[0].selectize.clear(); 
   $('#inputUsers').selectize()[0].selectize.refreshItems();
   // Duration Picker (duration of event)
-  $('.durationpicker') .data("DateTimePicker").setDate(new Date(1979, 0, 1, 2, 0, 0, 0));
+  $('.durationpicker') .data("DateTimePicker").setDate(moment().startOf('day').hours(2));
   // Datetime picker (time frame of proposal )
   if(test) {
     $('#proposalName').val("TestProposal");
     $('#inputUsers').selectize()[0].selectize.addItem(1);
     $('#inputUsers').selectize()[0].selectize.addItem(2);
-    $('.datetimepicker1').data("DateTimePicker").setDate(new Date(2014, 0, 6, 08, 0, 0, 0));
-    $('.datetimepicker2').data("DateTimePicker").setDate(new Date(2014, 0, 11, 22, 0, 0, 0));
+    $('.datepicker1').data("DateTimePicker").setDate(moment("2014-01-06 08:00"));
+    $('.datepicker2').data("DateTimePicker").setDate(moment("2014-01-11 22:00"));
   }
   else {
-    $('.datetimepicker1').data("DateTimePicker").setDate(new Date());
-    $('.datetimepicker2').data("DateTimePicker").setDate(moment().add('d', 14));
+    $('.datepicker1').data("DateTimePicker").setDate(moment());
+    $('.datepicker2').data("DateTimePicker").setDate(moment().add('d', 14));
   }
   // Datetime picker (time frame within a day of proposal)
-  $('.timepicker1')    .data("DateTimePicker").setDate(new Date(1979, 0, 1, 08, 0, 0, 0));
-  $('.timepicker2')    .data("DateTimePicker").setDate(new Date(1979, 0, 1, 22, 0, 0, 0));
+  $('.timepicker1').data("DateTimePicker").setDate(moment().startOf('day').hours(8));
+  $('.timepicker2').data("DateTimePicker").setDate(moment().startOf('day').hours(22));
 }
 
 function setFinishProposalModalValues(proposalId) {

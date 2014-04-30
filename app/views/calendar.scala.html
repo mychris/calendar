@@ -160,15 +160,15 @@
       });
 
       // Datetime picker (time frame of proposal )
-      $('.datetimepicker1').datetimepicker({
+      $('.datepicker1').datetimepicker({
           language    : 'en',
-          showToday   : true,
-          pickTime    : true
+          pickTime    : false,
+          showToday   : true
       });
-      $('.datetimepicker2').datetimepicker({
+      $('.datepicker2').datetimepicker({
           language    : 'en',
-          showToday   : true,
-          pickTime    : true
+          pickTime    : false,
+          showToday   : true
       });
 
       // Datetime picker (time frame within a day of proposal)
@@ -340,7 +340,7 @@
                   <div class="well well-sm">
                     <div class="row">
                       <div class="col-md-6">
-                          <div class="input-group date datetimepicker1">
+                          <div class="input-group date datepicker1">
                             <span class="input-group-addon">From</span>
                             <input type="text" id="proposalFrom" class="form-control" />
                             <span class="input-group-addon">
@@ -349,7 +349,7 @@
                           </div>
                       </div>
                       <div class="col-md-6">
-                          <div class='input-group date datetimepicker2' >
+                          <div class='input-group date datepicker2' >
                             <span class="input-group-addon">To</span>
                             <input type="text" id="proposalTo" class="form-control" />
                             <span class="input-group-addon">
