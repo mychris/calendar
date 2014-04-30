@@ -531,7 +531,7 @@ function finishCreateProposal(){
 
   var data = {
     'title'        : $('#proposalName').val(),
-    'color'        : "#F1D4AF",   // let them eat cake
+    'color'        : "#E08E79",   // let them eat cake
     'participants' : $('#inputUsers').selectize()[0].selectize.items.map(function(el){
                         return parseInt(el);
                       }),
