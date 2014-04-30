@@ -358,7 +358,7 @@ function listProposals(successCallback) {
 
     if(!error && data.proposals.length > 0) {
 
-      d3.select("#conflicts ul li.nonefound").remove();
+      d3.select("#proposals ul li.nonefound").remove();
 
       var proposals = d3.select("#proposals ul").selectAll("li.proposal").data(data.proposals);
 
@@ -802,7 +802,7 @@ function listTags() {
 
     if (!error && data.tags.length > 0) {
 
-      d3.select("#conflicts ul li.nonefound").remove();
+      d3.select("#tags ul li.nonefound").remove();
 
       var tags = d3.select("#tags ul").selectAll("li.tag").data(data.tags);
 
