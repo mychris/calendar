@@ -241,8 +241,11 @@ function getTags() {
 }
 
 function findFreeTimeSlots() {
+
+  function duration(date) { return (moment(date, "HH:mm").hours() * 60 + moment(date, "HH:mm").minutes()) * 60 * 1000; }
+  
   var userIds   = $('#inputUsers').selectize()[0].selectize.items
-  var duration  = (moment($('.durationpicker').data("DateTimePicker").getDate(), "HH:mm").hours() * 60 + moment($('.durationpicker').data("DateTimePicker").getDate(), "HH:mm").minutes()) * 60 * 1000;  // hours and minutes in millis as LongA
+  var duration  = duration($('.durationpicker').data("DateTimePicker").getDate());
   var from      = moment($('.datetimepicker1').data("DateTimePicker").getDate()).valueOf();
   var to        = moment($('.datetimepicker2').data("DateTimePicker").getDate()).valueOf();
   var startTime = moment($('.timepicker1').data("DateTimePicker").getDate(), "h:mm A").valueOf();
