@@ -316,7 +316,7 @@ function getIconForVoteIdOrName(vote){
     } else if ( (vote == 3) || (vote == "Uncertain") ) {
       content = "<i title='Uncertain' class='glyphicon uncertain'></i>";
     } else {
-      content = "<i class='glyphicon glyphicon-minus'></i>"
+      content = "<i title='Not voted' class='glyphicon glyphicon-minus'></i>"
     }
     return content;
   }
