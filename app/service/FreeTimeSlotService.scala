@@ -52,31 +52,31 @@ class FreeTimeSlotService(db: Database)
 
       log.debug(s"Received free time slot request with ${fftss.toJson}")
 
+      val fromWithTime = from.withTimeOf(startTime.getOrElse(from.getStartOfDay))
+      val toWithTime   = to.withTimeOf(endTime.getOrElse(to.getEndOfDay))
+
       val appointments = db.withSession { implicit session =>
-        appointmentsFromUsers(userIds, from, to)
+        appointmentsFromUsers(userIds, fromWithTime, toWithTime)
           .buildColl[Seq]
           .filter(a => !(startTime.forall(a.end.timeOfDay < _.timeOfDay) || endTime.forall(_.timeOfDay < a.start.timeOfDay)))
       }
 
-      val constraints: Seq[Appointment] = from.days(to).flatMap { day => 
-        log.debug(s"day: ${day.toJson}")
+      val constraints: Seq[Appointment] = fromWithTime.days(toWithTime).flatMap { day => 
         Seq(
           startTime.map { startTime =>
-            log.debug(s"""startConstraint: ${Appointment(-1, "", day.getStartOfDay, day.withTimeOf(startTime)).toJson}""")
             Appointment(-1, "", day.getStartOfDay, day.withTimeOf(startTime))
           },
           endTime.map { endTime =>
-            log.debug(s"""endConstraint: ${Appointment(-1, "", day.withTimeOf(endTime), day.getEndOfDay)}""")
             Appointment(-1, "", day.withTimeOf(endTime), day.getEndOfDay)
           }
         ).flatten
       }
 
-      val sorted = (appointments ++ constraints :+ Appointment(-1, "", to, to)).sortBy(_.start.millisUTC)
+      val sorted = (appointments ++ constraints :+ Appointment(-1, "", toWithTime, toWithTime)).sortBy(_.start.millisUTC)
 
       val freeTimeSlots =
         sorted
-          .foldLeft[Acc]((Seq(), from)) {
+          .foldLeft[Acc]((Seq(), fromWithTime)) {
             case ((slots, lastEnd), appointment) =>
               if(appointment.start.millisUTC - lastEnd.millisUTC >= duration)
                 (slots :+ TimeSlot(lastEnd, appointment.start), appointment.end)
