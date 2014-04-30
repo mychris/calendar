@@ -487,8 +487,7 @@ function proposalCreationMode(){
         'title'                : proposalName,
         'start'                : moment(timeSlots[i].start),
         'end'                  : moment(timeSlots[i].end),
-        'color'                : "lightgreen",
-        'textColor'            : '#252525',
+        'textColor'            : '#252525', 
         'editable'             : false,
         'type'                 : 'freetimeslot'
       }
@@ -532,7 +531,7 @@ function finishCreateProposal(){
 
   var data = {
     'title'        : $('#proposalName').val(),
-    'color'        : "#EDC000", 
+    'color'        : "#F1D4AF",   // let them eat cake
     'participants' : $('#inputUsers').selectize()[0].selectize.items.map(function(el){
                         return parseInt(el);
                       }),

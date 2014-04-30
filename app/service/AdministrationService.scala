@@ -87,21 +87,21 @@ class AdministrationService(db: Database)
       val christoph = (users returning users.map(_.id)) += User(-1, "Christoph", "test")
 
       val tagIds = (tags returning tags.map(_.id)) ++= Seq(
-        Tag(-1, "default", 0, Color.colors(6), test),
-        Tag(-1, "family" , 1, Color.colors(14), test),
-        Tag(-1, "work"   , 2, Color.colors(21), test),
+        Tag(-1, "default", 0, Color.colors(0), test),
+        Tag(-1, "family" , 1, Color.colors(1), test),
+        Tag(-1, "work"   , 2, Color.colors(2), test),
 
-        Tag(-1, "default", 0, Color.colors(6), simon),
-        Tag(-1, "family" , 1, Color.colors(14), simon),
-        Tag(-1, "work"   , 2, Color.colors(21), simon),
+        Tag(-1, "default", 0, Color.colors(0), simon),
+        Tag(-1, "family" , 1, Color.colors(1), simon),
+        Tag(-1, "work"   , 2, Color.colors(2), simon),
 
-        Tag(-1, "default", 0, Color.colors(6), florian),
-        Tag(-1, "family" , 1, Color.colors(14), florian),
-        Tag(-1, "work"   , 2, Color.colors(21), florian),
+        Tag(-1, "default", 0, Color.colors(0), florian),
+        Tag(-1, "family" , 1, Color.colors(1), florian),
+        Tag(-1, "work"   , 2, Color.colors(2), florian),
 
-        Tag(-1, "default", 0, Color.colors(6), christoph),
-        Tag(-1, "family" , 1, Color.colors(14), christoph),
-        Tag(-1, "work"   , 2, Color.colors(21), christoph)
+        Tag(-1, "default", 0, Color.colors(0), christoph),
+        Tag(-1, "family" , 1, Color.colors(1), christoph),
+        Tag(-1, "work"   , 2, Color.colors(2), christoph)
       )
 
       val defaultTagId = tagIds(0)
@@ -146,7 +146,7 @@ class AdministrationService(db: Database)
 
       // add proposal with 3 times, test is the creator, other default user are participants.
       val participants = Seq(test, simon, florian, christoph)
-      val proposalId = (proposals returning proposals.map(_.id)) += Proposal(-1, "Final presentation", Color.colors(23), test)
+      val proposalId = (proposals returning proposals.map(_.id)) += Proposal(-1, "Final presentation", Color.colors(4), test)
 
       val proposalTime1 = (proposalTimes returning proposalTimes.map(_.id)) += ProposalTime(-1, new DateTime("2014-01-13 15:00"), new DateTime("2014-01-13 17:00"), proposalId)
       proposalTimeVotes ++= participants.map(ProposalTimeVote(proposalTime1, _, Vote.NotVoted))

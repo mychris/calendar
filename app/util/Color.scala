@@ -21,17 +21,22 @@ object Color {
     case _             => None
   }
 
-  /** Google calendar color matrix */
   val colors = Vector(
-    Color.parse("#AC725E"),
-    Color.parse("#D06B64"),
-    Color.parse("#F83A22"),
-    Color.parse("#FA573C"),
-    Color.parse("#FF7537"),
-    Color.parse("#FFAD46"),
-    Color.parse("#42D692"),
-    Color.parse("#16A765"),
-    Color.parse("#7BD148"),
+
+    // i demand a pancake
+    Color.parse("#547980"),
+    Color.parse("#45ADA8"),
+    Color.parse("#9DE0AD"),
+    Color.parse("#E5FCC2"),
+
+    // let them eat cake
+    Color.parse("#F1D4AF"),
+    Color.parse("#E08E79"),
+    Color.parse("#774F38"),
+    Color.parse("#ECE5CE"),
+    Color.parse("#C5E0DC"),
+
+
     Color.parse("#B3DC6C"),
     Color.parse("#FBE983"),
     Color.parse("#FAD165"),
