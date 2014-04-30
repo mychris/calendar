@@ -1,3 +1,5 @@
+package format
+
 import controllers._
 
 import datasource.calendar._
@@ -16,7 +18,7 @@ import service.protocol._
 import util._
 import util.JsonConversion._
 
-package object formatters {
+object ResponseFormat {
 
   /*
    * Generic
@@ -82,9 +84,6 @@ package object formatters {
   implicit val appointmentFormat         = Json.format[Appointment]
   implicit val appointmentWithTagsFormat = Json.format[AppointmentWithTags]
 
-  /* Requests */
-  implicit val addAppointmentFormat = Json.format[AddAppointment]
-
   /* Responses */
   // Appointment
   implicit val appointmentByIdFormat             = Json.format[AppointmentById]
@@ -145,9 +144,6 @@ package object formatters {
    */
   implicit val timeSlotFormat = Json.format[TimeSlot]
 
-  /* Requests */
-  implicit val findFreeTimeSlotsFormat = Json.format[FindFreeTimeSlots]
-
   /* Responses */
   implicit val freeTimeSlotsFormat = Json.format[FreeTimeSlots]
 
@@ -174,7 +170,6 @@ package object formatters {
     def writes(o: SampleDataCreated.type): JsValue = "SampleDataCreated".toJson
   }
 
-
   /*
    * Json request bodies
    */
@@ -197,5 +192,4 @@ package object formatters {
   implicit val addProposalTimeWithoutParticipantsRequestBodyFormat = Json.format[AddProposalTimeWithoutParticipantsRequestBody]
   implicit val addProposalWithTimesRequestBodyFormat               = Json.format[AddProposalWithTimesRequestBody]
   implicit val finishVoteRequestBodyFormat                         = Json.format[FinishVoteRequestBody]
-
 }

@@ -6,7 +6,7 @@ import datasource.user._
 import datasource.calendar._
 import datasource.proposal._
 
-import formatters._
+import format.DebugWrites._
 
 import hirondelle.date4j.DateTime
 

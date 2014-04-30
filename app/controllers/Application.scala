@@ -2,7 +2,7 @@ package controllers
 
 import akka.pattern.ask
 
-import formatters._
+import format.ResponseFormat._
 
 import hirondelle.date4j.DateTime
 

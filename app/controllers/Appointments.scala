@@ -7,7 +7,7 @@ import scala.concurrent._
 
 import hirondelle.date4j.DateTime
 
-import formatters._
+import format.ResponseFormat._
 
 import service._
 import service.protocol._

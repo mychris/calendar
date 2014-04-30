@@ -11,13 +11,6 @@ object DateTimeExtensions {
 
   /** */
   val timeZoneUTC = TimeZone.getTimeZone("UTC")
-
-  /** */
-  val startOfDay = 0
-
-  /** */
-  val endOfDay = 24 * 3600 * 1000
-
 }
 
 class DateTimeExtensions(dateTime: DateTime) {
@@ -36,6 +29,6 @@ class DateTimeExtensions(dateTime: DateTime) {
     ((dateTime.getHour * 3600 + dateTime.getMinute * 60 + dateTime.getSecond) * 1000).toLong
 
   /** */
-  def withTimeOfDay(timeOfDay: Long) =
-    DateTime.forInstant(dateTime.getStartOfDay.millisUTC + timeOfDay, timeZoneUTC)
+  def withTimeOf(that: DateTime) =
+    that.getStartOfDay.plus(0, 0, 0, that.getHour, that.getMinute, that.getSecond, that.getNanoseconds, DateTime.DayOverflow.Spillover)
 }

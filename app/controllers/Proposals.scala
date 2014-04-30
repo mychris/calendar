@@ -5,7 +5,7 @@ import akka.pattern.ask
 import datasource.calendar._
 import datasource.proposal._
 
-import formatters._
+import format.ResponseFormat._
 
 import java.util.TimeZone
 

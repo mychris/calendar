@@ -14,7 +14,7 @@ import scala.concurrent._
 import service._
 import service.protocol._
 
-import formatters._
+import format.ResponseFormat._
 
 case class AddUserRequestBody(name: String, password: String)
 

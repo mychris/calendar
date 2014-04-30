@@ -14,7 +14,7 @@ import scala.concurrent.{util => _, _}
 import service._
 import service.protocol._
 
-import formatters._
+import format.ResponseFormat._
 
 import util._
 

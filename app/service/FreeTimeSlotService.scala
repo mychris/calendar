@@ -5,7 +5,7 @@ import akka.actor._
 import datasource.calendar._
 import datasource.user._
 
-import formatters._
+import format.DebugWrites._
 
 import hirondelle.date4j.DateTime
 
@@ -59,12 +59,15 @@ class FreeTimeSlotService(db: Database)
       }
 
       val constraints: Seq[Appointment] = from.days(to).flatMap { day => 
+        log.debug(s"day: ${day.toJson}")
         Seq(
           startTime.map { startTime =>
-            Appointment(-1, "", day.withTimeOfDay(startOfDay), day.withTimeOfDay(startTime.timeOfDay))
+            log.debug(s"""startConstraint: ${Appointment(-1, "", day.getStartOfDay, day.withTimeOf(startTime)).toJson}""")
+            Appointment(-1, "", day.getStartOfDay, day.withTimeOf(startTime))
           },
           endTime.map { endTime =>
-            Appointment(-1, "", day.withTimeOfDay(endTime.timeOfDay), day.withTimeOfDay(endOfDay))
+            log.debug(s"""endConstraint: ${Appointment(-1, "", day.withTimeOf(endTime), day.getEndOfDay)}""")
+            Appointment(-1, "", day.withTimeOf(endTime), day.getEndOfDay)
           }
         ).flatten
       }

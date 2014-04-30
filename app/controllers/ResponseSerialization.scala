@@ -2,7 +2,7 @@ package controllers
 
 import akka.pattern.AskTimeoutException
 
-import formatters._
+import format.ResponseFormat._
 
 import play.api.libs.json.{util => _, _}
 import play.api.mvc._
