@@ -717,6 +717,7 @@ function voteForTimeSuggestion(proposalEventID, timeId, voteId){
         var newTitle = $(proposalEvent.title) 
         newTitle.find('div.you span[vote]').html(getIconForVoteIdOrName(voteId))
         proposalEvent.title = newTitle;
+        $("div.fc-event[proposalid]").popover("hide");
         $('#calendar').fullCalendar('updateEvent', proposalEvent);
     })
     .fail(function(err) {
