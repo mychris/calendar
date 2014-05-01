@@ -36,6 +36,7 @@ class ConflictFindingService extends Actor with ActorLogging {
         }
       }
       sender ! Conflicts(result.reverse) */
+      sender ! Conflicts(Seq())
     }
 
   def receive =  {
