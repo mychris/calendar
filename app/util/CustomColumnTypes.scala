@@ -1,7 +1,6 @@
 package util
 
 import java.sql.Timestamp
-import java.util.TimeZone
 
 import com.github.nscala_time.time.Imports._
 

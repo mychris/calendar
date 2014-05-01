@@ -23,7 +23,7 @@ object ConflictFindingService {
   */
 class ConflictFindingService extends Actor with ActorLogging {
 
-  def findConflicts(conflicts: Seq[Appointment]) = {
+  def findConflicts(conflicts: Seq[Appointment]) = { /*
       var sorted = conflicts.sortBy(a => a.start)
       var result: List[(Appointment, Appointment)] = Nil
       while (!sorted.isEmpty) {
@@ -35,7 +35,7 @@ class ConflictFindingService extends Actor with ActorLogging {
           innerSorted = innerSorted.drop(1)
         }
       }
-      sender ! Conflicts(result.reverse)
+      sender ! Conflicts(result.reverse) */
     }
 
   def receive =  {

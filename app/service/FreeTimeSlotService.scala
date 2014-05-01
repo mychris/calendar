@@ -14,7 +14,6 @@ import scala.slick.driver.PostgresDriver.simple._
 import service.protocol._
 
 import util.CustomColumnTypes._
-import util.DateTimeExtensions._
 import util.JsonConversion._
 
 /**
@@ -48,7 +47,7 @@ class FreeTimeSlotService(db: Database)
   private type Acc = (Seq[TimeSlot], DateTime)
 
   def receive = {
-    case fftss @ FindFreeTimeSlots(userIds, duration, from, to, startTime, endTime) =>
+    case fftss @ FindFreeTimeSlots(userIds, duration, from, to, startTime, endTime) => /*
 
       log.debug(s"Received free time slot request with ${fftss.toJson}")
 
@@ -86,6 +85,6 @@ class FreeTimeSlotService(db: Database)
 
       log.debug(s"Free time slots ${freeTimeSlots.toJson}")
 
-      sender ! FreeTimeSlots(freeTimeSlots)
+      sender ! FreeTimeSlots(freeTimeSlots) */
   }
 }

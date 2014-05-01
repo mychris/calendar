@@ -7,8 +7,6 @@ import datasource.proposal._
 
 import format.ResponseFormat._
 
-import java.util.TimeZone
-
 import scala.concurrent.{util => _, _}
 
 import com.github.nscala_time.time.Imports._
