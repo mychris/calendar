@@ -2,18 +2,14 @@ package util
 
 import com.github.nscala_time.time.Imports._
 
-import java.util.TimeZone
-
 import play.api.mvc.QueryStringBindable
 import play.api.mvc.QueryStringBindable._
 
 object Binders {
 
-  val timeZone = TimeZone.getTimeZone("UTC")
-
   implicit object bindableDateTime extends Parsing[DateTime](
-    str => DateTime.forInstant(str.toLong, timeZone),
-    _.getMilliseconds(timeZone).toString,
+    str => new DateTime(str.toLong),
+    _.getMillis.toString,
     (key: String, e: Exception) => "Cannot parse parameter %s as DateTime: %s".format(key, e.getMessage)
   )
 }
