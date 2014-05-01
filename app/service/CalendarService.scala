@@ -8,7 +8,7 @@ import datasource.proposal._
 
 import format.DebugWrites._
 
-import hirondelle.date4j.DateTime
+import com.github.nscala_time.time.Imports._
 
 import scala.slick.driver.PostgresDriver.simple.{Tag =>_, _}
 

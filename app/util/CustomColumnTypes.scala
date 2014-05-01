@@ -3,7 +3,7 @@ package util
 import java.sql.Timestamp
 import java.util.TimeZone
 
-import hirondelle.date4j.DateTime
+import com.github.nscala_time.time.Imports._
 
 import scala.slick.driver.PostgresDriver.simple._
 

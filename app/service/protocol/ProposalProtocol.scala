@@ -5,7 +5,7 @@ import datasource.calendar._
 import datasource.proposal._
 import datasource.proposal.Vote.Vote
 
-import hirondelle.date4j.DateTime
+import com.github.nscala_time.time.Imports._
 
 import util._
 

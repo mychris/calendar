@@ -4,7 +4,7 @@ import datasource.calendar._
 import datasource.user._
 import datasource.proposal._
 
-import hirondelle.date4j.DateTime
+import com.github.nscala_time.time.Imports._
 
 import play.api.libs.json.{util => _, _}
 

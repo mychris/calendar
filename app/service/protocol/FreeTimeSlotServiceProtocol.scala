@@ -3,7 +3,7 @@ package service.protocol
 import datasource.calendar._
 import datasource.user._
 
-import hirondelle.date4j.DateTime
+import com.github.nscala_time.time.Imports._
 
 /** */
 case class TimeSlot(start: DateTime, end: DateTime)

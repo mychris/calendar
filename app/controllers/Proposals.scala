@@ -11,7 +11,7 @@ import java.util.TimeZone
 
 import scala.concurrent.{util => _, _}
 
-import hirondelle.date4j.DateTime
+import com.github.nscala_time.time.Imports._
 
 import play.api.mvc._
 import play.api.Logger

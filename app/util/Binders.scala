@@ -1,6 +1,6 @@
 package util
 
-import hirondelle.date4j.DateTime
+import com.github.nscala_time.time.Imports._
 
 import java.util.TimeZone
 

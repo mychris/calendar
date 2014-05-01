@@ -4,7 +4,7 @@ import akka.pattern.ask
 
 import format.ResponseFormat._
 
-import hirondelle.date4j.DateTime
+import com.github.nscala_time.time.Imports._
 
 import play.api.mvc._
 import play.api.libs.json.{JsValue, Json}

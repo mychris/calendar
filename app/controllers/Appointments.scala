@@ -5,7 +5,7 @@ import play.api.mvc._
 import akka.pattern.ask
 import scala.concurrent._
 
-import hirondelle.date4j.DateTime
+import com.github.nscala_time.time.Imports._
 
 import format.ResponseFormat._
 

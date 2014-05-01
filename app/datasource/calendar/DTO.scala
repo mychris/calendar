@@ -2,7 +2,7 @@ package datasource.calendar
 
 import scala.slick.driver.PostgresDriver.simple.{Tag => _, _}
 
-import hirondelle.date4j.DateTime
+import com.github.nscala_time.time.Imports._
 
 import util._
 
