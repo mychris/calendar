@@ -33,12 +33,10 @@ object ResponseFormat {
    */
   implicit object dateTimeFormat extends Format[DateTime] {
 
-    val timeZone = TimeZone.getTimeZone("UTC")
+    def writes(o: DateTime): JsValue = o.getMillis
 
-    def writes(o: DateTime): JsValue = o.getMilliseconds(timeZone).toJson  // sending time as String
-
-    def reads(json: JsValue): JsResult[DateTime] = json match { // receiving time as Long
-      case JsNumber(ms) => JsSuccess(DateTime.forInstant(ms.toLong, timeZone)) // Frontend sends millis, not nanos!
+    def reads(json: JsValue): JsResult[DateTime] = json match {
+      case JsNumber(ms) => JsSuccess(DateTime(ms))
       case _            => JsError(Seq(JsPath() -> Seq(ValidationError("error.expected.jsnumber"))))
     }
   }
