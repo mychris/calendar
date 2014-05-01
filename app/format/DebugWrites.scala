@@ -20,7 +20,7 @@ object DebugWrites {
 
   implicit object dateTimeFormat extends Writes[DateTime] {
 
-    def writes(o: DateTime): JsValue = o.toString.toJson
+    def writes(o: DateTime): JsValue = o.toString().toJson
   }
 
   implicit val addAppointmentWrites = Json.writes[AddAppointment]

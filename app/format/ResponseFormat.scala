@@ -8,8 +8,6 @@ import datasource.proposal._
 
 import com.github.nscala_time.time.Imports._
 
-import java.util.TimeZone
-
 import play.api.data.validation.ValidationError
 import play.api.libs.json.{util => _, _}
 
@@ -33,10 +31,10 @@ object ResponseFormat {
    */
   implicit object dateTimeFormat extends Format[DateTime] {
 
-    def writes(o: DateTime): JsValue = o.getMillis
+    def writes(o: DateTime): JsValue = o.getMillis.toJson
 
     def reads(json: JsValue): JsResult[DateTime] = json match {
-      case JsNumber(ms) => JsSuccess(DateTime(ms))
+      case JsNumber(ms) => JsSuccess(new DateTime(ms))
       case _            => JsError(Seq(JsPath() -> Seq(ValidationError("error.expected.jsnumber"))))
     }
   }
