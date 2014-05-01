@@ -11,7 +11,6 @@ import format.ResponseFormat._
 
 import service._
 import service.protocol._
-import java.util.TimeZone
 import datasource.calendar.{Appointment, Tag}
 
 case class AddAppointmentRequestBody(title: String, start: DateTime, end: DateTime, tagIds: Seq[Int])
@@ -38,11 +37,7 @@ object Appointments
     */
   def list(from: Option[DateTime], to: Option[DateTime]) = Authenticated.async { implicit request =>
     toJsonResult {
-      (Services.calendarService ? GetAppointmentsFromUserWithTags(
-        request.user.id,
-        from.getOrElse(DateTime.forInstant(0, TimeZone.getTimeZone("UTC"))),
-        to.getOrElse(DateTime.now(TimeZone.getTimeZone("UTC"))
-      ))).expecting[AppointmentsFromUserWithTags]
+      (Services.calendarService ? GetAppointmentsFromUserWithTags(request.user.id, from, to)).expecting[AppointmentsFromUserWithTags]
     }
   }
 
