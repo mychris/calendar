@@ -2,18 +2,21 @@ package service
 
 import akka.actor._
 
+import com.github.nscala_time.time.Imports._
+
 import datasource.calendar._
 import datasource.user._
 
 import format.DebugWrites._
 
-import com.github.nscala_time.time.Imports._
+import org.joda.time.Days
 
 import scala.slick.driver.PostgresDriver.simple._
 
 import service.protocol._
 
 import util.CustomColumnTypes._
+import util.JodaTimeExtensions._
 import util.JsonConversion._
 
 /**
@@ -46,38 +49,36 @@ class FreeTimeSlotService(db: Database)
   /** */
   private type Acc = (Seq[TimeSlot], DateTime)
 
+  /** */
+  def datesBetween(from: DateTime, to: DateTime) =
+    (1 to Days.daysBetween(from, to).getDays).map(from + _.days)
+
   def receive = {
-    case fftss @ FindFreeTimeSlots(userIds, duration, from, to, startTime, endTime) => /*
+    case fftss @ FindFreeTimeSlots(userIds, duration, from, to, startTime, endTime, timeZone) =>
 
       log.debug(s"Received free time slot request with ${fftss.toJson}")
 
-      val fromWithTime = from.withTimeOf(startTime.getOrElse(from.getStartOfDay))
-      val toWithTime   = to.withTimeOf(endTime.getOrElse(to.getEndOfDay))
+      val fromDateTime = startTime.map(from.toDateTime(_, timeZone)).getOrElse(from.toDateTimeAtStartOfDay(timeZone))
+      val toDateTime   = endTime.map(to.toDateTime(_, timeZone)).getOrElse(to.toDateTimeAtStartOfDay(timeZone).withTimeAtEndOfDay)
 
       val appointments = db.withSession { implicit session =>
-        appointmentsFromUsers(userIds, fromWithTime, toWithTime)
-          .buildColl[Seq]
-          .filter(a => !(startTime.forall(a.end.timeOfDay < _.timeOfDay) || endTime.forall(_.timeOfDay < a.start.timeOfDay)))
+        appointmentsFromUsers(userIds, Some(fromDateTime), Some(toDateTime)).buildColl[Seq]
       }
 
-      val constraints: Seq[Appointment] = fromWithTime.days(toWithTime).flatMap { day => 
+      val constraints: Seq[Appointment] = datesBetween(fromDateTime, toDateTime).flatMap { date => 
         Seq(
-          startTime.map { startTime =>
-            Appointment(-1, "", day.getStartOfDay, day.withTimeOf(startTime))
-          },
-          endTime.map { endTime =>
-            Appointment(-1, "", day.withTimeOf(endTime), day.getEndOfDay)
-          }
+          startTime.map { startTime => Appointment(-1, "", date.withTimeAtStartOfDay, date.withMillisOfDay(startTime.getMillisOfDay)) },
+          endTime.map { endTime => Appointment(-1, "", date.withMillisOfDay(endTime.getMillisOfDay), date.withTimeAtEndOfDay) }
         ).flatten
       }
 
-      val sorted = (appointments ++ constraints :+ Appointment(-1, "", toWithTime, toWithTime)).sortBy(_.start.millisUTC)
+      val sorted = (appointments ++ constraints :+ Appointment(-1, "", toDateTime, toDateTime)).sortBy(_.start)
 
       val freeTimeSlots =
         sorted
-          .foldLeft[Acc]((Seq(), fromWithTime)) {
+          .foldLeft[Acc]((Seq(), fromDateTime)) {
             case ((slots, lastEnd), appointment) =>
-              if(appointment.start.millisUTC - lastEnd.millisUTC >= duration)
+              if(appointment.start - lastEnd >= duration)
                 (slots :+ TimeSlot(lastEnd, appointment.start), appointment.end)
               else
                 (slots, appointment.end)
@@ -85,6 +86,6 @@ class FreeTimeSlotService(db: Database)
 
       log.debug(s"Free time slots ${freeTimeSlots.toJson}")
 
-      sender ! FreeTimeSlots(freeTimeSlots) */
+      sender ! FreeTimeSlots(freeTimeSlots)
   }
 }

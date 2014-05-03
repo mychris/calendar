@@ -13,7 +13,7 @@ case class TimeSlot(start: DateTime, end: DateTime)
  */
 
 /** */
-case class FindFreeTimeSlots(userIds: Seq[Int], duration: Int, from: DateTime, to: DateTime, startTime: Option[DateTime], endTime: Option[DateTime]) extends Request
+case class FindFreeTimeSlots(userIds: Seq[Int], duration: Duration, from: LocalDate, to: LocalDate, startTime: Option[LocalTime], endTime: Option[LocalTime], timeZone: DateTimeZone) extends Request
 
 /*
  * Responses

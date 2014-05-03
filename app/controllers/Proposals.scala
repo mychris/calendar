@@ -130,7 +130,15 @@ object Proposals
     }
   }
 
-  def findFreeTimeSlots(userIds: Seq[Int], duration: Int, from: DateTime, to: DateTime, startTime: Option[DateTime], endTime: Option[DateTime]) =
+  def findFreeTimeSlots(
+    userIds: Seq[Int],
+    duration: Duration,
+    from: LocalDate,
+    to: LocalDate,
+    startTime: Option[LocalTime],
+    endTime: Option[LocalTime],
+    timeZone: DateTimeZone
+  ) =
     Authenticated.async { implicit request =>
       toJsonResult {
         (Services.freeTimeSlotService ?
@@ -140,7 +148,8 @@ object Proposals
             from,
             to,
             startTime,
-            endTime
+            endTime,
+            timeZone
           )
         ).expecting[FreeTimeSlots]
       }
