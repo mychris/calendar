@@ -118,12 +118,14 @@ function createEventPopover(selectedElement, start, end) {
 
       var tags = res.tags
       var tagListElems = [];
-      for (var i = 0; i < tags.length; i++) {
-      tagListElems += ""
-      + "<label class='btn btn-xs' style='background-color: " + tags[i].color + ";'>"
-        + "<input type='checkbox' tagId='" + tags[i].id + "'><span>" + tags[i].name + "</span>"
-      + "</label>"
-      };
+      $(tags).each(function(){
+        if ( !(this.id == defaultTagId) ){
+          tagListElems += ""
+            + "<label class='btn btn-xs' style='background-color: " + this.color + ";'>"
+              + "<input type='checkbox' tagId='" + this.id + "'><span>" + this.name + "</span>"
+            + "</label>"
+        }
+      });
 
       var heightBefore = $('#newEventPopoverContent').parent().parent().height();
       $('#newEventTags').html($(tagListElems))
@@ -217,8 +219,6 @@ function filterEventsByTagIds(ids) {
       return $.inArray(val, list) > -1;
     })) > -1;
   }
-
-  var defaultTagId = 1;
 
   var eventsWithTags = $("[tagIds].fc-event");
   eventsWithTags.removeClass("hidden");
