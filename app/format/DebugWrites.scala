@@ -1,10 +1,13 @@
 package format
 
+import com.github.nscala_time.time.Imports._
+
 import datasource.calendar._
 import datasource.user._
 import datasource.proposal._
 
-import com.github.nscala_time.time.Imports._
+import org.joda.time.format.PeriodFormat
+import org.joda.time.PeriodType
 
 import play.api.libs.json.{util => _, _}
 
@@ -23,7 +26,7 @@ object DebugWrites {
    */
   implicit object dateTimeFormat extends Writes[DateTime] {
 
-    def writes(o: DateTime): JsValue = o.toString().toJson
+    def writes(o: DateTime): JsValue = o.toDateTime(DateTimeZone.forOffsetHours(0)).toString().toJson
   }
 
   implicit object localTimeFormat extends Writes[LocalTime] {
@@ -33,7 +36,7 @@ object DebugWrites {
 
   implicit object durationFormat extends Writes[Duration] {
 
-    def writes(o: Duration): JsValue = o.toString().toJson
+    def writes(o: Duration): JsValue = PeriodFormat.getDefault.print(o.toPeriod(PeriodType.time)).toJson
   }
 
   implicit object dateTimeZoneFormat extends Writes[DateTimeZone] {
