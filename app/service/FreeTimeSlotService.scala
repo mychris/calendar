@@ -51,7 +51,7 @@ class FreeTimeSlotService(db: Database)
 
   /** */
   def datesBetween(from: DateTime, to: DateTime) =
-    (1 to Days.daysBetween(from, to).getDays).map(from + _.days)
+    (0 to Days.daysBetween(from, to).getDays).map(from + _.days)
 
   def receive = {
     case fftss @ FindFreeTimeSlots(userIds, duration, from, to, startTime, endTime, timeZone) =>
@@ -67,8 +67,8 @@ class FreeTimeSlotService(db: Database)
 
       val constraints: Seq[Appointment] = datesBetween(fromDateTime, toDateTime).flatMap { date => 
         Seq(
-          startTime.map { startTime => Appointment(-1, "", date.withTimeAtStartOfDay, date.withMillisOfDay(startTime.getMillisOfDay)) },
-          endTime.map { endTime => Appointment(-1, "", date.withMillisOfDay(endTime.getMillisOfDay), date.withTimeAtEndOfDay) }
+          startTime.map(startTime => Appointment(-1, "", date.withTimeAtStartOfDay, date.withMillisOfDay(startTime.getMillisOfDay))),
+          endTime.map(endTime => Appointment(-1, "", date.withMillisOfDay(endTime.getMillisOfDay), date.withTimeAtEndOfDay))
         ).flatten
       }
 
