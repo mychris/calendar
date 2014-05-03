@@ -32,8 +32,8 @@ object Binders {
   )
 
   implicit object bindableDateTimeZone extends Parsing[DateTimeZone](
-    DateTimeZone.forID _,
-    _.toString,
+    str => DateTimeZone.forOffsetMillis(str.toInt),
+    _.getOffset(0).toString,
     (key: String, e: Exception) => "Cannot parse parameter %s as DateTimeZone: %s".format(key, e.getMessage)
   )
 }
