@@ -13,7 +13,7 @@ object JodaTimeExtensions {
 
 class RichDateTime(dateTime: DateTime) {
 
-  def -(that: DateTime): Duration = new Duration(dateTime, that)
+  def -(that: DateTime): Duration = new Duration(that, dateTime)
 
   def withTimeAtEndOfDay: DateTime = dateTime.withTime(23, 59, 59, 0)
 }
