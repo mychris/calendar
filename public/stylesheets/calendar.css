@@ -28,13 +28,27 @@
 }
 
 #newEventTags label {
-  margin-right: 4px;
-  margin-bottom: 4px;
-  font-size: 13px;
+  margin-right     : 4px;
+  margin-bottom    : 4px;
+  font-size        : 13px;
+  max-width        : 100%;
+  overflow         : hidden;
+  text-overflow    : ellipsis;
+  -o-text-overflow : ellipsis;
+  text-align       : left; 
+}
+
+#newEventTags span {
+  white-space : normal;
 }
 
 #newEventTags label input{
-  margin-right: 4px;
+  margin-right : 4px;
+}
+
+#newEventTags {
+  max-height : 250px;
+  overflow-y : overlay;
 }
 
 #main {
@@ -83,15 +97,15 @@
 .tag {
   margin : 5px 0 5px 0;
   padding   : 0 18px 0 0;
-  white-space: nowrap;
+  white-space: nowrap;    /* so that the menu triangle icon doesnt wrap */
 }
 
-.tag span {
-  white-space: normal;
-}
-
-.tag .name {
-  overflow    : hidden;
+.tag span.name {
+  width            : 100%;
+  overflow         : hidden;
+  white-space      : normal;
+  text-overflow    : ellipsis;
+  -o-text-overflow : ellipsis;
 }
 
 .menu {
@@ -176,9 +190,12 @@ i.glyphicon.uncertain:before {
 }
 
 .proposal span.btn {
-  text-align  : left;
-  white-space : normal;
-  width       : 100%;
+  text-align       : left;
+  white-space      : normal;
+  width            : 100%;
+  overflow         : hidden;
+  text-overflow    : ellipsis;
+  -o-text-overflow : ellipsis;
 }
 
 .proposal h3 {
@@ -196,6 +213,7 @@ i.glyphicon.uncertain:before {
 .proposal .participants {
   font-size : .85em;
   color : #252525;
+  white-space: normal;
 }
 
 .selectize-dropdown-content div[data-selectable].option.active {

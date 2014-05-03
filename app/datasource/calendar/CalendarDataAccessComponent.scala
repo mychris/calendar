@@ -74,8 +74,8 @@ trait CalendarDataAccessComponent {
       def tagId         : Column[Int]
 
       // def pk            : Constraint
-      def appointment   : Query[AppointmentTable, Appointment]
-      def tag           : Query[TagTable, Tag]
+      def appointment : Query[AppointmentTable, Appointment]
+      def tag         : Query[TagTable, Tag]
     }
 
     /** Data definition language */

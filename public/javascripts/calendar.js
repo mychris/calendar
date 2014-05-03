@@ -48,46 +48,38 @@ function createEvent(eventData) {
   });
 }
 
-function createEventPopover(selectedElement, start, end) {
-  getTags()
-    .done(function(res) {
-      $(selectedElement).popover({
-        container: 'body',
-        placement: 'auto top',
-        html: 'true',
-        // title       : 'Create a new event',
-        delay: {
-          show: 400,
-          hide: 400
-        },
-        content     : function(){
-          var tags = res.tags
-          var tagListElems = [];
-          for (var i = 0; i < tags.length; i++) {
-          tagListElems += ""
-          + "<label class='btn btn-xs' style='background-color: " + tags[i].color + ";'>"
-            + "<input type='checkbox' tagId='" + tags[i].id + "'>" + tags[i].name
-          + "</label>"
-          };
 
-          return "" 
-          + "<div id='newEventPopoverContent'>"
-          + "<form class='form-horizontal' role='form'>"
-            + "<div class='form-group'>"
+function createEventPopover(selectedElement, start, end) {
+  $(selectedElement).popover({
+      container: 'body',
+      placement : 'auto bottom',
+      html      : 'true',
+      trigger   : 'manual',
+      delay     : {
+        show : 400,
+        hide : 400
+      },
+      content   : function(){
+        var loadingimage = '<div style="margin-top: 8px;"><img src="/assets/images/loading.gif"></div>';
+
+        return "" 
+        + "<div id='newEventPopoverContent'>"
+        + "<form class='form-horizontal' role='form'>"
+          + "<div class='form-group'>"
             + "<label class='col-sm-3 control-label'>Title</label>"
             + "<div class='col-sm-9'>"
               + "<input type='text' class='form-control' id='newEventTitle' placeholder='Title'>"
             + "</div>"
-            + "</div>"
+          + "</div>"
 
-            + "<div class='form-group'>"
+          + "<div class='form-group'>"
             + "<label class='col-sm-3 control-label'>Tags</label>"
             + "<div class='col-sm-9' id='newEventTags'> "
-              + tagListElems
+              + loadingimage
             + "</div>"
-            + "</div>"
+          + "</div>"
 
-            + "<div class='form-group'>"
+          + "<div class='form-group'>"
             + "<label class='col-sm-3 control-label'>From</label>"
             + "<div class='col-sm-9'>"
               + "<p class='form-control-static' id='newEventStart' date='" + start + "'>" + start.format("dd, MMM DD, HH:mm") + "</p>"
@@ -96,35 +88,63 @@ function createEventPopover(selectedElement, start, end) {
             + "<div class='col-sm-9'>"
               + "<p class='form-control-static' id='newEventEnd' date='" + end + "'>" + end.format("dd, MMM DD, HH:mm") + "</p>"
             + "</div>"
-            + "</div>"
+          + "</div>"
 
-            + "<div class='form-group'>"
+          + "<div class='form-group'>"
             + "<div class='col-sm-12'>"
               + "<button type='submit' class='btn btn-primary btn-sm col-sm-9'>Create Event</button>"
               + "<button type='button' id='cancelNewEventSubmit' class='btn btn-default btn-sm col-sm-3'>Cancel</button>"
             + "</div>"
-            + "</div>"
-          + "</form>"
-          + "<div>";
-        }
-      });
+          + "</div>"
+        + "</form>"
+        + "<div>";
+     }
+  });
 
+  $(selectedElement).on('shown.bs.popover', function () {
+    $('#newEventTitle').focus();
 
-      $(selectedElement).popover('show');
-      $('#newEventTitle').focus();
+    $("#cancelNewEventSubmit").on("click", function(event) {
+      $('#calendar').fullCalendar('unselect');
+    });
 
+    $('#newEventPopoverContent').keyup(function(e) {
+      if (e.keyCode == 27) {  // esc
+        $('#cancelNewEventSubmit').click();
+      } 
+    });   
+  });
 
-      $("#cancelNewEventSubmit").on("click", function(event) {
-        $('#calendar').fullCalendar('unselect');
-        $(selectedElement).popover('destroy');
+  $(selectedElement).popover('show');
 
-      });
+  getTags()
+    .done(function(res) {
 
-      $('#newEventPopoverContent').keyup(function(e) {
-        if (e.keyCode == 27) {
-          $('#cancelNewEventSubmit').click();
-        } // esc
-      });
+      var tags = res.tags
+      var tagListElems = [];
+      for (var i = 0; i < tags.length; i++) {
+      tagListElems += ""
+      + "<label class='btn btn-xs' style='background-color: " + tags[i].color + ";'>"
+        + "<input type='checkbox' tagId='" + tags[i].id + "'><span>" + tags[i].name + "</span>"
+      + "</label>"
+      };
+
+      var heightBefore = $('#newEventPopoverContent').parent().parent().height();
+      $('#newEventTags').html($(tagListElems))
+
+      // necessary for repositioning of popover after content change
+      if ( $(selectedElement).data('bs.popover').$tip.hasClass('top') ) {  // in case, add:  or hasClass('right') or hasClass('left')
+        var heightAfter = $('#newEventPopoverContent').parent().parent().height();
+        var heightDiff = heightAfter - heightBefore
+        var topBefore = parseInt($('#newEventPopoverContent').parent().parent().css('top'));
+        $('#newEventPopoverContent').parent().parent().css('top', (topBefore - heightDiff) + "px");
+      }
+
+      // if( $(selectedElement).data('bs.popover') )
+
+      // $(selectedElement).data('bs.popover').options.content = $('#newEventPopoverContent')
+      // $(selectedElement).data('bs.popover').setContent()
+      // $(selectedElement).popover('show')
 
       $("#newEventPopoverContent").on("submit", function(event) {
         event.preventDefault();
@@ -167,18 +187,15 @@ function createEventPopover(selectedElement, start, end) {
           $('#calendar').fullCalendar('unselect');
           $('#calendar').fullCalendar('renderEvent', newEventData, true); // stick? = true
 
-          $(selectedElement).popover('destroy');
-          $(lastSelected).popover('destroy');
           listConflicts();
         })
         .fail(function(err){
-          console.log("createEvent Error: ");
+          console.log("Error trying to create new event:");
           console.log(err.responseText);
           $('#calendar').fullCalendar('unselect');
         });
-      });
-
-    })
+      }); // newEvent.on("submit" ...)
+    })  // getTags.done
     .fail(function(err) {
       console.log("Error trying to receive list of tags:")
       console.log(err.responseText)
@@ -726,33 +743,34 @@ function voteForTimeSuggestion(proposalEventID, timeId, voteId){
     });
 }
 
-function initVotingPopover(proposalEvent, timeId) {
-  $("div.fc-event[proposalid]").popover({
-      container: 'body',
-      placement: 'auto top',
-      html: 'true',
-      trigger: 'click',
-      // title       : 'Create a new event',
-      delay: {
-        show: 100,
-        hide: 100
+function initVotingPopover() {
+  $("body").popover({
+      container : 'body',
+      selector  : "div.fc-event[proposalid]",
+      placement : 'auto top',
+      html      : 'true',
+      trigger   : 'click',
+      delay     : {
+        show : 100,
+        hide : 100
       },
-      content : function(){
-
+      content   : function(){
+        var proposalId = $(this).attr("proposalid");
+        var timeId = $(this).attr("timeid");
         var content = ""
           + "<ul class='list-inline'>"
             + "<li>"
-              + "<a title='Accept' onclick='voteForTimeSuggestion(" + proposalEvent.proposalId + ", " + timeId + ", \"Accepted\")'>"
+              + "<a title='Accept' onclick='voteForTimeSuggestion(" + proposalId + ", " + timeId + ", \"Accepted\")'>"
                 + "<i class='glyphicon accepted'></i>"
               + "</a>"
             + "</li>"
             + "<li>"
-              + "<a title='Refuse' onclick='voteForTimeSuggestion(" + proposalEvent.proposalId + ", " + timeId + ", \"Refused\")'>"
+              + "<a title='Refuse' onclick='voteForTimeSuggestion(" + proposalId + ", " + timeId + ", \"Refused\")'>"
                 + "<i class='glyphicon refused'></i>"
               + "</a>"
             + "</li>"
             + "<li>"
-              + "<a title='Uncertain' onclick='voteForTimeSuggestion(" + proposalEvent.proposalId + ", " + timeId  +", \"Uncertain\")'>"
+              + "<a title='Uncertain' onclick='voteForTimeSuggestion(" + proposalId + ", " + timeId  + ", \"Uncertain\")'>"
                 + "<i class='glyphicon uncertain'></i>"
               + "</a>"
             + "</li>"

@@ -22,7 +22,6 @@
 
   <script>
 
-    var lastSelected;
     var test = true;
     var createProposalMode = false;
 
@@ -30,9 +29,9 @@
 
       // Causes all popovers to disappear after clicking outside of them
       $('body').on('click', function (e) {
-        $('.popover').each(function () {
-          if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0){
-              $(this).remove();
+        $('.popover').each(function () { // better: use popover-triggering element (node), not popover itself ...
+          if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0 && $(this).has('#newEventPopoverContent').length === 0){
+              $(this).remove();          // ... and then do "$(this).popover('hide')"
             }
         });
       });
@@ -66,7 +65,9 @@
           }
         },
         unselect: function( view, jsEvent ) {
+          $('.popover').has('#newEventPopoverContent').remove();
         },
+        unselectCancel : "#newEventPopoverContent",
         editable: true,
         events: function(start, end, timezone, callback) { // getting the events from the server
           $.ajax({
@@ -110,7 +111,6 @@
             element.attr("proposalId", event.proposalId);
             element.attr("timeId", event.timeId);
             element.find('.fc-event-title').html(event.title);
-            initVotingPopover(event, event.timeId);
           }
           else if ( event.type == "freetimeslot" ) {
             element.addClass("freetimeslot")
@@ -124,7 +124,7 @@
         eventClick: function(calEvent, jsEvent, view) {
           if (calEvent.type == "appointment" && confirm("Delete appointment '" + calEvent.title + "'?")) {
             $.ajax({
-              url: '/appointment/' + calEvent.id,
+              url: '/appointment/' + calEvent.id,   // TODO: Replace by compiled URL
               type: 'DELETE',
               success: function(data) {
                 $('#calendar').fullCalendar('removeEvents', function(ev) {
@@ -209,7 +209,7 @@
                   type: 'GET',
                   dataType: 'json',
                   error: function() {
-                      callback();
+                    callback();
                   },
                   success: function(res) {
                     callback(res.users);
@@ -235,6 +235,8 @@
       })
       // $('#proposalModal').on('hidden.bs.modal', function () {
       // });
+
+      initVotingPopover();
 
       setProposalModalDefaultValues();
 
