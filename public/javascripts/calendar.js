@@ -208,32 +208,27 @@ function getHighestPriorityTag(tags) {
   return highestPriorityTag;
 }
 
-/* Shows only events belonging (eventAttributeName contains IDs) to any tag given in ids 
- * param ids filter IDs which eventAttributeName must contain to be filtered
- * param eventAttributeName: name of event attribute which contains the IDs to be filtered
+/* Shows only events belonging ('tagIds' contains IDs) to any tag given in ids 
+ * param ids filter IDs which 'tagIds' must contain to be filtered
 */
-function filterEventsByIds(ids, eventAttributeName) {
+function filterEventsByTagIds(ids) {
   function listContainsAny(list, filters) {
     return $.inArray(true, $.map(filters, function(val) {
       return $.inArray(val, list) > -1;
     })) > -1;
   }
 
-  var eventsWithAttribute = $("[" + eventAttributeName + "].fc-event");
+  var defaultTagId = 1;
 
-  eventsWithAttribute.each(function(index) {
-    $(this).removeClass("hidden");
-  });
+  var eventsWithTags = $("[tagIds].fc-event");
+  eventsWithTags.removeClass("hidden");
 
-  var eventsBelongingToNoTag = eventsWithAttribute.filter(function(index, el) {
-    var isFiltered = !listContainsAny($(el).attr(eventAttributeName).split(","), ids);
-    // un-comment for test purposes: 
-    // console.log($(el).attr(eventAttributeName).split(",") + ": " + isFiltered);
-    return isFiltered;
-  });
+  eventsWithTags.each(function() {
+    var tagIds = $(this).attr("tagIds").split(",");
+    var tagIdsWithoutDefault = (tagIds.length > 1)  ?  tagIds.filter( function(e){ return !( e == defaultTagId ) })  :  tagIds
 
-  eventsBelongingToNoTag.each(function(index) {
-    $(this).addClass("hidden");
+    if ( !listContainsAny(tagIdsWithoutDefault, ids) ) 
+      $(this).addClass("hidden");
   });
 }
 
@@ -866,7 +861,7 @@ function listTags() {
             return $(this).attr("tagid");
           }).get()
 
-          filterEventsByIds(tagIds, "tagIds");
+          filterEventsByTagIds(tagIds, "tagIds");
         })
 
       /* Exit */
