@@ -248,16 +248,17 @@ function getTags() {
 
 function findFreeTimeSlots() {
 
-  function duration(date) { return (moment(date, "HH:mm").hours() * 60 + moment(date, "HH:mm").minutes()) * 60 * 1000; }
+  function millisOfDay(date) { return (moment(date, "HH:mm").hours() * 60 + moment(date, "HH:mm").minutes()) * 60 * 1000; }
   
-  var userIds   = $('#inputUsers').selectize()[0].selectize.items
-  var duration  = duration($('.durationpicker').data("DateTimePicker").getDate());
-  var from      = $('.datepicker1').data("DateTimePicker").getDate().valueOf();
-  var to        = $('.datepicker2').data("DateTimePicker").getDate().valueOf();
-  var startTime = $('.timepicker1').data("DateTimePicker").getDate().valueOf();
-  var endTime   = $('.timepicker2').data("DateTimePicker").getDate().valueOf();
+  var userIds        = $('#inputUsers').selectize()[0].selectize.items
+  var duration       = millisOfDay($('.durationpicker').data("DateTimePicker").getDate());
+  var from           = $('.datepicker1').data("DateTimePicker").getDate().format("YYYY-MM-DD");
+  var to             = $('.datepicker2').data("DateTimePicker").getDate().format("YYYY-MM-DD");
+  var startTime      = millisOfDay($('.timepicker1').data("DateTimePicker").getDate());
+  var endTime        = millisOfDay($('.timepicker2').data("DateTimePicker").getDate());
+  var timeZoneOffset = -($('.datepicker1').data("DateTimePicker").getDate().zone()) * 60 * 1000;
 
-  return $.getJSON(jsRoutes.controllers.Proposals.findFreeTimeSlots(userIds, duration, from, to, startTime, endTime).url);
+  return $.getJSON(jsRoutes.controllers.Proposals.findFreeTimeSlots(userIds, duration, from, to, startTime, endTime, timeZoneOffset).url);
 }
 
 function listConflicts() {
