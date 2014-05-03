@@ -51,14 +51,10 @@ function createEvent(eventData) {
 
 function createEventPopover(selectedElement, start, end) {
   $(selectedElement).popover({
-      container: 'body',
+      container : 'body',
       placement : 'auto bottom',
       html      : 'true',
       trigger   : 'manual',
-      delay     : {
-        show : 400,
-        hide : 400
-      },
       content   : function(){
         var loadingimage = '<div style="margin-top: 8px;"><img src="/assets/images/loading.gif"></div>';
 
@@ -97,7 +93,7 @@ function createEventPopover(selectedElement, start, end) {
             + "</div>"
           + "</div>"
         + "</form>"
-        + "<div>";
+        + "<div>"
      }
   });
 
@@ -131,6 +127,10 @@ function createEventPopover(selectedElement, start, end) {
 
       var heightBefore = $('#newEventPopoverContent').parent().parent().height();
       $('#newEventTags').html($(tagListElems))
+      $('#newEventStart').attr('date', start)
+      $('#newEventStart').html(start.format("dd, MMM DD, HH:mm"))
+      $('#newEventEnd').attr('date', end)
+      $('#newEventEnd').html(end.format("dd, MMM DD, HH:mm"))
 
       // necessary for repositioning of popover after content change
       if ( $(selectedElement).data('bs.popover').$tip.hasClass('top') ) {  // in case, add:  or hasClass('right') or hasClass('left')
@@ -139,13 +139,6 @@ function createEventPopover(selectedElement, start, end) {
         var topBefore = parseInt($('#newEventPopoverContent').parent().parent().css('top'));
         $('#newEventPopoverContent').parent().parent().css('top', (topBefore - heightDiff) + "px");
       }
-
-
-      // if( $(selectedElement).data('bs.popover') )
-
-      // $(selectedElement).data('bs.popover').options.content = $('#newEventPopoverContent')
-      // $(selectedElement).data('bs.popover').setContent()
-      // $(selectedElement).popover('show')
 
       $("#newEventPopoverContent").on("submit", function(event) {
         event.preventDefault();
