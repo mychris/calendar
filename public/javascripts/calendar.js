@@ -66,26 +66,26 @@ function createEventPopover(selectedElement, start, end) {
         + "<div id='newEventPopoverContent'>"
         + "<form class='form-horizontal' role='form'>"
           + "<div class='form-group'>"
-            + "<label class='col-sm-3 control-label'>Title</label>"
-            + "<div class='col-sm-9'>"
+            + "<label class='col-sm-2 control-label'>Title</label>"
+            + "<div class='col-sm-10'>"
               + "<input type='text' class='form-control' id='newEventTitle' placeholder='Title'>"
             + "</div>"
           + "</div>"
 
           + "<div class='form-group'>"
-            + "<label class='col-sm-3 control-label'>Tags</label>"
-            + "<div class='col-sm-9' id='newEventTags'> "
+            + "<label class='col-sm-2 control-label'>Tags</label>"
+            + "<div class='col-sm-10' id='newEventTags'> "
               + loadingimage
             + "</div>"
           + "</div>"
 
           + "<div class='form-group'>"
-            + "<label class='col-sm-3 control-label'>From</label>"
-            + "<div class='col-sm-9'>"
+            + "<label class='col-sm-2 control-label'>From</label>"
+            + "<div class='col-sm-10'>"
               + "<p class='form-control-static' id='newEventStart' date='" + start + "'>" + start.format("dd, MMM DD, HH:mm") + "</p>"
             + "</div>"
-            + "<label class='col-sm-3 control-label'>To</label>"
-            + "<div class='col-sm-9'>"
+            + "<label class='col-sm-2 control-label'>To</label>"
+            + "<div class='col-sm-10'>"
               + "<p class='form-control-static' id='newEventEnd' date='" + end + "'>" + end.format("dd, MMM DD, HH:mm") + "</p>"
             + "</div>"
           + "</div>"
@@ -139,6 +139,7 @@ function createEventPopover(selectedElement, start, end) {
         var topBefore = parseInt($('#newEventPopoverContent').parent().parent().css('top'));
         $('#newEventPopoverContent').parent().parent().css('top', (topBefore - heightDiff) + "px");
       }
+
 
       // if( $(selectedElement).data('bs.popover') )
 

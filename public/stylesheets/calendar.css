@@ -27,6 +27,10 @@
   margin-bottom : 50px;
 }
 
+#newEventPopoverContent .control-label {
+  padding-right: 3px;
+}
+
 #newEventTags label {
   margin-right     : 4px;
   margin-bottom    : 4px;
@@ -49,6 +53,7 @@
 #newEventTags {
   max-height : 250px;
   overflow-y : overlay;
+  margin-top : 5px;
 }
 
 #main {
@@ -223,4 +228,8 @@ i.glyphicon.uncertain:before {
 .freetimeslot {
   opacity        : 0.4;
   pointer-events : none;
+}
+
+.popover {
+  max-width: 320px;
 }
