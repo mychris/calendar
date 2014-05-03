@@ -107,7 +107,7 @@ function createEventPopover(selectedElement, start, end) {
     $('#newEventPopoverContent').keyup(function(e) {
       if (e.keyCode == 27) {  // esc
         $('#cancelNewEventSubmit').click();
-      } 
+      }
     });   
   });
 
@@ -394,10 +394,9 @@ function listProposals(successCallback) {
         .append("span")
         .attr("class", "btn filter-off")
         .on("click", function(clickedProposal) {
-          $(this).toggleClass("proposal-filter-on");
           $(this).toggleClass("filter-off");
 
-          if( $(this).hasClass("proposal-filter-on") ) {
+          if( !$(this).hasClass("filter-off") ) {
             fetchProposalTimes(clickedProposal.proposal.id)
             .done(function(data){
               var proposalTimes = data.proposalTimes;
@@ -436,11 +435,6 @@ function listProposals(successCallback) {
               return (event.type == "proposal") && (event.proposalId == clickedProposal.proposal.id)
             });
           }
-          // In case we would have used filtering:
-          // var proposalIds = $(".proposal-filter-on").parent().map(function() {
-          //   return $(this).attr("proposalId");
-          // }).get()
-          // filterEventsByIds(proposalIds, "proposalId");
         })
         .style("background-color", function(proposal) { return proposal.proposal.color; });
 
@@ -819,19 +813,30 @@ function listTags() {
 
       var tags = d3.select("#tags ul").selectAll("li.tag").data(data.tags);
 
-      // Update
+      /* Update */
+      var filteredTagIds = $("#tags li.tag span.name.filter-off").parent().map(function() {
+        return $(this).attr("tagid");
+      }).get();
       tags.each(function() {
+        d3.select(this).attr('tagid', function(tag) {
+            return tag.id;
+        }); 
         d3.select(this).select(".name")
           .style("background-color", function(tag) {
             return tag.color;
           })
+          .classed('filter-off', false)
           .text(function(tag) {
             return tag.name;
-          });
+          })
+      });
+      // to restore filtered tag tabs
+      $(filteredTagIds).each(function(index, el){
+        $('#tags ul li[tagid=' + el + '] span.name').addClass('filter-off');
       });
 
 
-      // Enter
+      /* Enter */
       tags.enter()
         .append("li")
         .attr("class", "tag")
@@ -847,7 +852,7 @@ function listTags() {
             hideTagMenu(this);
         })
         .append("span")
-        .attr("class", "name btn btn-xs tag-filter-on")
+        .attr("class", "name btn btn-xs")
         .style("background-color", function(tag) {
           return tag.color;
         })
@@ -855,17 +860,16 @@ function listTags() {
           return tag.name;
         })
         .on("click", function() {
-          $(this).toggleClass("tag-filter-on");
           $(this).toggleClass("filter-off");
 
-          var tagIds = $(".tag-filter-on").parent().map(function() {
+          var tagIds = $("#tags li.tag span.name").not(".filter-off").parent().map(function() {
             return $(this).attr("tagid");
           }).get()
 
           filterEventsByIds(tagIds, "tagIds");
         })
 
-      // Exit
+      /* Exit */
       tags.exit().remove();
 
     } else {
@@ -942,7 +946,7 @@ function saveEdit(tag) {
 
 function cancelEdit(tag) {
   $("#edit-tag").remove();
-  $("<span class='name btn btn-xs tag-filter-on' style='background-color:" + tag[0].__data__.color + "'>" + tag[0].__data__.name + "</span>").appendTo(tag);
+  $("<span class='name btn btn-xs' style='background-color:" + tag[0].__data__.color + "'>" + tag[0].__data__.name + "</span>").appendTo(tag);
   $("#tags").data("editing", false);
 }
 
