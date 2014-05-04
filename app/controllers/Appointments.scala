@@ -45,7 +45,7 @@ object Appointments
     readBody[AddAppointmentRequestBody] { addAppointment =>
       toJsonResult {
         for {
-          AppointmentAdded(id)     <- (Services.calendarService ? AddAppointment(
+          AppointmentAdded(id)      <- (Services.calendarService ? AddAppointment(
                                         addAppointment.title,
                                         addAppointment.start,
                                         addAppointment.end,

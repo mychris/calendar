@@ -804,7 +804,6 @@ function initVotingPopover() {
   });
 }
 
-      
 function listTags() {
   
   function generateTagMenu(tag) {
@@ -844,16 +843,7 @@ function listTags() {
 
       d3.select("#tags ul li.nonefound").remove();
 
-      var defaultTag;
-      var tagsWithoutDefault = [];
-      for (var i = 0; i < data.tags.length; i++) {
-        if ( !(data.tags[i].id == defaultTagId) )
-          tagsWithoutDefault.push(data.tags[i]);
-        else
-          defaultTag = data.tags[i]
-      };
-
-      var tags = d3.select("#tags ul").selectAll("li.tag").data([defaultTag].concat(tagsWithoutDefault));
+      var tags = d3.select("#tags ul").selectAll("li.tag").data(data.tags);
 
       /* Update */
       var filteredTagIds = $("#tags li.tag span.name.filter-off").parent().map(function() {
