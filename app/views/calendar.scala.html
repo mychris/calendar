@@ -107,6 +107,7 @@
         eventRender: function(event, element) {
           if ( event.type == "appointment" ) {
             element.attr("tagIds", event.tagIds);
+            element.attr("appointmentId", event.id);
           }
           else if ( event.type == "proposal" ) {
             element.attr("proposalId", event.proposalId);
@@ -118,25 +119,13 @@
           }
         },
         eventAfterAllRender : function(view){
+          initDeleteEventPopover();
         },
         loading: function(bool) {
           $('#loading').toggle(bool);
         },
         eventClick: function(calEvent, jsEvent, view) {
-          if (calEvent.type == "appointment" && confirm("Delete appointment '" + calEvent.title + "'?")) {
-            $.ajax({
-              url: '/appointment/' + calEvent.id,   // TODO: Replace by compiled URL
-              type: 'DELETE',
-              success: function(data) {
-                $('#calendar').fullCalendar('removeEvents', function(ev) {
-                  return ev.id == calEvent.id;
-                });
-                listConlicts();
-              },
-              error: function(xhr) {
-                console.log("Can not delete appointment " + JSON.stringify(calEvent));
-              },
-            })
+          if ( calEvent.type == "appointment" ) {
           } else if ( calEvent.type == "proposal" ) {
 
           } else if ( calEvent.type == "suggestion" ) {

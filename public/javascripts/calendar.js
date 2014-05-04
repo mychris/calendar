@@ -25,6 +25,44 @@ function updateEvent(eventData, revertFunc) {
   })
 }
 
+function deleteEvent(id){
+  return $.ajax({
+      url: '/appointment/' + id,   // TODO: Replace by compiled URL
+      type: 'DELETE',
+      success: function(data) {
+        $("div.fc-event[appointmentid]").popover("hide");
+        $('#calendar').fullCalendar('removeEvents', function(ev) {
+          return ev.id == id;
+        });
+        listConflicts();
+      },
+      error: function(xhr) {
+        console.log("Can not delete appointment with ID " + id);
+      },
+    })
+}
+
+function initDeleteEventPopover() {
+  $("div.fc-event[appointmentid]").popover({
+      container : 'body',
+      placement : 'auto top',
+      html      : 'true',
+      trigger   : 'click',
+      delay     : {
+        show : 100,
+        hide : 100
+      },
+      content   : function(){
+        return "" 
+        + "<div id='deleteAppointmentPopoverContent'>"
+          + "<button title='delete' class='btn btn-sm btn-danger' onclick='deleteEvent(" + $(this).attr("appointmentid") + ")'>"
+            + "<span class='glyphicon glyphicon-remove'></span> Delete"
+          + "</button>"
+        + "<div>";
+      }
+  }); 
+}
+
 /*
  * Create and post an event to the server. If successful, show in calendar.
  * param eventData: Object with 'description', 'start' and 'end'
@@ -47,7 +85,6 @@ function createEvent(eventData) {
     })
   });
 }
-
 
 function createEventPopover(selectedElement, start, end) {
   $(selectedElement).popover({
@@ -764,7 +801,7 @@ function initVotingPopover() {
           + content
         + "<div>";
       }
-  }); 
+  });
 }
 
       
