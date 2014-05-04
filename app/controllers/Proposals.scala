@@ -62,8 +62,8 @@ object Proposals
     readBody[AddProposalWithTimesRequestBody] { addProposal =>
       val requester = request.user.id
       val participants =
-        if
-          (addProposal.participants.exists(_ == requester)) addProposal.participants
+        if(addProposal.participants.exists(_ == requester))
+          addProposal.participants
         else
           requester +: addProposal.participants
 

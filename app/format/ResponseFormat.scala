@@ -34,7 +34,7 @@ object ResponseFormat {
     def writes(o: DateTime): JsValue = o.getMillis.toJson
 
     def reads(json: JsValue): JsResult[DateTime] = json match {
-      case JsNumber(ms) => JsSuccess(new DateTime(ms))
+      case JsNumber(ms) => JsSuccess(new DateTime(ms.toLong))
       case _            => JsError(Seq(JsPath() -> Seq(ValidationError("error.expected.jsnumber"))))
     }
   }
