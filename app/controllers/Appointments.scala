@@ -46,11 +46,11 @@ object Appointments
       toJsonResult {
         for {
           AppointmentAdded(id)      <- (Services.calendarService ? AddAppointment(
-                                        addAppointment.title,
-                                        addAppointment.start,
-                                        addAppointment.end,
-                                        addAppointment.tagIds
-                                      )).expecting[AppointmentAdded]
+                                         addAppointment.title,
+                                         addAppointment.start,
+                                         addAppointment.end,
+                                         addAppointment.tagIds
+                                       )).expecting[AppointmentAdded]
           AppointmentById(app)      <- (Services.calendarService ? GetAppointmentById(id, request.user.id)).expecting[AppointmentById]
           TagsFromAppointment(tags) <- (Services.calendarService ? GetTagsFromAppointment(id)).expecting[TagsFromAppointment]
         }
