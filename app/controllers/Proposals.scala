@@ -123,7 +123,7 @@ object Proposals
       toJsonResult {
         (Services.proposalService ? FinishVote(
           id,
-          1,
+          request.user.id,
           finishVote.times
         )).expecting[VoteFinished.type]
       }
