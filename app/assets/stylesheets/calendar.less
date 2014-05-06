@@ -1,0 +1,264 @@
+/* General, Main layout */
+#main {
+  display         : flex;
+  flex-direction  : row;
+  justify-content : center;
+}
+
+#calendar {
+  width  : 780px;
+  margin : 0px 20px;
+}
+
+.sidebar {
+  & h3 {
+    margin-top     : 0;
+    padding-bottom : 12px;
+    font-size      : 14px;
+    font-weight    : bold;
+    border-bottom  : 1px solid #ddd;
+    color          : #444;
+  }
+  & ul {
+    padding    : 0 0 5px 0;
+    list-style : none;
+  }
+}
+
+#left-sidebar {
+  width      : 170px;
+  margin-top : 45px;
+}
+
+#right-sidebar {
+  width      : 180px;
+  margin-top : 45px;
+}
+
+.popover {
+  max-width: 320px;
+}
+
+
+
+/* Header Messages */
+#script-warning {
+  display       : none;
+  background    : #eee;
+  border-bottom : 1px solid #ddd;
+  padding       : 0 10px;
+  line-height   : 40px;
+  text-align    : center;
+  font-weight   : bold;
+  font-size     : 12px;
+  color         : red;
+}
+
+#loading {
+  display    : block;
+  position   : absolute;
+  top        : 20px;
+  text-align : center;
+  left       : 0;
+  right      : 0;
+  z-index    : 9999;
+  color      : white;
+}
+
+
+/* 
+ * Calendar 
+ */
+.fc-event {
+  color: #252525;
+  font-size: .85em;
+}
+
+/* New Event Popover */
+#newEventPopoverContent .control-label {
+  padding-right: 3px;
+}
+
+#newEventTags {
+  max-height : 250px;
+  overflow-y : overlay;
+  margin-top : 5px;
+
+  & label {
+    margin-right     : 4px;
+    margin-bottom    : 4px;
+    font-size        : 13px;
+    max-width        : 100%;
+    overflow         : hidden;
+    text-overflow    : ellipsis;
+    -o-text-overflow : ellipsis;
+    text-align       : left; 
+    & input {
+      margin-right : 4px;
+    }
+  }
+  & span {
+    white-space : normal;
+  }
+}
+
+
+/* 
+ * Right sidebar Sections
+ */
+
+/* Conlicts */
+#conflicts li {
+  cursor : pointer;
+
+  &:hover {
+    background-color : #eee;
+  }
+}
+
+
+/*
+ * Left sidebar Sections 
+ */
+
+.filter-off {
+  opacity: 0.35;
+}
+
+.tag .open-menu,
+.proposal .open-menu {
+  cursor : pointer;
+}
+
+.dropdown-menu-triangle {
+  margin-left : 6px;
+  display     : inline-block;
+}
+
+/* 
+ * Tags
+ */
+.tag {
+  margin : 5px 0 5px 0;
+  padding   : 0 18px 0 0;
+  white-space: nowrap;    /* so that the menu triangle icon doesnt wrap */
+
+  & span.name {
+    width            : 100%;
+    overflow         : hidden;
+    white-space      : normal;
+    text-overflow    : ellipsis;
+    -o-text-overflow : ellipsis;
+  }
+}
+
+#edit-tag {
+  & div {
+    margin-top : 10px;
+  }
+
+  & input {
+    display : inline-block;
+    padding : 4px 8px;
+    height  : auto;
+
+    &[name=name] {
+      width : 85px;
+    }
+    &[name=priority] {
+      width   : 40px;
+      padding : 4px 4px 4px 8px;
+    }
+  }
+}
+
+
+/* 
+ * Proposal 
+ */
+
+/* Proposal Section */
+.proposal {
+  padding       : 0 18px 0 0;
+  white-space   : nowrap;
+  margin        : 5px 0;
+
+  & span.btn {
+    text-align       : left;
+    white-space      : normal;
+    width            : 100%;
+    overflow         : hidden;
+    text-overflow    : ellipsis;
+    -o-text-overflow : ellipsis;
+  }
+
+  & h3 {
+    font-weight      : normal;
+    font-size        : 14px;
+    border           : none;
+    padding-bottom   : 0;
+    margin-bottom    : 3px;
+    color            : #252525;
+    overflow         : hidden;
+    text-overflow    : ellipsis;
+    -o-text-overflow : ellipsis;
+  }
+
+  & .participants {
+    font-size : .85em;
+    color : #252525;
+    white-space: normal;
+  }
+}
+
+/* Creating new Proposal */
+.proposal-modal {
+  width : 650px;
+}
+
+.finish-proposal-modal {
+  width : 1150px;
+
+  & table {
+    & tr, & th {
+      text-align: center;
+    }
+    & .not-voted  {
+      //background-color: #F691B2;
+    }
+    & .accepted {
+    background-color: #42D692;
+    }
+    & .refused {
+      background-color: #FF4444;
+    }
+    & .uncertain {
+      background-color: #F0AD4E;
+    }
+  }
+}
+
+.selectize-dropdown-content div[data-selectable].option.active {
+  background-color: #eee;
+}
+
+.freetimeslot {
+  opacity        : 0.4;
+  pointer-events : none;
+}
+
+/* Vote-Icons for Proposal */
+i {
+  &.glyphicon.accepted:before {
+    color: #252525;
+    content: "\e013"
+  }
+  &.glyphicon.refused:before {
+    color: #252525;
+    content: "\e014"
+  }
+  &.glyphicon.uncertain:before {
+    color: #252525;
+    content: "\e085"
+  }
+}

@@ -35,21 +35,24 @@ nav {
   width      : 300px;
   text-align : right;
   margin     : 0;
+
+  & a {
+    padding-left : 10px;
+  }
 }
 
-nav a {
-  padding-left : 10px;
+a {
+  & .no-decoration {
+    text-decoration: none;
+    color: #999;
+  }
+
+  & .no-decoration:hover {
+    text-decoration: none;
+    color: #999 !important;
+  }
 }
 
-a.no-decoration {
-  text-decoration: none;
-  color: #999;
-}
-
-a.no-decoration:hover {
-  text-decoration: none;
-  color: #999 !important;
-}
 .spacer {
   margin: 40px 0;
 }

@@ -369,7 +369,7 @@ function listProposals(successCallback) {
 
   function generateProposalMenu(proposal) {
     return $(
-      "<div class='menu dropdown'>" +
+      "<span class='menu dropdown'>" +
       "  <a class='open-menu dropdown-toggle caret'" +
       "     style='color:" + proposal.color + ";'" +
       "     role='button'" +
@@ -383,7 +383,7 @@ function listProposals(successCallback) {
       "      <a role='menuitem' tabindex='-1' onclick='deleteProposal($(this).closest(\".proposal\").attr(\"proposalId\"))'>Delete proposal</a>" +
       "    </li>" +
       "  </ul>" +
-      "</div>"
+      "</span>"
     );
   }
 
