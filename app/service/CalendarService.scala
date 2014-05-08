@@ -93,8 +93,8 @@ class CalendarService(db: Database)
     sender ! AppointmentUpdated(
       appointments
         .filter(_.id === msg.id)
-        .map(a => (a.start, a.end))
-        .update((msg.start, msg.end))
+        .map(a => (a.title, a.start, a.end))
+        .update((msg.title, msg.start, msg.end))
     )
   }
 

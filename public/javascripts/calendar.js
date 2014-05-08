@@ -5,7 +5,6 @@ function updateEvent(eventData, revertFunc) {
       type: "PUT",
       url: '/appointment/' + eventData.id,
       dataType: 'json',
-      accepts: "application/json; charset=utf-8",
       headers: {
         Accept: "application/json; charset=utf-8",
         "Content-Type": "application/json; charset=utf-8"
@@ -42,8 +41,41 @@ function deleteEvent(id){
     })
 }
 
-function initDeleteEventPopover() {
-  $("div.fc-event[appointmentid]").popover({
+function updateEventTitle(id) {
+
+  var event = $('#calendar').fullCalendar('clientEvents', function(event){
+    return event.id == id;
+  })[0];
+
+  event.title = $('#newTitle').val();
+
+  return $.ajax({
+      type: "PUT",
+      url: '/appointment/' + id,
+      dataType: 'json',
+      headers: {
+        Accept: "application/json; charset=utf-8",
+        "Content-Type": "application/json; charset=utf-8"
+      },
+      data: JSON.stringify({
+        'title'  : event.title,
+        'start'  : event.start.valueOf(),
+        'end'    : event.end.valueOf(),
+        'tagIds' : event.tagIds
+      }),
+      success: function(data) {
+        $("div.fc-event[appointmentid]").popover('hide');
+        $('#calendar').fullCalendar('updateEvent', event);
+      },
+      error: function(xhr) {
+        console.log("Error trying to change event title:");
+        console.log(err.responseText);
+      },
+  })
+}
+
+function initEventClickPopover() {
+  var popover = $("div.fc-event[appointmentid]").popover({
       container : 'body',
       placement : 'auto top',
       html      : 'true',
@@ -55,12 +87,34 @@ function initDeleteEventPopover() {
       content   : function(){
         return "" 
         + "<div id='deleteAppointmentPopoverContent'>"
-          + "<button title='delete' class='btn btn-sm btn-danger' onclick='deleteEvent(" + $(this).attr("appointmentid") + ")'>"
-            + "<span class='glyphicon glyphicon-remove'></span> Delete"
-          + "</button>"
-        + "<div>";
+          + "<form class='form-inline' onsubmit='return false;'>"
+            + "<div class='form-group'>"
+                + "<input type='text' class='form-control' id='newTitle' placeholder='New Title'>"
+                + "<button type='submit' title='rename' id='renameEventButton' onclick='updateEventTitle(" + $(this).attr('appointmentid') + ")' class='btn btn-sm btn-default'>"
+                  + "<span class='glyphicon glyphicon-pencil'></span> Rename"
+                + "</button>"
+            + "</div>"
+            + "<div class='form-group'>"
+                + "<button title='delete' class='btn btn-sm btn-danger' onclick='deleteEvent(" + $(this).attr('appointmentid') + ")'>"
+                 + "<span class='glyphicon glyphicon-remove'></span> Delete"
+                + "</button>"
+            + "</div>"
+          + "</form>"
+        + "</div>";
       }
   }); 
+
+
+  $(popover).on('shown.bs.popover', function () {
+    $('#newTitle').focus();
+
+    
+    $('#deleteAppointmentPopoverContent').keyup(function(e) {
+      if (e.keyCode == 27) {  // esc
+        $("div.fc-event[appointmentid]").popover('hide');
+      }
+    });
+  });
 }
 
 /*
@@ -72,7 +126,6 @@ function createEvent(eventData) {
     type: "POST",
     url: jsRoutes.controllers.Appointments.add().url,
     dataType: "json",
-    accepts: "application/json; charset=utf-8",
     headers: {
       Accept: "application/json; charset=utf-8",
       "Content-Type": "application/json; charset=utf-8"
@@ -163,6 +216,8 @@ function createEventPopover(selectedElement, start, end) {
             + "</label>"
         }
       });
+
+      $('#newEventPopoverContent').parent().parent().css('max-width', '320px');
 
       var heightBefore = $('#newEventPopoverContent').parent().parent().height();
       $('#newEventTags').html($(tagListElems))
@@ -709,7 +764,6 @@ function finishProposalVote(proposalId, proposalTimeId) {
     type: "POST",
     url: jsRoutes.controllers.Proposals.finishVote(proposalId).url,
     dataType: "json",
-    accepts: "application/json; charset=utf-8",
     headers: {
       Accept: "application/json; charset=utf-8",
       "Content-Type": "application/json; charset=utf-8"
