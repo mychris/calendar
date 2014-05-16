@@ -3,7 +3,15 @@
 #### by [mychris](https://github.com/mychris), [FlorianLiebhart](https://github.com/FlorianLiebhart/), [simonkaltenbacher](https://github.com/simonkaltenbacher)
 --------
 
-## Development
+
+## Main Features
+- Calendar application with a month view, week view and day view
+- Category tags to filter events
+- Creating an event with friends: Create an event proposal, invite others and let them vote for their desired time. The free time slots where the participants are available will automatically be displayed
+- Conflict finding: Automatic conflict detection of colliding events
+
+
+## Development and Usage
 
 ### Getting started
 
@@ -71,36 +79,3 @@ Run ```sbt test``` from the command line to run the tests.
   * jQuery-based hybrid of a textbox and <select> box.
    * [Documentation](https://github.com/brianreavis/selectize.js/blob/master/docs/usage.md)
    * [API documentation](https://github.com/brianreavis/selectize.js/blob/master/docs/api.md)
-
-
-
-
-## Hauptfunktionen:
-- Freie Zeitslots für Termine finden:
-    Angabe von: - Beteiligte Personen
-                - Dauer
-                - Evtl. Zeitrahmen (Nachmittags/...)
-    Ausgabe von Terminvorschlägen, an dem alle teilnehmen können.
-    - Davon kann man dann einen auswählen.
-    - Zwischen zwei Terminen einen Zeitslot anzeigen, keine Termine (sodass nicht für jede Minute ein Termin angezeigt wird)
-- Termin als Vorschlag markieren (reserviert), Termin als fest markieren.
-- Kategorie-Tagging (mit Priorität) eines Termins, welcher eine Standardpriorität (wichtig für Konfliktlösung) beinhaltet  
-  (Beispieltags: Uni:3, Arbeit:1, Privat:2,..), mit jeweils verschiedener Standard-Priorität
-
-- Möglichkeit des Eintragens kollidierender Termine
-- Auflösen von Konflikten (kollidierende Termine) 
-    -> Automatisches Auflösen möglich
-    -> Halbautomatisches Auflösen möglich
-
-- GUI: Kalendaransicht
-
-
-
-
-Aufgaben:
-- Gut dokumentierte Software, Beschreibung: paar Seiten, hauptsache Präsentation am Ende
-
-
-Notes
-  1. The tables of the ProposalDataAccessService are not created at the moment. Support will be added as soon as the component's implementation is finished.
-  2. There seems to be a bug in slick regarding compound primary keys. Therefore the compound keys are commented out in CalendarDataAccessService.
